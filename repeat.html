@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Repeater</title>
+    <style>
+        .heading{
+            text-align: center;
+            padding-top: 60px;
+            color: rgb(0,0,0);
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 50px;
+            -webkit-text-stroke: 1px black;
+        }
+        .text_part{
+            text-align: center;
+            padding: 50px 0px;
+        }
+        .text_area{
+            padding-bottom: 20px;
+        }
+        .button{
+            background-color: black;
+            color: white;
+            padding: 5px 30px;
+            font-size: 15px;
+            border-radius: 80px / 60px;
+        }
+        .input_value{
+            padding: 10px 30px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="heading">Text Repeater</h1>
+    
+    <div class="text_part">
+        <div class="text_area">
+            <textarea onkeyup="func_textarea(this)" name="" id="text_area" cols="60" rows="10" placeholder="Input your text."></textarea>
+        </div>
+        <input type="text" class="input_value" placeholder="How many time you want?" id="input_value" onkeyup="func_value(this.value)">
+        <button class="button" onclick="func_button(this)">ENTER</button>
+    </div>
+    
+    <script>
+
+        var text;
+        var value;
+        var result = '';
+        function func_textarea(t){
+              text = t.value;
+        }
+        function func_value(v){
+                value = parseInt(v);
+                             
+        }   
+        function func_button(v){
+            for(var i = 0; i < value; i++){
+                result += text + " ";
+            }
+            document.getElementById("text_area").value = result.trim();
+            document.getElementById("input_value").value = " ";
+            text = '';
+            value = 0;
+            result = '';
+        } 
+ 
+        
+    </script>
+</body>
+</html>
