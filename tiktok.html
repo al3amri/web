@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TikTok Info Scraper</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<div>
+		<h1>TikTok Info Scraper</h1>
+		<p>This program allows you to scrape information about a TikTok account.</p>
+		<form onsubmit="return false">
+			<label for="username">Username:</label>
+			<input type="text" id="username" required>
+			<button onclick="scrapeInfo()">Scrape Info</button>
+		</form>
+	</div>
+	<div id="result" style="display:none">
+		<h2>Results:</h2>
+		<p id="userId"></p>
+		<p id="nickname"></p>
+		<p id="verified"></p>
+		<p id="private"></p>
+		<p id="secUid"></p>
+		<p id="followers"></p>
+		<p id="following"></p>
+		<p id="createTime"></p>
+		<p id="lastChange"></p>
+		<p id="region"></p>
+	</div>
+
+	<script>
+		function scrapeInfo() {
+			var username = document.getElementById("username").value;
+			if (username.charAt(0) == "@" || username.includes("@")) {
+				username = username.replace("@", "");
+			}
+			var request = new XMLHttpRequest();
+			request.open("GET", "https://www.tiktok.com/@" + username);
+			request.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
+			request.onload = function() {
+				if (request.status == 200) {
+					var serverLog = request.responseText;
+					var dataJson = getDataJson(serverLog);
+					document.getElementById("result").style.display = "block";
+					document.getElementById("userId").innerHTML = "UserID: " + getUserId(dataJson);
+					document.getElementById("nickname").innerHTML = "Nickname: " + getNickname(dataJson);
+					document.getElementById("verified").innerHTML = "Verified: " + isVerified(dataJson);
+					document.getElementById("private").innerHTML = "Private: " + isPrivate(dataJson);
+					document.getElementById("secUid").innerHTML = "secUid: " + getSecUid(dataJson);
+					document.getElementById("followers").innerHTML = "Followers: " + getFollowers(dataJson);
+					document.getElementById("following").innerHTML = "Following: " + getFollowing(dataJson);
+					document.getElementById("createTime").innerHTML = "User Create Time: " + getUserCreateTime(dataJson);
+					document.getElementById("lastChange").innerHTML = "Last Time Change Nickname: " + getLastChangeName(dataJson);
+					document.getElementById("region").innerHTML = "Account Region: " + getAccountRegion(dataJson);
+				} else {
+					alert("Error: Username not found.");
+				}
+			};
+			request.send();
+		}
+
+		function getDataJson(serverLog) {
+			var soup = new DOMParser().parseFromString(serverLog, "text/html");
+			var script = soup.getElementById("__NEXT_DATA__").innerHTML;
+			var data = script.split('"UserModule":{"users":{')[1];
+			return data;
+		}
+
+		function getUserId(dataJson) {
+		
