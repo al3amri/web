@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
+<head>
     <title>TikTok Scraper</title>
-  </head>
-  <body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
     <h1>TikTok Scraper</h1>
-    <form id="form">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username"><br><br>
-      <button type="button" onclick="scrapeData()">Scrape Info</button>
-    </form>
-    <div id="output"></div>
+    <p>Enter a TikTok username below and click "Scrape Info" to get user information:</p>
+    <input type="text" id="username">
+    <button id="scrape-btn">Scrape Info</button>
+    <br>
+    <br>
+    <div id="result-container">
+        <h2>User Info</h2>
+        <p id="user-id"></p>
+        <p id="nickname"></p>
+        <p id="verified"></p>
+        <p id="private"></p>
+        <p id="sec-uid"></p>
+        <p id="followers"></p>
+        <p id="following"></p>
+        <p id="create-time"></p>
+        <p id="last-change"></p>
+        <p id="region"></p>
+    </div>
 
     <script>
-      function scrapeData() {
-        var username = document.getElementById("username").value;
-        console.log("Username:", username);
+        function scrapeTikTok() {
+            var username = $('#username').val();
+            var url = 'https://www.tiktok.com/@' + username;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "https://www.tiktok.com/@"+username);
-        xhr.setRequestHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36");
-        xhr.onload = function() {
-          var parser = new DOMParser();
-          var doc = parser.parseFromString(xhr.responseText, "text/html");
-          console.log("Response:", doc);
+            $.getJSON('https://api.allorigins.win/get?url=' + encodeURIComponent(url) + '&callback=?', function (data) {
+                var html = data.contents;
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, "text/html");
 
-          var data = doc.querySelector("#__NEXT_DATA__").innerHTML;
-          console.log("Data:", data);
+                var script = doc.getElementById('SIGI_STATE').textContent;
+                var userData = JSON.parse(script.split('window.__INIT_PROPS__ = ')[1].split(';')[0]);
 
-          var json = JSON.parse(data);
-          console.log("JSON:", json);
+                var userInfo = userData.userData.userInfo;
+                $('#user-id').text('User ID: ' + userInfo.user.id);
+                $('#nickname').text('Nickname: ' + userInfo.user.nickname);
+                $('#verified').text('Verified: ' + userInfo.user.verified);
+                $('#private').text('Private: ' + userInfo.user.privateAccount);
+                $('#sec-uid').text('Sec UID: ' + userInfo.user.secUid);
+                $('#followers').text('Followers: ' + userInfo.stats.followerCount);
+                $('#following').text('Following: ' + userInfo.stats.followingCount);
+                $('#create-time').text('Create Time: ' + new Date(userInfo.user.createTime * 1000));
+                $('#last-change').text('Last Change: ' + new Date(userInfo.user.nickNameModifyTime * 1000));
+                $('#region').text('Region: ' + userInfo.user.region);
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log('Error:', jqXHR, textStatus, errorThrown);
+            });
+        }
 
-          var userInfo = json.props.pageProps.userInfo;
-          console.log("User Info:", userInfo);
-
-          var output = document.getElementById("output");
-          output.innerHTML = "<h2>User Info</h2>";
-          output.innerHTML += "<p>User ID: "+userInfo.user.id+"</p>";
-          output.innerHTML += "<p>Username: "+userInfo.user.uniqueId+"</p>";
-          output.innerHTML += "<p>Verified: "+userInfo.user.verified+"</p>";
-          output.innerHTML += "<p>Private Account: "+userInfo.user.privateAccount+"</p>";
-          output.innerHTML += "<p>SecUid: "+userInfo.user.secUid+"</p>";
-          output.innerHTML += "<p>Followers: "+userInfo.stats.followerCount+"</p>";
-          output.innerHTML += "<p>Following: "+userInfo.stats.followingCount+"</p>";
-          output.innerHTML += "<p>User Create Time: "+new Date(userInfo.user.createTime*1000).toLocaleString()+"</p>";
-          output.innerHTML += "<p>Last Time Change Nickname: "+new Date(userInfo.user.modifyTime*1000).toLocaleString()+"</p>";
-          output.innerHTML += "<p>Account Region: "+userInfo.region+"</p>";
-        };
-        xhr.send();
-      }
+        $('#scrape-btn').click(scrapeTikTok);
     </script>
-  </body>
+</body>
 </html>
