@@ -97,6 +97,27 @@
                 padding: 1rem;
             }
         }
+		        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            background: #4a90e2;
+            padding: 0.8rem;
+            border-radius: 8px;
+        }
+
+        .action-buttons button.copy {
+            background: #2ecc71;
+        }
+
+        .action-buttons button.download {
+            background: #e74c3c;
+        }
     </style>
 </head>
 <body>
@@ -126,6 +147,11 @@
 
         <textarea id="result" readonly></textarea>
         <div class="stats" id="stats"></div>
+		
+		       <div class="action-buttons">
+            <button class="copy" onclick="copyToClipboard()">📋 Copy All</button>
+            <button class="download" onclick="downloadList()">💾 Download List</button>
+        </div>
     </div>
 
     <script>
@@ -139,7 +165,51 @@
                 alphanum: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             }
         };
+function copyToClipboard() {
+            const textarea = document.getElementById('result');
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showStatsMessage('Copied to clipboard!');
+            } catch (err) {
+                showStatsMessage('Failed to copy!');
+            }
+        }
 
+        function downloadList() {
+            const content = document.getElementById('result').value;
+            if (!content) {
+                showStatsMessage('No data to download!');
+                return;
+            }
+
+            const length = document.getElementById('length').value;
+            const caseType = document.getElementById('case').value;
+            const charType = document.getElementById('type').value;
+            
+            const filename = `Letto_${length}_${caseType}_${charType}.txt`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatsMessage('Download started!');
+        }
+
+        function showStatsMessage(message) {
+            const stats = document.getElementById('stats');
+            stats.textContent = message;
+            setTimeout(() => {
+                stats.textContent = '';
+            }, 2000);
+        }
         function generate() {
             const length = parseInt(document.getElementById('length').value);
             const count = parseInt(document.getElementById('count').value);
