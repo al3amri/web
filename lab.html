@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Plant Lab Report</title>
+    <style>
+        :root {
+            --primary: #2c5f2d;
+            --secondary: #97bc62;
+            --background: #f0f8f0;
+            --text: #333;
+            --card-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary: #7aa079;
+            --secondary: #a8c698;
+            --background: #1a2a1a;
+            --text: #e0e0e0;
+            --card-bg: #2d3d2d;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--secondary);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .exercise {
+            margin: 2.5rem 0;
+            padding: 2rem;
+            background: rgba(var(--primary-rgb), 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+        }
+
+        .calculation-box {
+            background: rgba(var(--primary-rgb), 0.08);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        input {
+            padding: 0.8rem;
+            margin: 0.5rem;
+            width: 120px;
+            border: 2px solid var(--secondary);
+            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+        }
+
+        th {
+            background: rgba(var(--primary-rgb), 0.1);
+            font-weight: 600;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary);
+        }
+
+        @media print {
+            .theme-switcher, .print-btn {
+                display: none;
+            }
+        }
+
+        .result-box {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            background: rgba(var(--secondary-rgb), 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .floating-graphic {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switcher">
+        <button onclick="toggleTheme('light')">🌞 Light</button>
+        <button onclick="toggleTheme('dark')">🌙 Dark</button>
+        <button onclick="toggleTheme('nature')">🌿 Nature</button>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+
+    <div class="container">
+        <h1>🌱 Advanced Plant Biology Lab Report</h1>
+
+        <!-- Exercise 3 Interactive Calculator -->
+        <div class="exercise">
+            <h2>🔬 Exercise 3: Water Absorption Analysis</h2>
+            
+            <div class="calculation-box">
+                <h3>🧪 Moss Absorption Calculator</h3>
+                <label>Water Remaining (ml): </label>
+                <input type="number" id="mossWaterLeft" value="30" min="0" max="100">
+                <button onclick="calculateAbsorption()">🧮 Calculate</button>
+                <div class="result-box" id="mossResult"></div>
+            </div>
+
+            <div class="calculation-box">
+                <h3>📜 Paper Towel Comparison</h3>
+                <label>Water Remaining (ml): </label>
+                <input type="number" id="towelWaterLeft" value="70" min="0" max="100">
+                <button onclick="calculateAbsorption()">🧮 Calculate</button>
+                <div class="result-box" id="towelResult"></div>
+            </div>
+
+            <div class="calculation-box">
+                <h3>📊 Comparative Analysis</h3>
+                <div id="comparisonChart"></div>
+            </div>
+        </div>
+
+        <!-- Exercise 6 Comparison -->
+        <div class="exercise">
+            <h2>🌿🆚🌿 Exercise 6: Moss vs Fern Comparison</h2>
+            <div class="comparison">
+                <div>
+                    <h3>🌱 Moss Characteristics</h3>
+                    <ul>
+                        <li>✅ Dominant Gametophyte</li>
+                        <li>❌ No Vascular Tissue</li>
+                        <li>💧 Water-dependent Reproduction</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>🌿 Fern Features</h3>
+                    <ul>
+                        <li>✅ Dominant Sporophyte</li>
+                        <li>✅ Vascular System Present</li>
+                        <li>🍃 Frond Leaf Structure</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 7 Table -->
+        <div class="exercise">
+            <h2>🔍 Exercise 7: Plant Structure Analysis</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Structure</th>
+                        <th>Generation</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Prothallium</td>
+                        <td>Gametophyte</td>
+                        <td>Produces gametes</td>
+                    </tr>
+                    <tr>
+                        <td>Spore</td>
+                        <td>Haploid</td>
+                        <td>Germinates into gametophyte</td>
+                    </tr>
+                    <tr>
+                        <td>Sporangium</td>
+                        <td>Sporophyte</td>
+                        <td>Spore production</td>
+                    </tr>
+                    <tr>
+                        <td>Antheridium</td>
+                        <td>Gametophyte</td>
+                        <td>Sperm production</td>
+                    </tr>
+                    <tr>
+                        <td>Archegonium</td>
+                        <td>Gametophyte</td>
+                        <td>Egg production</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Theme Management
+        const themes = {
+            light: {
+                primary: '#2c5f2d',
+                secondary: '#97bc62',
+                background: '#f0f8f0',
+                text: '#333',
+                cardBg: '#ffffff'
+            },
+            dark: {
+                primary: '#7aa079',
+                secondary: '#a8c698',
+                background: '#1a2a1a',
+                text: '#e0e0e0',
+                cardBg: '#2d3d2d'
+            },
+            nature: {
+                primary: '#4a7c59',
+                secondary: '#8fb996',
+                background: '#e9f5db',
+                text: '#2d3b2a',
+                cardBg: '#ffffff'
+            }
+        };
+
+        function toggleTheme(theme) {
+            const root = document.documentElement;
+            const colors = themes[theme];
+            
+            root.style.setProperty('--primary', colors.primary);
+            root.style.setProperty('--secondary', colors.secondary);
+            root.style.setProperty('--background', colors.background);
+            root.style.setProperty('--text', colors.text);
+            root.style.setProperty('--card-bg', colors.cardBg);
+            
+            localStorage.setItem('theme', theme);
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        toggleTheme(savedTheme);
+
+        // Exercise 3 Calculations
+        function calculateAbsorption() {
+            const mossLeft = parseFloat(document.getElementById('mossWaterLeft').value) || 0;
+            const towelLeft = parseFloat(document.getElementById('towelWaterLeft').value) || 0;
+
+            const mossAbsorbed = 100 - mossLeft;
+            const towelAbsorbed = 100 - towelLeft;
+
+            document.getElementById('mossResult').innerHTML = `
+                <strong>Moss Absorption:</strong><br>
+                ${mossAbsorbed}ml water absorbed<br>
+                ${(mossAbsorbed/3).toFixed(1)}× its weight
+            `;
+
+            document.getElementById('towelResult').innerHTML = `
+                <strong>Paper Towel Absorption:</strong><br>
+                ${towelAbsorbed}ml water absorbed<br>
+                ${(towelAbsorbed/3).toFixed(1)}× its weight
+            `;
+
+            updateChart(mossAbsorbed, towelAbsorbed);
+        }
+
+        // Simple ASCII Chart
+        function updateChart(moss, towel) {
+            const chart = document.getElementById('comparisonChart');
+            const max = Math.max(moss, towel) || 1;
+            
+            const mossBar = '█'.repeat(Math.round((moss/max)*20));
+            const towelBar = '█'.repeat(Math.round((towel/max)*20));
+            
+            chart.innerHTML = `
+                <pre>
+                Moss:    ${mossBar} ${moss}ml
+                Towel:   ${towelBar} ${towel}ml
+                </pre>
+            `;
+        }
+
+        // Initial calculations
+        calculateAbsorption();
+    </script>
+</body>
+</html>
