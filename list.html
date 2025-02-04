@@ -185,9 +185,9 @@ function copyToClipboard() {
 
             const length = document.getElementById('length').value;
             const caseType = document.getElementById('case').value;
-            const charType = document.getElementById('type').value;
+            const count = document.getElementById('count').value;
             
-            const filename = `Letto_${length}_${caseType}_${charType}.txt`;
+            const filename = `Letto_${length}_${caseType}_${count}.txt`;
             
             const blob = new Blob([content], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
