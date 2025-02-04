@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Text Extractor</title>
+    <title>Advanced OCR Scanner</title>
     <script src="https://unpkg.com/tesseract.js@v4.0.2/dist/tesseract.min.js"></script>
     <style>
         :root {
@@ -51,6 +51,7 @@
             border-radius: 0.5rem;
             background: #000;
             margin-bottom: 1rem;
+            transform: scaleX(-1);
         }
 
         .controls {
@@ -121,6 +122,10 @@
             animation: spin 1s linear infinite;
         }
 
+        .upload-section {
+            margin: 1rem 0;
+        }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -139,8 +144,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Smart Text Extractor 📸</h1>
-            <p>Capture images and extract text in any language</p>
+            <h1>Smart OCR Scanner 📸</h1>
+            <p>Capture/upload images to extract text in multiple languages</p>
         </div>
 
         <div class="camera-section">
@@ -157,6 +162,14 @@
                 </select>
                 <button onclick="startCamera()">📸 Start Camera</button>
                 <button onclick="captureImage()">🎯 Capture & Analyze</button>
+                <button onclick="flipCamera()">🔄 Flip Camera</button>
+            </div>
+            
+            <div class="upload-section">
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <button onclick="document.getElementById('fileInput').click()">
+                    📁 Upload Image
+                </button>
             </div>
         </div>
 
@@ -172,11 +185,23 @@
 
     <script>
         let stream = null;
-        const worker = Tesseract.createWorker();
+        let currentFacingMode = 'environment';
+        let worker;
+
+        async function initializeTesseract() {
+            worker = await Tesseract.createWorker();
+            await worker.load();
+            await worker.initialize('eng');
+        }
 
         async function startCamera() {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                if(stream) stream.getTracks().forEach(track => track.stop());
+                
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode }
+                });
+                
                 const video = document.getElementById('cameraPreview');
                 video.srcObject = stream;
             } catch (error) {
@@ -184,22 +209,21 @@
             }
         }
 
-        async function captureImage() {
+        async function flipCamera() {
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+            await startCamera();
+        }
+
+        async function processImage(imageSource) {
             showLoading(true);
             try {
-                const video = document.getElementById('cameraPreview');
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video, 0, 0);
-                
                 const lang = document.getElementById('languageSelect').value;
                 
-                await worker.load();
-                await worker.loadLanguage(lang);
-                await worker.initialize(lang);
+                await worker.setParameters({
+                    tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                });
                 
-                const { data: { text } } = await worker.recognize(canvas);
+                const { data: { text } } = await worker.recognize(imageSource, lang);
                 document.getElementById('extractedText').textContent = text;
             } catch (error) {
                 alert('OCR Error: ' + error.message);
@@ -208,18 +232,47 @@
             }
         }
 
+        async function captureImage() {
+            const video = document.getElementById('cameraPreview');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            await processImage(canvas);
+        }
+
+        // Handle file upload
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = async () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    await processImage(canvas);
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
-        // Initialize Tesseract worker on startup
+        // Initialize Tesseract when page loads
         (async function init() {
-            await worker.load();
-            await worker.loadLanguage('eng');
-            await worker.initialize('eng');
+            await initializeTesseract();
+            document.getElementById('loading').style.display = 'none';
         })();
 
-        // Cleanup camera stream
+        // Cleanup
         window.addEventListener('beforeunload', () => {
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
