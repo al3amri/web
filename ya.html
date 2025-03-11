@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Water Resources Study Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .chapter {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin: 2rem 0 1rem;
+        }
+
+        h3 {
+            color: var(--accent);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .section {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calculator {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        .question {
+            background: white;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .answer {
+            display: none;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: var(--light);
+            border-radius: 5px;
+        }
+
+        .formula {
+            background: #e9ecef;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .chapter {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chapter 9 Content -->
+        <div class="chapter">
+            <h1>Chapter 9: Water Resources, Pollution, and Treatment</h1>
+
+            <div class="section">
+                <h2>Water Distribution & Properties</h2>
+                <div class="formula">BOD₅ = (Initial DO - Final DO) × Dilution Factor</div>
+                <h3>Global Water Distribution</h3>
+                <ul>
+                    <li>Saltwater: 97% (oceans)</li>
+                    <li>Freshwater: 3% (2% glaciers/ice caps, <1% accessible)</li>
+                </ul>
+
+                <h3>Hydrologic Cycle</h3>
+                <p>Steps: Evaporation → Transpiration → Condensation → Precipitation → Infiltration/Runoff</p>
+                
+                <h3>Unique Properties</h3>
+                <ul>
+                    <li>Hydrogen bonding creates high surface tension</li>
+                    <li>Maximum density at 4°C (ice floats)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Water Pollution</h2>
+                <table>
+                    <tr><th>Point Sources</th><th>Nonpoint Sources</th></tr>
+                    <tr><td>Factory discharge pipes</td><td>Agricultural runoff</td></tr>
+                    <tr><td>Sewage treatment plants</td><td>Urban stormwater</td></tr>
+                </table>
+
+                <h3>Pollutant Categories</h3>
+                <table>
+                    <tr><th>Type</th><th>Examples</th><th>Impact</th></tr>
+                    <tr><td>Pathogens</td><td>E. coli, Cholera</td><td>Waterborne diseases</td></tr>
+                    <tr><td>Nutrients</td><td>Nitrogen/Phosphorus</td><td>Eutrophication</td></tr>
+                    <tr><td>Toxic Metals</td><td>Lead, Mercury</td><td>Organ damage</td></tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Wastewater Treatment</h2>
+                <ol>
+                    <li>Preliminary: Remove debris</li>
+                    <li>Primary: Sedimentation</li>
+                    <li>Secondary: Biological treatment</li>
+                    <li>Tertiary: Advanced filtration</li>
+                </ol>
+                <h3>Disinfection Methods</h3>
+                <ul>
+                    <li>Chlorination</li>
+                    <li>UV Radiation</li>
+                    <li>Ozonation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Chapter 10 Content -->
+        <div class="chapter">
+            <h1>Chapter 10: Water and Wastewater Analysis</h1>
+
+            <div class="section">
+                <h2>Water Quality Parameters</h2>
+                <table>
+                    <tr><th>Parameter</th><th>Measurement</th></tr>
+                    <tr><td>pH</td><td>0-14 scale</td></tr>
+                    <tr><td>Turbidity</td><td>NTU</td></tr>
+                    <tr><td>Conductivity</td><td>µS/cm</td></tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Analytical Methods</h2>
+                <div class="formula">A = εbc (Beer's Law)</div>
+                <h3>Spectrophotometry</h3>
+                <p>Used for phosphate and nitrate analysis</p>
+                
+                <h3>Ion Chromatography</h3>
+                <p>Separates anions like Cl⁻ and NO₃⁻</p>
+            </div>
+        </div>
+
+        <!-- Interactive Calculators -->
+        <div class="chapter">
+            <h1>Interactive Calculators</h1>
+
+            <div class="calculator">
+                <h2>BOD Calculator</h2>
+                <div class="formula">BOD₅ = (Initial DO - Final DO) × Dilution Factor</div>
+                <input type="number" id="initialDO" placeholder="Initial DO (mg/L)">
+                <input type="number" id="finalDO" placeholder="Final DO (mg/L)">
+                <input type="number" id="dilution" placeholder="Dilution Factor">
+                <button onclick="calculateBOD()">Calculate</button>
+                <p id="bodResult"></p>
+            </div>
+
+            <div class="calculator">
+                <h2>Beer's Law Calculator</h2>
+                <div class="formula">A = ε × b × c</div>
+                <input type="number" id="A" placeholder="Absorbance (A)">
+                <input type="number" id="epsilon" placeholder="Molar Absorptivity">
+                <input type="number" id="b" placeholder="Path Length (cm)">
+                <button onclick="calculateConcentration()">Calculate Concentration</button>
+                <p id="beerResult"></p>
+            </div>
+        </div>
+
+        <!-- Exam Practice -->
+        <div class="chapter">
+            <h1>Exam Practice (10 Questions)</h1>
+
+            <div class="question">
+                <p>1. Calculate BOD with Initial DO 8.3 mg/L, Final DO 2.3 mg/L, Dilution 60</p>
+                <button onclick="toggleAnswer('ans1')">Show Answer</button>
+                <div id="ans1" class="answer">BOD = (8.3 - 2.3) × 60 = 360 mg/L</div>
+            </div>
+
+            <div class="question">
+                <p>2. Explain the eutrophication process</p>
+                <button onclick="toggleAnswer('ans2')">Show Answer</button>
+                <div id="ans2" class="answer">Excess nutrients → Algae bloom → Oxygen depletion → Dead zone</div>
+            </div>
+
+            <div class="question">
+                <p>3. Difference between point and nonpoint pollution sources</p>
+                <button onclick="toggleAnswer('ans3')">Show Answer</button>
+                <div id="ans3" class="answer">Point: Direct discharge from pipes. Nonpoint: Diffuse runoff</div>
+            </div>
+
+            <div class="question">
+                <p>4. Name three stages of wastewater treatment</p>
+                <button onclick="toggleAnswer('ans4')">Show Answer</button>
+                <div id="ans4" class="answer">Primary, Secondary, Tertiary</div>
+            </div>
+
+            <div class="question">
+                <p>5. What does COD measure?</p>
+                <button onclick="toggleAnswer('ans5')">Show Answer</button>
+                <div id="ans5" class="answer">Total oxidizable organic/inorganic matter using chemical oxidizers</div>
+            </div>
+
+            <div class="question">
+                <p>6. Why does ice float on water?</p>
+                <button onclick="toggleAnswer('ans6')">Show Answer</button>
+                <div id="ans6" class="answer">Water reaches maximum density at 4°C, ice is less dense</div>
+            </div>
+
+            <div class="question">
+                <p>7. What is the purpose of activated sludge?</p>
+                <button onclick="toggleAnswer('ans7')">Show Answer</button>
+                <div id="ans7" class="answer">Aerobic bacteria digest organic waste in secondary treatment</div>
+            </div>
+
+            <div class="question">
+                <p>8. How does thermal pollution affect aquatic life?</p>
+                <button onclick="toggleAnswer('ans8')">Show Answer</button>
+                <div id="ans8" class="answer">Reduces dissolved oxygen, increases metabolic rates</div>
+            </div>
+
+            <div class="question">
+                <p>9. What are DBPs in water treatment?</p>
+                <button onclick="toggleAnswer('ans9')">Show Answer</button>
+                <div id="ans9" class="answer">Disinfection By-Products formed during chlorination</div>
+            </div>
+
+            <div class="question">
+                <p>10. How to remove permanent water hardness?</p>
+                <button onclick="toggleAnswer('ans10')">Show Answer</button>
+                <div id="ans10" class="answer">Ion exchange resins or chemical precipitation</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BOD Calculator
+        function calculateBOD() {
+            const initial = parseFloat(document.getElementById('initialDO').value);
+            const final = parseFloat(document.getElementById('finalDO').value);
+            const dilution = parseFloat(document.getElementById('dilution').value);
+            
+            if(isNaN(initial) || isNaN(final) || isNaN(dilution)) {
+                alert("Please fill all fields with numbers!");
+                return;
+            }
+
+            const bod = (initial - final) * dilution;
+            document.getElementById('bodResult').textContent = `BOD₅ = ${bod} mg/L`;
+        }
+
+        // Beer's Law Calculator
+        function calculateConcentration() {
+            const A = parseFloat(document.getElementById('A').value);
+            const ε = parseFloat(document.getElementById('epsilon').value);
+            const b = parseFloat(document.getElementById('b').value);
+
+            if(isNaN(A) || isNaN(ε) || isNaN(b)) {
+                alert("Please fill all fields with numbers!");
+                return;
+            }
+
+            const c = (A / (ε * b)).toFixed(2);
+            document.getElementById('beerResult').textContent = `Concentration = ${c} mol/L`;
+        }
+
+        // Toggle Answers
+        function toggleAnswer(id) {
+            const answer = document.getElementById(id);
+            answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
