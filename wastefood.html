@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoConnect UAE | Food Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2D3748;
+            --secondary: #4A5568;
+            --accent: #48BB78;
+            --light: #F7FAFC;
+            --space: 1.6rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-steps {
+            display: flex;
+            gap: 1rem;
+            padding: var(--space) 0;
+            margin-bottom: 3rem;
+        }
+
+        .step {
+            flex: 1;
+            height: 4px;
+            background: #E2E8F0;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: var(--accent);
+            height: 6px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            padding: 2rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent);
+            background: #F0FFF4;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #38A169;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--secondary);
+            border: 2px solid #CBD5E0;
+        }
+
+        .btn-secondary:hover {
+            background: #EDF2F7;
+        }
+
+        .rules-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .rules-list li {
+            padding: 1rem;
+            background: #F7FAFC;
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 2rem;
+            }
+            
+            .option-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-steps">
+            <div class="step active"></div>
+            <div class="step"></div>
+            <div class="step"></div>
+        </div>
+
+        <!-- Page 1 -->
+        <div class="card active-page" id="page1">
+            <h1>Select Donation Type</h1>
+            <p class="text-secondary">Choose the category that best matches your donation</p>
+            
+            <div class="option-grid">
+                <div class="option-card" onclick="selectCategory('human')">
+                    <h3>Human Consumption</h3>
+                    <p>Pre-packaged meals, non-perishables</p>
+                </div>
+                <div class="option-card" onclick="selectCategory('animals')">
+                    <h3>Animal Feed</h3>
+                    <p>Pet food, agricultural feed</p>
+                </div>
+                <div class="option-card" onclick="selectCategory('plants')">
+                    <h3>Plant Nutrition</h3>
+                    <p>Organic compost, plant-based materials</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2 -->
+        <div class="card" id="page2">
+            <h1>Collection Details</h1>
+            
+            <div class="form-group">
+                <label>Select Collection Date & Time</label>
+                <input type="datetime-local" required>
+            </div>
+
+            <div class="form-group">
+                <label>Collection Method</label>
+                <select>
+                    <option value="delivery">Home Collection</option>
+                    <option value="pickup">Drop-off Center</option>
+                </select>
+            </div>
+
+            <div class="rules-list" id="rulesContainer"></div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="showPage('page1')">
+                    ← Back
+                </button>
+                <button class="btn btn-primary" onclick="showPage('page3')">
+                    Continue →
+                </button>
+            </div>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="card" id="page3">
+            <h1>Contact Information</h1>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+                <label>City</label>
+                <select required>
+                    <option value="">Select City</option>
+                    <option>Abu Dhabi</option>
+                    <option>Dubai</option>
+                    <option>Sharjah</option>
+                    <!-- Other UAE cities -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Full Address</label>
+                <input type="text" placeholder="Street and Area" required>
+                <input type="text" placeholder="Building/Villa Number" required>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="showPage('page2')">
+                    ← Back
+                </button>
+                <button class="btn btn-primary" onclick="submitForm()">
+                    Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rules = {
+            human: [
+                "All items must be in original packaging",
+                "Minimum 3 days before expiration date",
+                "No homemade or unpackaged items",
+                "Vegetarian items only"
+            ],
+            animals: [
+                "Commercially sealed packages only",
+                "Include detailed ingredients list",
+                "Specify animal type suitability",
+                "No raw meat products"
+            ],
+            plants: [
+                "Organic materials only",
+                "Properly dried and processed",
+                "No chemically treated products",
+                "Must be pest-free"
+            ]
+        };
+
+        let currentPage = 1;
+        let selectedCategory = null;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active-page');
+                card.style.display = 'none';
+            });
+            
+            document.getElementById(pageId).style.display = 'block';
+            setTimeout(() => {
+                document.getElementById(pageId).classList.add('active-page');
+            }, 10);
+
+            updateProgress(pageId.replace('page', ''));
+            window.scrollTo(0, 0);
+        }
+
+        function updateProgress(pageNumber) {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.toggle('active', index < pageNumber);
+            });
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Update rules
+            const rulesContainer = document.getElementById('rulesContainer');
+            rulesContainer.innerHTML = rules[category].map(rule => `
+                <li>${rule}</li>
+            `).join('');
+
+            showPage('page2');
+        }
+
+        function submitForm() {
+            // Add validation logic here
+            if (document.forms[0].reportValidity()) {
+                alert('Request submitted successfully!\nWe will contact you shortly.');
+                showPage('page1');
+                document.querySelectorAll('form').forEach(form => form.reset());
+                updateProgress(1);
+            }
+        }
+
+        // Initialize first page
+        showPage('page1');
+    </script>
+</body>
+</html>
