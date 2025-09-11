@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dates Price Calculator • Letto</title>
+<style>
+  :root{
+    --bg:#0b0f1a;
+    --card:rgba(20,25,40,0.85);
+    --text:#f3f4f6;
+    --muted:#9ca3af;
+    --accent:#3b82f6; /* blue */
+    --accent2:#a855f7; /* purple */
+    --radius:16px;
+    --shadow:0 0 25px rgba(59,130,246,.3);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(circle at 20% 20%, rgba(59,130,246,.15), transparent 30%),
+                radial-gradient(circle at 80% 30%, rgba(168,85,247,.15), transparent 35%),
+                var(--bg);
+    color:var(--text);
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:20px;}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .logo{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+        background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+        font-size:22px;box-shadow:var(--shadow);}
+  h1{margin:0;font-size:1.7rem;}
+  .sub{color:var(--muted);font-size:.95rem;}
+
+  .card{background:var(--card);border-radius:var(--radius);
+        backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,.4);padding:16px;}
+
+  .items .item{display:flex;align-items:center;justify-content:space-between;
+               padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+  .items .item:last-child{border-bottom:0;}
+  .left{display:flex;align-items:center;gap:12px;}
+  .badge{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+         background:#1e293b;font-size:20px;box-shadow:inset 0 0 8px rgba(0,0,0,.6);}
+  .title{font-weight:600;}
+  .unit{font-size:.85rem;color:var(--muted);}
+
+  .stepper{display:flex;align-items:center;gap:6px;}
+  .btn{width:34px;height:34px;border:0;border-radius:8px;cursor:pointer;
+       background:linear-gradient(135deg,var(--accent),var(--accent2));
+       color:#fff;font-weight:700;font-size:16px;box-shadow:var(--shadow);}
+  .btn:active{transform:translateY(1px);}
+  .qty{width:70px;text-align:center;border:0;border-radius:6px;
+       background:#111827;color:var(--text);padding:6px;font-size:1rem;}
+
+  .summary{margin-top:20px;}
+  .row{display:flex;justify-content:space-between;margin:6px 0;color:var(--muted);}
+  .row strong{color:var(--text);}
+  .grand{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);
+         display:flex;justify-content:space-between;font-weight:800;
+         font-size:1.3rem;color:var(--accent2);}
+
+  .actions{margin-top:14px;display:flex;gap:10px;}
+  .pill{flex:1;padding:10px;border:0;border-radius:10px;font-weight:600;
+        cursor:pointer;}
+  .pill.copy{background:linear-gradient(135deg,var(--accent),var(--accent2));
+             color:#fff;box-shadow:var(--shadow);}
+  .pill.reset{background:#1e293b;color:var(--text);}
+
+  footer{margin-top:30px;text-align:center;color:var(--muted);font-size:.9rem;}
+  .love{color:#ef4444;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🌙</div>
+    <div>
+      <h1>Dates Price Calculator</h1>
+      <div class="sub">Gold • Rainbow • Lucky • Galaxy</div>
+    </div>
+  </header>
+
+  <section class="card items" id="items">
+    <div class="item">
+      <div class="left"><div class="badge">🥇</div><div><div class="title">Gold Date</div><div class="unit">32 per piece</div></div></div>
+      <div class="stepper" data-key="gold" data-price="32">
+        <button class="btn minus">−</button>
+        <input class="qty" value="0">
+        <button class="btn plus">+</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="left"><div class="badge">🌈</div><div><div class="title">Rainbow Date</div><div class="unit">64 per piece</div></div></div>
+      <div class="stepper" data-key="rainbow" data-price="64">
+        <button class="btn minus">−</button>
+        <input class="qty" value="0">
+        <button class="btn plus">+</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="left"><div class="badge">🍀</div><div><div class="title">Lucky Date</div><div class="unit">96 per piece</div></div></div>
+      <div class="stepper" data-key="lucky" data-price="96">
+        <button class="btn minus">−</button>
+        <input class="qty" value="0">
+        <button class="btn plus">+</button>
+      </div>
+    </div>
+    <div class="item">
+      <div class="left"><div class="badge">🌌</div><div><div class="title">Galaxy Date</div><div class="unit">160 per piece</div></div></div>
+      <div class="stepper" data-key="galaxy" data-price="160">
+        <button class="btn minus">−</button>
+        <input class="qty" value="0">
+        <button class="btn plus">+</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card summary">
+    <div class="row"><span>Gold</span><strong id="sum-gold">0.00</strong></div>
+    <div class="row"><span>Rainbow</span><strong id="sum-rainbow">0.00</strong></div>
+    <div class="row"><span>Lucky</span><strong id="sum-lucky">0.00</strong></div>
+    <div class="row"><span>Galaxy</span><strong id="sum-galaxy">0.00</strong></div>
+    <div class="row"><span>Items</span><strong id="sum-items">0 pcs</strong></div>
+    <div class="grand"><span>Total</span><span id="grand">0.00</span></div>
+    <div class="actions">
+      <button class="pill copy" id="copy">Copy</button>
+      <button class="pill reset" id="reset">Reset</button>
+    </div>
+  </section>
+
+  <footer>
+    Made with <span class="love">❤️</span> by <strong>Letto</strong> — Free for everyone to use.
+  </footer>
+</div>
+
+<script>
+(() => {
+  const sums={gold:document.getElementById("sum-gold"),
+              rainbow:document.getElementById("sum-rainbow"),
+              lucky:document.getElementById("sum-lucky"),
+              galaxy:document.getElementById("sum-galaxy"),
+              items:document.getElementById("sum-items"),
+              grand:document.getElementById("grand")};
+  function fmt(n){return n.toFixed(2);}
+  function calc(){
+    let total=0, count=0;
+    document.querySelectorAll(".stepper").forEach(s=>{
+      const key=s.dataset.key, price=+s.dataset.price;
+      const qty=Math.max(0,+s.querySelector(".qty").value||0);
+      const line=qty*price;
+      sums[key].textContent=fmt(line);
+      total+=line; count+=qty;
+    });
+    sums.items.textContent=`${count} pcs`;
+    sums.grand.textContent=fmt(total);
+  }
+  document.getElementById("items").addEventListener("click",e=>{
+    if(e.target.classList.contains("plus")||e.target.classList.contains("minus")){
+      const inp=e.target.parentNode.querySelector(".qty");
+      let v=+inp.value||0;
+      if(e.target.classList.contains("plus")) v++;
+      else v=Math.max(0,v-1);
+      inp.value=v; calc();
+    }
+  });
+  document.querySelectorAll(".qty").forEach(inp=>{
+    inp.addEventListener("input",calc);
+  });
+  document.getElementById("reset").addEventListener("click",()=>{
+    document.querySelectorAll(".qty").forEach(i=>i.value=0);calc();
+  });
+  document.getElementById("copy").addEventListener("click",()=>{
+    let text="Dates Breakdown:\n";
+    document.querySelectorAll(".stepper").forEach(s=>{
+      const k=s.dataset.key, price=+s.dataset.price, qty=+s.querySelector(".qty").value||0;
+      if(qty>0) text+=`${k}: ${qty} × ${price} = ${fmt(qty*price)}\n`;
+    });
+    text+=`Total = ${sums.grand.textContent}`;
+    navigator.clipboard.writeText(text).then(()=>alert("Copied!"));
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
