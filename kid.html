@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kid Lounge - Coffee & More</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6F4E37;
+            --secondary-color: #C8A882;
+            --accent-color: #E6D5B8;
+            --text-color: #333;
+            --light-bg: #F9F5F0;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(111, 78, 55, 0.7), rgba(111, 78, 55, 0.7)), url('https://picsum.photos/seed/coffee-shop/1200/600.jpg');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 5rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Menu Section */
+        .menu {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .menu-category {
+            margin-bottom: 3rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .menu-category:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        .category-header i {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .category-header h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .menu-item-name {
+            flex-grow: 1;
+        }
+
+        /* Special styles for sweets with checkboxes */
+        .sweets-notice {
+            font-style: italic;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .sweet-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .sweet-checkbox {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+        }
+
+        .sweet-name {
+            flex-grow: 1;
+        }
+
+        /* Dishes Section */
+        .dishes-description {
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            padding: 15px;
+            background-color: var(--accent-color);
+            border-radius: 8px;
+        }
+
+        /* Note Section */
+        .note-section {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .note-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-section p, .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--white);
+            color: var(--primary-color);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            nav {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            nav ul {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav ul li {
+                margin: 0.5rem;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .menu-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-coffee"></i>
+                    <span>Kid Lounge</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav id="mainNav">
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#menu">Menu</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Welcome to Kid Lounge</h1>
+            <p>Experience the perfect blend of exceptional coffee, delightful treats, and a cozy atmosphere. Our menu is crafted with passion and inspired by daily creativity.</p>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu" id="menu">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Menu</h2>
+            </div>
+
+            <!-- Filter Coffee -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-filter"></i>
+                    <h3>Filter Coffee</h3>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <span class="menu-item-name">V60</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Moka pot</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Cold Brew</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Siphon</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">French press</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Aero press</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Espresso Machine Coffee -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-mug-hot"></i>
+                    <h3>Espresso Machine Coffee</h3>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <span class="menu-item-name">Espresso</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Ristretto</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Coffee (Regular Coffee)</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Americano</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Espresso Lungo</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Cappuccino</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Latte Macchiato</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Flat White</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Caffè Latte</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Cortado</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Affogato</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tea & Herbal Infusions -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Tea & Herbal Infusions</h3>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <span class="menu-item-name">Green Tea with Jasmine</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Lemon & Ginger Herbal Infusion</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Earl Grey Tea</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Earl Grey Classic – Fortnum & Mason</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Royal Blend – Fortnum & Mason</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Afternoon Blend – Fortnum & Mason</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Azawi Imperial Black Tea</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Azerbaijani Black Tea</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cold Beverages -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-glass-martini-alt"></i>
+                    <h3>Cold Beverages</h3>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <span class="menu-item-name">Hibiscus</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">RedBull</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Coconut and berry RedBull</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Ginger Ale Schweppes</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Pineapple juice</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Berries juice</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Water -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-tint"></i>
+                    <h3>Water</h3>
+                </div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <span class="menu-item-name">Soda water</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Sparkling Water</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Clay Pot Chilled Water</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Filtered water</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-item-name">Bottled Water</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sweets -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-cookie-bite"></i>
+                    <h3>Sweets</h3>
+                </div>
+                <p class="sweets-notice">ONLY SELECTED ARE AVAILABLE</p>
+                <div class="menu-items">
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="tiramisu">
+                        <label for="tiramisu" class="sweet-name">Tiramisu</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="lemon-tiramisu">
+                        <label for="lemon-tiramisu" class="sweet-name">Lemon tiramisu</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="lemon-berries-cake">
+                        <label for="lemon-berries-cake" class="sweet-name">Lemon and berries cake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="cookies">
+                        <label for="cookies" class="sweet-name">Cookies</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="san-sebastian">
+                        <label for="san-sebastian" class="sweet-name">San Sebastian Cheesecake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="brownie">
+                        <label for="brownie" class="sweet-name">Brownie</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="french-tossed">
+                        <label for="french-tossed" class="sweet-name">French tossed</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="waffle">
+                        <label for="waffle" class="sweet-name">Waffle</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="classic-cheesecake">
+                        <label for="classic-cheesecake" class="sweet-name">Classic cheesecake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="chocolate-cake">
+                        <label for="chocolate-cake" class="sweet-name">Chocolate cake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="rose-milk-cake">
+                        <label for="rose-milk-cake" class="sweet-name">Rose milk cake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="chocolate-oat">
+                        <label for="chocolate-oat" class="sweet-name">Chocolate oat</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="zebra-marble">
+                        <label for="zebra-marble" class="sweet-name">Zebra Marble Cake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="fake-honey-cake">
+                        <label for="fake-honey-cake" class="sweet-name">Fake honey cake</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="ice-cream">
+                        <label for="ice-cream" class="sweet-name">Ice cream</label>
+                    </div>
+                    <div class="sweet-item">
+                        <input type="checkbox" class="sweet-checkbox" id="mawzeye">
+                        <label for="mawzeye" class="sweet-name">Mawzeye</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dishes -->
+            <div class="menu-category">
+                <div class="category-header">
+                    <i class="fas fa-utensils"></i>
+                    <h3>Dishes</h3>
+                </div>
+                <div class="dishes-description">
+                    Our dining experience is guided by the chef's daily inspiration, without a fixed menu, ensuring every dish is unique, seasonal, and crafted fresh upon request.
+                </div>
+            </div>
+
+            <!-- Note Section -->
+            <div class="note-section">
+                <h3>Please Note</h3>
+                <p>Our menu may feature daily variations, reflecting the chef's inspiration and the freshest seasonal produce. This applies to all categories, including main courses and desserts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Kid Lounge</h3>
+                    <p>A cozy space where exceptional coffee meets culinary creativity. We pride ourselves on our daily inspired menu and warm atmosphere.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Coffee Street, City</li>
+                        <li><i class="fas fa-phone"></i> +123 456 7890</li>
+                        <li><i class="fas fa-envelope"></i> info@kidlounge.com</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Opening Hours</h3>
+                    <ul>
+                        <li>Monday - Friday: 7:00 AM - 10:00 PM</li>
+                        <li>Saturday: 8:00 AM - 11:00 PM</li>
+                        <li>Sunday: 8:00 AM - 9:00 PM</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kid Lounge. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('mainNav').classList.toggle('active');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu if open
+                document.getElementById('mainNav').classList.remove('active');
+            });
+        });
+
+        // Interactive sweets checkboxes
+        document.querySelectorAll('.sweet-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.parentElement.style.color = 'var(--primary-color)';
+                    this.parentElement.style.fontWeight = 'bold';
+                } else {
+                    this.parentElement.style.color = 'var(--text-color)';
+                    this.parentElement.style.fontWeight = 'normal';
+                }
+            });
+        });
+
+        // Add animation to menu categories on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.menu-category').forEach(category => {
+            category.style.opacity = 0;
+            category.style.transform = 'translateY(20px)';
+            category.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(category);
+        });
+    </script>
+</body>
+</html>
