@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kid Lounge - Coffee & More</title>
+    <title>Kid Lounge - Premium Coffee Experience</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+
         :root {
-            --primary-color: #6F4E37;
-            --secondary-color: #C8A882;
-            --accent-color: #E6D5B8;
-            --text-color: #333;
-            --light-bg: #F9F5F0;
-            --white: #FFFFFF;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --bg-dark: #0A0A0A;
+            --bg-light: #1A1A1A;
+            --accent: #D4A574;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border: #2A2A2A;
         }
 
         * {
@@ -23,702 +24,880 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
         }
 
-        /* Header Styles */
-        header {
-            background-color: var(--white);
-            box-shadow: var(--shadow);
-            position: sticky;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
             top: 0;
-            z-index: 100;
+            width: 100%;
+            padding: 20px 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
-        .header-content {
+        .header.scrolled {
+            padding: 15px 0;
+            background: rgba(10, 10, 10, 0.98);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -1px;
         }
 
-        .logo i {
-            margin-right: 10px;
-            font-size: 2rem;
-        }
-
-        nav ul {
+        .nav-menu {
             display: flex;
             list-style: none;
+            gap: 40px;
         }
 
-        nav ul li {
-            margin-left: 1.5rem;
-        }
-
-        nav ul li a {
+        .nav-menu a {
+            color: var(--text-secondary);
             text-decoration: none;
-            color: var(--primary-color);
+            font-size: 14px;
             font-weight: 500;
-            transition: color 0.3s;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+            position: relative;
         }
 
-        nav ul li a:hover {
-            color: var(--secondary-color);
+        .nav-menu a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(111, 78, 55, 0.7), rgba(111, 78, 55, 0.7)), url('https://picsum.photos/seed/coffee-shop/1200/600.jpg');
-            background-size: cover;
-            background-position: center;
-            color: var(--white);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: var(--bg-dark);
+        }
+
+        .hero-content {
             text-align: center;
-            padding: 5rem 0;
+            max-width: 900px;
+            padding: 0 20px;
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .hero-subtitle {
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto;
+        .hero-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
         }
 
         /* Menu Section */
-        .menu {
-            padding: 4rem 0;
+        .menu-section {
+            padding: 120px 0;
+            background: var(--bg-dark);
+        }
+
+        .menu-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
         }
 
         .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
         }
 
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            display: inline-block;
-            padding-bottom: 10px;
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background-color: var(--secondary-color);
+        /* Menu Grid Layout */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 60px;
+            margin-bottom: 80px;
         }
 
         .menu-category {
-            margin-bottom: 3rem;
-            background-color: var(--white);
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s;
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
         }
 
-        .menu-category:hover {
-            transform: translateY(-5px);
-        }
-
-        .category-header {
+        .category-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--accent);
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-        }
-
-        .category-header i {
-            font-size: 1.8rem;
-            margin-right: 15px;
-            color: var(--primary-color);
-        }
-
-        .category-header h3 {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-        }
-
-        .menu-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
+        }
+
+        .category-title i {
+            font-size: 20px;
+        }
+
+        .menu-list {
+            list-style: none;
         }
 
         .menu-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+            transition: all 0.3s ease;
         }
 
-        .menu-item-name {
-            flex-grow: 1;
+        .menu-item:hover {
+            padding-left: 10px;
+            border-bottom-color: var(--accent);
         }
 
-        /* Special styles for sweets with checkboxes */
-        .sweets-notice {
-            font-style: italic;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        /* Special Sweets Section */
+        .sweets-section {
+            background: var(--bg-light);
+            padding: 80px 0;
+            margin: 80px 0;
+        }
+
+        .sweets-header {
             text-align: center;
+            margin-bottom: 50px;
         }
 
-        .sweet-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
+        .availability-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--accent);
+            color: var(--bg-dark);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            border-radius: 20px;
+        }
+
+        .sweets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .sweet-card {
+            background: var(--bg-dark);
+            padding: 30px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sweet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sweet-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .sweet-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
         }
 
         .sweet-checkbox {
-            margin-right: 10px;
             width: 20px;
             height: 20px;
-            accent-color: var(--primary-color);
+            margin-right: 15px;
+            accent-color: var(--accent);
         }
 
         .sweet-name {
-            flex-grow: 1;
+            font-size: 16px;
+            color: var(--text-primary);
+            user-select: none;
         }
 
         /* Dishes Section */
-        .dishes-description {
-            font-style: italic;
+        .dishes-section {
             text-align: center;
-            margin-bottom: 20px;
-            color: var(--text-color);
-            padding: 15px;
-            background-color: var(--accent-color);
-            border-radius: 8px;
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-dark) 100%);
+        }
+
+        .dishes-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .dishes-description {
+            font-size: 20px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 40px;
         }
 
         /* Note Section */
-        .note-section {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 3rem 0;
+        .note-banner {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 40px;
             text-align: center;
+            margin: 80px 0;
         }
 
-        .note-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
+        .note-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         /* Footer */
-        footer {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 3rem 0 1rem;
+        .footer {
+            background: var(--bg-light);
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--border);
         }
 
-        .footer-content {
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 60px;
         }
 
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
+        .footer-column h4 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
         }
 
-        .footer-section p, .footer-section li {
-            margin-bottom: 0.5rem;
+        .footer-column p,
+        .footer-column li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
         }
 
-        .footer-section ul {
+        .footer-column ul {
             list-style: none;
         }
 
-        .footer-section a {
-            color: var(--white);
+        .footer-column a {
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
         }
 
-        .footer-section a:hover {
-            color: var(--accent-color);
+        .footer-column a:hover {
+            color: var(--text-primary);
         }
 
-        .social-icons {
+        .social-links {
             display: flex;
-            gap: 15px;
-            margin-top: 1rem;
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .social-icons a {
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: var(--white);
-            color: var(--primary-color);
-            border-radius: 50%;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .social-icons a:hover {
-            background-color: var(--accent-color);
-            transform: scale(1.1);
+        .social-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
-        .copyright {
+        .footer-bottom {
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 0.9rem;
+            padding-top: 40px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        /* Responsive Design */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-
-            nav {
-                width: 100%;
-                margin-top: 1rem;
-            }
-
-            nav ul {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            nav ul li {
-                margin: 0.5rem;
-            }
-
-            .menu-toggle {
-                display: block;
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-            }
-
-            nav {
+            .nav-menu {
                 display: none;
-                width: 100%;
             }
 
-            nav.active {
-                display: block;
+            .hero-title {
+                font-size: 48px;
             }
 
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .menu-items {
+            .menu-grid {
                 grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .sweets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-container,
+            .menu-container,
+            .sweets-grid,
+            .footer-container {
+                padding: 0 20px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-coffee"></i>
-                    <span>Kid Lounge</span>
-                </div>
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <nav id="mainNav">
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#menu">Menu</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </nav>
-            </div>
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo">Kid Lounge</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <div class="container">
-            <h1>Welcome to Kid Lounge</h1>
-            <p>Experience the perfect blend of exceptional coffee, delightful treats, and a cozy atmosphere. Our menu is crafted with passion and inspired by daily creativity.</p>
+        <div class="hero-content">
+            <div class="hero-subtitle">Premium Coffee Experience</div>
+            <h1 class="hero-title">Kid Lounge</h1>
+            <p class="hero-description">
+                Where exceptional coffee craftsmanship meets culinary artistry. 
+                An elevated experience for discerning palates.
+            </p>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down" style="color: var(--accent);"></i>
         </div>
     </section>
 
     <!-- Menu Section -->
-    <section class="menu" id="menu">
-        <div class="container">
-            <div class="section-title">
-                <h2>Our Menu</h2>
+    <section class="menu-section" id="menu">
+        <div class="menu-container">
+            <div class="section-header">
+                <h2 class="section-title">Our Selection</h2>
+                <p class="section-subtitle">Curated with precision, crafted with passion</p>
             </div>
 
-            <!-- Filter Coffee -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-filter"></i>
-                    <h3>Filter Coffee</h3>
+            <div class="menu-grid">
+                <!-- Filter Coffee -->
+                <div class="menu-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-coffee"></i>
+                        Filter Coffee
+                    </h3>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <span class="item-name">V60</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Moka Pot</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Cold Brew</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Siphon</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">French Press</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Aero Press</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <span class="menu-item-name">V60</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Moka pot</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Cold Brew</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Siphon</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">French press</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Aero press</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Espresso Machine Coffee -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-mug-hot"></i>
-                    <h3>Espresso Machine Coffee</h3>
+                <!-- Espresso Machine Coffee -->
+                <div class="menu-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-mug-hot"></i>
+                        Espresso Selection
+                    </h3>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <span class="item-name">Espresso</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Ristretto</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Coffee (Regular)</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Americano</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Espresso Lungo</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Cappuccino</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Latte Macchiato</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Flat White</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Caffè Latte</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Cortado</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Affogato</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <span class="menu-item-name">Espresso</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Ristretto</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Coffee (Regular Coffee)</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Americano</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Espresso Lungo</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Cappuccino</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Latte Macchiato</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Flat White</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Caffè Latte</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Cortado</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Affogato</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Tea & Herbal Infusions -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-leaf"></i>
-                    <h3>Tea & Herbal Infusions</h3>
+                <!-- Tea & Herbal Infusions -->
+                <div class="menu-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-leaf"></i>
+                        Tea & Herbal Infusions
+                    </h3>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <span class="item-name">Green Tea with Jasmine</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Lemon & Ginger Herbal Infusion</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Earl Grey Tea</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Earl Grey Classic – Fortnum & Mason</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Royal Blend – Fortnum & Mason</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Afternoon Blend – Fortnum & Mason</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Azawi Imperial Black Tea</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Azerbaijani Black Tea</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <span class="menu-item-name">Green Tea with Jasmine</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Lemon & Ginger Herbal Infusion</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Earl Grey Tea</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Earl Grey Classic – Fortnum & Mason</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Royal Blend – Fortnum & Mason</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Afternoon Blend – Fortnum & Mason</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Azawi Imperial Black Tea</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Azerbaijani Black Tea</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Cold Beverages -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-glass-martini-alt"></i>
-                    <h3>Cold Beverages</h3>
+                <!-- Cold Beverages -->
+                <div class="menu-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-glass-martini-alt"></i>
+                        Cold Beverages
+                    </h3>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <span class="item-name">Hibiscus</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">RedBull</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Coconut and Berry RedBull</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Ginger Ale Schweppes</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Pineapple Juice</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Berries Juice</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <span class="menu-item-name">Hibiscus</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">RedBull</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Coconut and berry RedBull</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Ginger Ale Schweppes</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Pineapple juice</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Berries juice</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Water -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-tint"></i>
-                    <h3>Water</h3>
+                <!-- Water -->
+                <div class="menu-category">
+                    <h3 class="category-title">
+                        <i class="fas fa-tint"></i>
+                        Water Selection
+                    </h3>
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <span class="item-name">Soda Water</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Sparkling Water</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Clay Pot Chilled Water</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Filtered Water</span>
+                        </li>
+                        <li class="menu-item">
+                            <span class="item-name">Bottled Water</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <span class="menu-item-name">Soda water</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Sparkling Water</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Clay Pot Chilled Water</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Filtered water</span>
-                    </div>
-                    <div class="menu-item">
-                        <span class="menu-item-name">Bottled Water</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sweets -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-cookie-bite"></i>
-                    <h3>Sweets</h3>
-                </div>
-                <p class="sweets-notice">ONLY SELECTED ARE AVAILABLE</p>
-                <div class="menu-items">
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="tiramisu">
-                        <label for="tiramisu" class="sweet-name">Tiramisu</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="lemon-tiramisu">
-                        <label for="lemon-tiramisu" class="sweet-name">Lemon tiramisu</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="lemon-berries-cake">
-                        <label for="lemon-berries-cake" class="sweet-name">Lemon and berries cake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="cookies">
-                        <label for="cookies" class="sweet-name">Cookies</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="san-sebastian">
-                        <label for="san-sebastian" class="sweet-name">San Sebastian Cheesecake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="brownie">
-                        <label for="brownie" class="sweet-name">Brownie</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="french-tossed">
-                        <label for="french-tossed" class="sweet-name">French tossed</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="waffle">
-                        <label for="waffle" class="sweet-name">Waffle</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="classic-cheesecake">
-                        <label for="classic-cheesecake" class="sweet-name">Classic cheesecake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="chocolate-cake">
-                        <label for="chocolate-cake" class="sweet-name">Chocolate cake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="rose-milk-cake">
-                        <label for="rose-milk-cake" class="sweet-name">Rose milk cake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="chocolate-oat">
-                        <label for="chocolate-oat" class="sweet-name">Chocolate oat</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="zebra-marble">
-                        <label for="zebra-marble" class="sweet-name">Zebra Marble Cake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="fake-honey-cake">
-                        <label for="fake-honey-cake" class="sweet-name">Fake honey cake</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="ice-cream">
-                        <label for="ice-cream" class="sweet-name">Ice cream</label>
-                    </div>
-                    <div class="sweet-item">
-                        <input type="checkbox" class="sweet-checkbox" id="mawzeye">
-                        <label for="mawzeye" class="sweet-name">Mawzeye</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dishes -->
-            <div class="menu-category">
-                <div class="category-header">
-                    <i class="fas fa-utensils"></i>
-                    <h3>Dishes</h3>
-                </div>
-                <div class="dishes-description">
-                    Our dining experience is guided by the chef's daily inspiration, without a fixed menu, ensuring every dish is unique, seasonal, and crafted fresh upon request.
-                </div>
-            </div>
-
-            <!-- Note Section -->
-            <div class="note-section">
-                <h3>Please Note</h3>
-                <p>Our menu may feature daily variations, reflecting the chef's inspiration and the freshest seasonal produce. This applies to all categories, including main courses and desserts.</p>
             </div>
         </div>
     </section>
 
+    <!-- Sweets Section -->
+    <section class="sweets-section">
+        <div class="sweets-header">
+            <span class="availability-badge">Only Selected Available</span>
+            <h2 class="section-title">Sweets Collection</h2>
+        </div>
+        <div class="sweets-grid">
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Tiramisu</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Lemon Tiramisu</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Lemon and Berries Cake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Cookies</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">San Sebastian Cheesecake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Brownie</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">French Tossed</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Waffle</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Classic Cheesecake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Chocolate Cake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Rose Milk Cake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Chocolate Oat</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Zebra Marble Cake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Fake Honey Cake</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Ice Cream</span>
+                </label>
+            </div>
+            <div class="sweet-card">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" class="sweet-checkbox">
+                    <span class="sweet-name">Mawzeye</span>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dishes Section -->
+    <section class="dishes-section">
+        <div class="dishes-content">
+            <h2 class="section-title">Chef's Special</h2>
+            <p class="dishes-description">
+                Our dining experience is guided by the chef's daily inspiration, without a fixed menu, 
+                ensuring every dish is unique, seasonal, and crafted fresh upon request.
+            </p>
+        </div>
+    </section>
+
+    <!-- Note Banner -->
+    <div class="note-banner">
+        <p class="note-text">
+            Please note: Our menu may feature daily variations, reflecting the chef's inspiration 
+            and the freshest seasonal produce. This applies to all categories, including main courses and desserts.
+        </p>
+    </div>
+
     <!-- Footer -->
-    <footer id="contact">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About Kid Lounge</h3>
-                    <p>A cozy space where exceptional coffee meets culinary creativity. We pride ourselves on our daily inspired menu and warm atmosphere.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <ul>
-                        <li><i class="fas fa-map-marker-alt"></i>Al3ain</li>
-                        <li><i class="fas fa-phone"></i> +971501231234</li>
-                        <li><i class="fas fa-envelope"></i> info@kidlounge.com</li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Opening Hours</h3>
-                    <ul>
-                        <li>Monday - Friday: 7:00 AM - 10:00 PM</li>
-                        <li>Saturday: 8:00 AM - 11:00 PM</li>
-                        <li>Sunday: 8:00 AM - 9:00 PM</li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Follow Us</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Kid Lounge</h4>
+                <p>An elevated coffee experience where exceptional craftsmanship meets culinary artistry.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2023 Kid Lounge. All rights reserved.</p>
+            <div class="footer-column">
+                <h4>Visit Us</h4>
+                <ul>
+                    <li>Al-Ain</li>
+                    <li>Near Syde</li>
+                    <li>Open Daily 7AM - 11PM</li>
+                </ul>
             </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:+1234567890">+971506966696</a></li>
+                    <li><a href="mailto:info@kidlounge.com">info@kidlounge.com</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Newsletter</h4>
+                <p>Subscribe for updates and special offers</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Kid Lounge. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Mobile menu toggle
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            document.getElementById('mainNav').classList.toggle('active');
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         });
 
-        // Smooth scrolling for navigation links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-                // Close mobile menu if open
-                document.getElementById('mainNav').classList.remove('active');
-            });
-        });
-
-        // Interactive sweets checkboxes
-        document.querySelectorAll('.sweet-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    this.parentElement.style.color = 'var(--primary-color)';
-                    this.parentElement.style.fontWeight = 'bold';
-                } else {
-                    this.parentElement.style.color = 'var(--text-color)';
-                    this.parentElement.style.fontWeight = 'normal';
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
 
-        // Add animation to menu categories on scroll
+        // Sweet cards interaction
+        document.querySelectorAll('.sweet-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const card = this.closest('.sweet-card');
+                if (this.checked) {
+                    card.style.borderColor = 'var(--accent)';
+                    card.style.background = 'linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, transparent 100%)';
+                } else {
+                    card.style.borderColor = 'var(--border)';
+                    card.style.background = 'var(--bg-dark)';
+                }
+            });
+        });
+
+        // Menu items hover effect
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+        });
+
+        // Intersection Observer for fade-in animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -727,17 +906,18 @@
         const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
+                    entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.menu-category').forEach(category => {
-            category.style.opacity = 0;
-            category.style.transform = 'translateY(20px)';
-            category.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(category);
+        // Apply observer to sections
+        document.querySelectorAll('.menu-category, .sweet-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
         });
     </script>
 </body>
