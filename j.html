@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عارض JSON المتكامل - صور وإحداثيات</title>
+    <title>عارض JSON المتكامل - مع دعم HTTP/2 و CloudFront</title>
     <style>
         * {
             box-sizing: border-box;
@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
@@ -124,6 +124,16 @@
             transform: translateY(-2px);
         }
         
+        .btn-http {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-http:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+        
         .error-message {
             color: #f44336;
             background: #ffebee;
@@ -152,6 +162,78 @@
             border-radius: 20px;
             font-weight: bold;
             color: #333;
+        }
+        
+        /* قسم الرؤوس HTTP */
+        .headers-section {
+            background: #1e1e2f;
+            color: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+        }
+        
+        .headers-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff9800;
+        }
+        
+        .http-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        .cloudfront-badge {
+            background: #ff9800;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        .headers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        
+        .header-item {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #ff9800;
+        }
+        
+        .header-key {
+            color: #ff9800;
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        
+        .header-value {
+            color: #fff;
+            font-size: 11px;
+            word-break: break-all;
+        }
+        
+        .http-status {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
         }
         
         /* قسمين جنب بعض */
@@ -446,38 +528,108 @@
             background: #667eea;
             color: white;
         }
+        
+        /* تنسيق الـ Headers Input */
+        .headers-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            direction: ltr;
+            resize: vertical;
+            margin-bottom: 10px;
+            background: #1e1e2f;
+            color: #fff;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .tab-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .tab-btn.active {
+            background: #1e1e2f;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📍 عارض JSON المتكامل - صور وإحداثيات</h1>
+        <h1>🚀 عارض JSON المتكامل - HTTP/2 & CloudFront</h1>
         
         <div class="main-box">
             <div class="input-section">
-                <textarea id="jsonInput" placeholder="الصق JSON هنا أو اسحب الملف..."></textarea>
+                <!-- تبويبات للإدخال -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('json')">📦 JSON</button>
+                    <button class="tab-btn" onclick="switchTab('headers')">📋 HTTP Headers</button>
+                    <button class="tab-btn" onclick="switchTab('both')">🔄 كليهما</button>
+                </div>
+                
+                <!-- حقل JSON -->
+                <div id="jsonTab">
+                    <textarea id="jsonInput" placeholder="الصق JSON هنا أو اسحب الملف..."></textarea>
+                </div>
+                
+                <!-- حقل Headers -->
+                <div id="headersTab" style="display: none;">
+                    <textarea id="headersInput" class="headers-input" rows="10" placeholder="الصق رؤوس HTTP هنا..."></textarea>
+                </div>
+                
+                <!-- كلا الحقلين -->
+                <div id="bothTab" style="display: none;">
+                    <textarea id="bothJsonInput" class="headers-input" rows="5" placeholder="الصق JSON هنا..."></textarea>
+                    <textarea id="bothHeadersInput" class="headers-input" rows="5" placeholder="الصق رؤوس HTTP هنا..."></textarea>
+                </div>
                 
                 <div class="button-group">
-                    <button class="btn-paste" onclick="pasteJSON()">
-                        📋 لصق
+                    <button class="btn-paste" onclick="pasteFromClipboard()">
+                        📋 لصق من الحافظة
                     </button>
-                    <button class="btn-primary" onclick="parseJSON()">
-                        🔍 عرض
+                    <button class="btn-primary" onclick="parseAll()">
+                        🔍 تحليل الكل
+                    </button>
+                    <button class="btn-http" onclick="parseHttpHeaders()">
+                        🌐 تحليل الرؤوس فقط
                     </button>
                     <button class="btn-danger" onclick="clearAll()">
                         🗑️ مسح
-                    </button>
-                    <button class="btn-success" onclick="downloadAll()">
-                        📥 تحميل
                     </button>
                 </div>
                 
                 <div class="quick-actions">
                     <button class="quick-btn" onclick="loadSampleData()">🌟 تجربة</button>
                     <button class="quick-btn" onclick="copyAllUrls()">📋 نسخ كل الروابط</button>
-                    <button class="quick-btn" onclick="extractLocationsOnly()">📍 عرض المواقع فقط</button>
+                    <button class="quick-btn" onclick="extractLocationsOnly()">📍 نسخ المواقع</button>
+                    <button class="quick-btn" onclick="downloadHeaders()">📥 تحميل الرؤوس</button>
                 </div>
                 
                 <div id="error" class="error-message" style="display: none;"></div>
+            </div>
+            
+            <!-- عرض الرؤوس HTTP -->
+            <div id="headersDisplay" style="display: none;">
+                <div class="headers-section">
+                    <div class="headers-title">
+                        <span>📋 رؤوس HTTP</span>
+                        <span class="http-status" id="httpStatus">HTTP/2 200</span>
+                        <span class="cloudfront-badge" id="cloudfrontStatus">🌩️ CloudFront</span>
+                        <span class="http-badge" id="encodingBadge">🗜️ gzip</span>
+                    </div>
+                    <div class="headers-grid" id="headersGrid"></div>
+                </div>
             </div>
             
             <div id="stats" class="stats" style="display: none;">
@@ -485,6 +637,7 @@
                 <span id="privateCount">🔒 خاص: 0</span>
                 <span id="publicCount">🔓 عام: 0</span>
                 <span id="locationCount">📍 مواقع: 0</span>
+                <span id="etagValue" style="background: #1e1e2f; color: #ff9800;">🆔 ETAG</span>
             </div>
             
             <div class="progress-bar" id="progressBar" style="display: none;">
@@ -508,8 +661,8 @@
                     </div>
                     
                     <div class="info-card">
-                        <h3>📊 إحصائيات متقدمة</h3>
-                        <div id="advancedStats">
+                        <h3>📊 معلومات CloudFront</h3>
+                        <div id="cloudfrontInfo">
                             <p style="color: #666; text-align: center;">جاري التحميل...</p>
                         </div>
                     </div>
@@ -530,7 +683,7 @@
         </div>
         
         <div class="footer">
-            <p>© 2024 - عارض JSON المتكامل | تم التطوير بواسطة المساعد الذكي</p>
+            <p>© 2024 - عارض JSON المتكامل | يدعم HTTP/2 و CloudFront | تم التطوير بواسطة المساعد الذكي</p>
         </div>
     </div>
     
@@ -543,21 +696,138 @@
     <script>
         let currentImages = [];
         let currentLocations = [];
+        let currentHeaders = {};
         let originalData = null;
+        let activeTab = 'json';
         
-        // دالة اللصق من الحافظة
-        async function pasteJSON() {
+        // التبديل بين التبويبات
+        function switchTab(tab) {
+            activeTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('jsonTab').style.display = tab === 'json' || tab === 'both' ? 'block' : 'none';
+            document.getElementById('headersTab').style.display = tab === 'headers' ? 'block' : 'none';
+            document.getElementById('bothTab').style.display = tab === 'both' ? 'block' : 'none';
+        }
+        
+        // دالة اللصق المتقدمة
+        async function pasteFromClipboard() {
             try {
                 const text = await navigator.clipboard.readText();
-                document.getElementById('jsonInput').value = text;
-                parseJSON();
+                
+                // محاولة تحديد المحتوى تلقائياً
+                if (text.includes('HTTP/2') || text.includes('CloudFront') || text.includes('server:')) {
+                    // هذا يبدو كرؤوس HTTP
+                    document.getElementById('headersInput').value = text;
+                    switchTab('headers');
+                    parseHttpHeaders(text);
+                } else {
+                    // هذا يبدو كـ JSON
+                    document.getElementById('jsonInput').value = text;
+                    switchTab('json');
+                    parseJSON(text);
+                }
             } catch (err) {
                 alert('❌ لا يمكن الوصول للحافظة. الصق يدوياً أو اسمح بالصلاحية.');
             }
         }
         
-        function parseJSON() {
-            const jsonInput = document.getElementById('jsonInput').value;
+        // تحليل الرؤوس HTTP
+        function parseHttpHeaders(headersText) {
+            const text = headersText || document.getElementById('headersInput').value;
+            const headers = {};
+            const lines = text.split('\n');
+            
+            // استخراج حالة HTTP
+            const statusLine = lines.find(l => l.includes('HTTP/'));
+            if (statusLine) {
+                headers['_status'] = statusLine;
+                document.getElementById('httpStatus').textContent = statusLine;
+            }
+            
+            // استخراج الرؤوس
+            lines.forEach(line => {
+                const match = line.match(/^([^:]+):\s*(.+)$/);
+                if (match) {
+                    const key = match[1].trim();
+                    const value = match[2].trim();
+                    headers[key] = value;
+                }
+            });
+            
+            currentHeaders = headers;
+            displayHeaders(headers);
+            
+            // تحديث شارات
+            if (headers['server'] && headers['server'].includes('CloudFront')) {
+                document.getElementById('cloudfrontStatus').style.display = 'inline-block';
+            }
+            if (headers['content-encoding'] === 'gzip') {
+                document.getElementById('encodingBadge').style.display = 'inline-block';
+            }
+            
+            // عرض معلومات CloudFront
+            displayCloudFrontInfo(headers);
+        }
+        
+        // عرض الرؤوس
+        function displayHeaders(headers) {
+            const grid = document.getElementById('headersGrid');
+            let html = '';
+            
+            Object.entries(headers).forEach(([key, value]) => {
+                if (key !== '_status') {
+                    html += `
+                        <div class="header-item">
+                            <div class="header-key">${key}</div>
+                            <div class="header-value">${value}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            grid.innerHTML = html;
+            document.getElementById('headersDisplay').style.display = 'block';
+            
+            // تحديث ETAG في الإحصائيات
+            if (headers['etag']) {
+                document.getElementById('etagValue').innerHTML = `🆔 ${headers['etag'].substring(0, 20)}...`;
+            }
+        }
+        
+        // عرض معلومات CloudFront
+        function displayCloudFrontInfo(headers) {
+            const container = document.getElementById('cloudfrontInfo');
+            
+            const info = {
+                '🌍 Edge Location': headers['x-amz-cf-pop'] || 'غير متوفر',
+                '🆔 Request ID': headers['x-amz-cf-id'] || 'غير متوفر',
+                '💾 Cache Status': headers['x-cache'] || 'غير متوفر',
+                '🖥️ Server': headers['server'] || 'غير متوفر',
+                '📦 Via': headers['via'] || 'غير متوفر',
+                '🗜️ Encoding': headers['content-encoding'] || 'غير متوفر',
+                '📝 Type': headers['content-type'] || 'غير متوفر'
+            };
+            
+            let html = '<div style="display: grid; gap: 10px;">';
+            
+            Object.entries(info).forEach(([key, value]) => {
+                html += `
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px;">
+                        <strong style="color: #ff9800;">${key}:</strong>
+                        <span style="float: left; font-family: monospace;">${value}</span>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // تحليل JSON
+        function parseJSON(jsonText) {
+            const jsonInput = jsonText || document.getElementById('jsonInput').value;
             const errorDiv = document.getElementById('error');
             const imagesContainer = document.getElementById('imagesContainer');
             const loading = document.getElementById('loading');
@@ -595,7 +865,6 @@
                     displayImages(images);
                     displayLocations(locations);
                     updateStats(images, locations);
-                    updateAdvancedStats(data);
                     
                     stats.style.display = 'flex';
                     searchBox.style.display = 'block';
@@ -616,7 +885,22 @@
             }
         }
         
-        // دالة استخراج الصور
+        // تحليل الكل معاً
+        function parseAll() {
+            if (activeTab === 'json') {
+                parseJSON();
+            } else if (activeTab === 'headers') {
+                parseHttpHeaders();
+            } else if (activeTab === 'both') {
+                const jsonText = document.getElementById('bothJsonInput').value;
+                const headersText = document.getElementById('bothHeadersInput').value;
+                
+                if (jsonText) parseJSON(jsonText);
+                if (headersText) parseHttpHeaders(headersText);
+            }
+        }
+        
+        // دوال استخراج البيانات (كما هي من الكود السابق)
         function extractImageUrls(obj, images = []) {
             if (obj && typeof obj === 'object') {
                 if (obj.url && typeof obj.url === 'string' && isImageUrl(obj.url)) {
@@ -651,10 +935,8 @@
             );
         }
         
-        // دالة استخراج المواقع
         function extractLocations(obj, locations = []) {
             if (obj && typeof obj === 'object') {
-                // إذا كان الكائن يحتوي على location
                 if (obj.location && (obj.location.longitude || obj.location.lon || obj.location.lng) && (obj.location.latitude || obj.location.lat)) {
                     locations.push({
                         longitude: obj.location.longitude || obj.location.lon || obj.location.lng,
@@ -664,7 +946,6 @@
                     });
                 }
                 
-                // البحث في الخصائص
                 for (let key in obj) {
                     if (obj.hasOwnProperty(key)) {
                         if (key === 'location' && obj[key] && typeof obj[key] === 'object') {
@@ -677,7 +958,6 @@
                                 });
                             }
                         } else if (key === 'longitude' || key === 'lon' || key === 'lng') {
-                            // إذا وجدنا longitude، نبحث عن latitude قريب
                             const lon = obj[key];
                             const lat = obj.latitude || obj.lat;
                             if (lat) {
@@ -766,7 +1046,6 @@
                             <a href="${googleMapsLink}" target="_blank" class="map-link">🗺️ فتح في خرائط جوجل</a>
                             <button onclick="copyCoordinates(${loc.latitude}, ${loc.longitude})" class="quick-btn" style="flex: 1;">📋 نسخ الإحداثيات</button>
                         </div>
-                        ${loc.description ? `<p style="margin-top: 10px; color: #666;">📝 ${loc.description}</p>` : ''}
                     </div>
                 `;
             });
@@ -781,74 +1060,6 @@
             document.getElementById('locationCount').innerHTML = `📍 مواقع: ${locations.length}`;
         }
         
-        function updateAdvancedStats(data) {
-            const statsDiv = document.getElementById('advancedStats');
-            
-            // إحصائيات متقدمة
-            const totalKeys = countKeys(data);
-            const depth = getDepth(data);
-            const arrays = countArrays(data);
-            
-            statsDiv.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 12px; color: #666;">عدد الحقول</div>
-                        <div style="font-size: 20px; font-weight: bold; color: #667eea;">${totalKeys}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 12px; color: #666;">عمق JSON</div>
-                        <div style="font-size: 20px; font-weight: bold; color: #764ba2;">${depth}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 12px; color: #666;">عدد المصفوفات</div>
-                        <div style="font-size: 20px; font-weight: bold; color: #4CAF50;">${arrays}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 12px; color: #666;">حجم البيانات</div>
-                        <div style="font-size: 20px; font-weight: bold; color: #ff9800;">${Math.round(JSON.stringify(data).length / 1024)} KB</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // دوال مساعدة للإحصائيات
-        function countKeys(obj) {
-            if (typeof obj !== 'object' || obj === null) return 0;
-            let count = 0;
-            for (let key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    count++;
-                    if (typeof obj[key] === 'object') {
-                        count += countKeys(obj[key]);
-                    }
-                }
-            }
-            return count;
-        }
-        
-        function getDepth(obj) {
-            if (typeof obj !== 'object' || obj === null) return 0;
-            let maxDepth = 0;
-            for (let key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    maxDepth = Math.max(maxDepth, getDepth(obj[key]));
-                }
-            }
-            return maxDepth + 1;
-        }
-        
-        function countArrays(obj) {
-            if (typeof obj !== 'object' || obj === null) return 0;
-            let count = 0;
-            if (Array.isArray(obj)) count++;
-            for (let key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    count += countArrays(obj[key]);
-                }
-            }
-            return count;
-        }
-        
         function filterImages() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = currentImages.filter(img => img.url.toLowerCase().includes(searchTerm));
@@ -857,14 +1068,19 @@
         
         function clearAll() {
             document.getElementById('jsonInput').value = '';
+            document.getElementById('headersInput').value = '';
+            document.getElementById('bothJsonInput').value = '';
+            document.getElementById('bothHeadersInput').value = '';
             document.getElementById('imagesContainer').innerHTML = '';
             document.getElementById('locationsContainer').innerHTML = '<p style="color: #666; text-align: center;">لا توجد مواقع لعرضها</p>';
             document.getElementById('error').style.display = 'none';
             document.getElementById('stats').style.display = 'none';
             document.getElementById('searchInput').style.display = 'none';
+            document.getElementById('headersDisplay').style.display = 'none';
             document.getElementById('searchInput').value = '';
             currentImages = [];
             currentLocations = [];
+            currentHeaders = {};
             originalData = null;
         }
         
@@ -897,88 +1113,59 @@
             document.getElementById('imageModal').style.display = 'none';
         }
         
-        function downloadAll() {
-            if (currentImages.length === 0 && currentLocations.length === 0) {
-                alert('لا توجد بيانات للتحميل');
-                return;
-            }
-            
-            let content = '⚡ تقرير JSON الكامل\n\n';
-            content += `📅 تاريخ التصدير: ${new Date().toLocaleString('ar-SA')}\n`;
-            content += `📸 عدد الصور: ${currentImages.length}\n`;
-            content += `📍 عدد المواقع: ${currentLocations.length}\n`;
-            content += `═══════════════════════════════\n\n`;
-            
-            if (currentImages.length > 0) {
-                content += '📸 الصور:\n';
-                currentImages.forEach((img, i) => {
-                    content += `${i+1}. ${img.url}\n`;
-                    content += `   الترتيب: ${img.order || i+1} | ${img.isPrivate ? '🔒 خاص' : '🔓 عام'}\n\n`;
-                });
-            }
-            
-            if (currentLocations.length > 0) {
-                content += '📍 المواقع:\n';
-                currentLocations.forEach((loc, i) => {
-                    content += `${i+1}. ${loc.name || 'موقع'}\n`;
-                    content += `   الإحداثيات: ${loc.latitude}, ${loc.longitude}\n`;
-                    content += `   رابط خرائط: https://www.google.com/maps?q=${loc.latitude},${loc.longitude}\n\n`;
-                });
-            }
-            
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `تقرير_JSON_${new Date().toISOString().slice(0,10)}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
         function loadSampleData() {
-            const sampleData = {
-                "result": {
-                    "user": {
-                        "id": "kJxvFCbKPw",
-                        "name": "Ashley Amira💖",
-                        "location": {
-                            "longitude": 50.01581087063288,
-                            "latitude": 26.558439325819666
-                        },
-                        "userImages": [
-                            {
-                                "id": "ONdgh44JKY",
-                                "imageFile": {
-                                    "url": "https://d3haz8kz57vxxi.cloudfront.net/a02c4e98a453befaa3e97d0f305d1a92_image_9a85954b-bd1c-401b-9930-8f9e0018cb9f.jpg"
-                                },
-                                "order": 1,
-                                "isPrivate": true
-                            },
-                            {
-                                "id": "0OEfFD4Dde",
-                                "imageFile": {
-                                    "url": "https://d3haz8kz57vxxi.cloudfront.net/b48cf9a3e8af4163ee45d9758b21f6f3_image_cd1f4080-725f-49f9-8008-398820397df5.jpg"
-                                },
-                                "order": 2,
-                                "isPrivate": true
-                            },
-                            {
-                                "id": "6iIIFHGwaR",
-                                "imageFile": {
-                                    "url": "https://d3haz8kz57vxxi.cloudfront.net/38dc4fa736bdaff100b318d2cf4f68c7_image_24766dfd-ee47-432c-981b-45c880567451.jpg"
-                                },
-                                "order": 0,
-                                "isPrivate": false
-                            }
-                        ]
-                    }
-                }
-            };
+            const sampleJson = `{
+  "result": {
+    "user": {
+      "id": "90iHH90u5t",
+      "location": {
+        "longitude": 50.01581087063288,
+        "latitude": 26.558439325819666
+      },
+      "userImages": [
+        {
+          "id": "s9boyzkOjq",
+          "imageFile": {
+            "url": "https://d3haz8kz57vxxi.cloudfront.net/f4bd56e0352d0552f9245295098b6c0e_image.jpg"
+          },
+          "order": 2,
+          "isPrivate": false
+        },
+        {
+          "id": "B4VxAdMkBF",
+          "imageFile": {
+            "url": "https://d3haz8kz57vxxi.cloudfront.net/87d2db8f04dda77c1dd0c6a422bca2f6_image.jpg"
+          },
+          "order": 3,
+          "isPrivate": false
+        }
+      ]
+    }
+  }
+}`;
+
+            const sampleHeaders = `HTTP/2 200
+server: CloudFront
+content-type: application/json; charset=utf-8
+date: Sat, 14 Feb 2026 13:33:45 GMT
+access-control-expose-headers: X-Parse-Job-Status-Id, X-Parse-Push-Status-Id
+vary: accept-encoding
+access-control-allow-origin: *
+access-control-allow-methods: GET,PUT,POST,DELETE,OPTIONS
+content-encoding: gzip
+etag: W/"78a-4m7Qzdad2n2f/selbUgUfb8fIks"
+x-cache: Miss from cloudfront
+via: 1.1 a5b35da3a37f3b4542ea89737243a522.cloudfront.net (CloudFront)
+x-amz-cf-pop: ZRH55-P2
+x-amz-cf-id: 9kDiBylX5Zs_zCHL8borNG2x5qAlmkuQOnHUOT_j_rFuo1aN2kF4YA==`;
+
+            document.getElementById('jsonInput').value = sampleJson;
+            document.getElementById('headersInput').value = sampleHeaders;
+            document.getElementById('bothJsonInput').value = sampleJson;
+            document.getElementById('bothHeadersInput').value = sampleHeaders;
             
-            document.getElementById('jsonInput').value = JSON.stringify(sampleData, null, 2);
-            parseJSON();
+            parseJSON(sampleJson);
+            parseHttpHeaders(sampleHeaders);
         }
         
         function copyAllUrls() {
@@ -1008,6 +1195,26 @@
             });
         }
         
+        function downloadHeaders() {
+            if (Object.keys(currentHeaders).length === 0) {
+                alert('لا توجد رؤوس للتحميل');
+                return;
+            }
+            
+            let content = '';
+            Object.entries(currentHeaders).forEach(([key, value]) => {
+                content += `${key}: ${value}\n`;
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `headers_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
         function sortByOrder() {
             if (currentImages.length === 0) return;
             currentImages.sort((a, b) => (a.order || 999) - (b.order || 999));
@@ -1034,20 +1241,24 @@
             <!DOCTYPE html>
             <html>
             <head>
-                <title>معرض الصور</title>
+                <title>معرض الصور - مستضاف على CloudFront</title>
                 <style>
                     body { font-family: Arial; background: #f0f0f0; padding: 20px; }
                     .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 15px; }
                     img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+                    .header { background: #1e1e2f; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
                 </style>
             </head>
             <body>
-                <h1>معرض الصور</h1>
+                <div class="header">
+                    <h1>📸 معرض الصور</h1>
+                    <p>مستضاف على CloudFront | عدد الصور: ${currentImages.length}</p>
+                </div>
                 <div class="gallery">
             `;
             
             currentImages.forEach(img => {
-                html += `<img src="${img.url}" loading="lazy">\n`;
+                html += `<img src="${img.url}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x150?text=خطأ'">\n`;
             });
             
             html += `</div></body></html>`;
@@ -1056,7 +1267,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `gallery_${new Date().toISOString().slice(0,10)}.html`;
+            a.download = `gallery_cloudfront_${new Date().toISOString().slice(0,10)}.html`;
             a.click();
             URL.revokeObjectURL(url);
         }
