@@ -1,86 +1,96 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عارض JSON المتطور - الصور والمواقع</title>
-    <!-- Font Awesome 6 (مجاني) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>عارض JSON · صور ومواقع</title>
+    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* المتغيرات العامة للثيم */
+        /* Light mode (default) */
         :root {
-            --bg-primary: #f4f7fb;
-            --bg-secondary: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --accent: #6366f1;
-            --accent-light: #818cf8;
+            --bg-body: #f1f5f9;
+            --bg-surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
             --border: #e2e8f0;
-            --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
-            --transition: 0.3s ease;
+            --shadow: 0 2px 8px rgba(0,0,0,0.04);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: 0.2s ease;
         }
 
+        /* Dark mode */
         body.dark {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f1f5f9;
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent: #818cf8;
+            --accent: #60a5fa;
+            --accent-light: #93c5fd;
             --border: #334155;
-            --card-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            --shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         body {
-            background: var(--bg-primary);
+            background: var(--bg-body);
             color: var(--text-primary);
             transition: background-color var(--transition), color var(--transition);
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* رأس الصفحة */
+        /* header */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .header h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, var(--accent), #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .header h1 i {
+            color: var(--accent);
         }
 
         .theme-toggle {
-            background: var(--bg-secondary);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: 30px;
+            border-radius: 40px;
             padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
-            transition: var(--transition);
+            font-size: 0.95rem;
             color: var(--text-primary);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
 
         .theme-toggle:hover {
@@ -89,59 +99,62 @@
             border-color: var(--accent);
         }
 
-        /* بطاقة الإدخال */
-        .input-card {
-            background: var(--bg-secondary);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 30px;
+        /* input card */
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
         textarea {
             width: 100%;
-            height: 200px;
-            padding: 18px;
-            border: 2px solid var(--border);
-            border-radius: 18px;
-            background: var(--bg-primary);
+            height: 160px;
+            padding: 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-body);
             color: var(--text-primary);
-            font-family: 'Courier New', monospace;
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
             font-size: 14px;
             direction: ltr;
             resize: vertical;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             transition: var(--transition);
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
         }
 
         .button-group {
             display: flex;
-            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 12px 18px;
             border: none;
             border-radius: 40px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: var(--bg-primary);
+            justify-content: center;
+            gap: 6px;
+            background: var(--bg-body);
             color: var(--text-primary);
             border: 1px solid var(--border);
+            flex: 1 1 auto;
+            min-width: 100px;
         }
 
         .btn-primary {
@@ -152,13 +165,11 @@
 
         .btn-primary:hover {
             background: var(--accent-light);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px var(--accent);
         }
 
         .btn-outline {
             background: transparent;
-            border: 2px solid var(--accent);
+            border: 1.5px solid var(--accent);
             color: var(--accent);
         }
 
@@ -170,108 +181,117 @@
         .quick-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .quick-btn {
-            background: var(--bg-primary);
-            border: 1px dashed var(--accent);
+            background: var(--bg-body);
+            border: 1px dashed var(--border);
             color: var(--text-secondary);
-            padding: 8px 16px;
+            padding: 8px 12px;
             border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
+            flex: 1 1 auto;
         }
 
         .quick-btn:hover {
             background: var(--accent);
             color: white;
-            border-style: solid;
+            border-color: var(--accent);
         }
 
         .error-message {
             background: #fee2e2;
             color: #b91c1c;
-            padding: 15px;
-            border-radius: 16px;
-            margin-top: 15px;
-            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-top: 16px;
+            font-size: 0.9rem;
             display: none;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+        .dark .error-message {
+            background: #7f1d1d;
+            color: #fecaca;
         }
 
-        .stat-card {
-            background: var(--bg-secondary);
+        /* stats row */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            flex: 1 1 120px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: var(--card-shadow);
+            gap: 10px;
+            box-shadow: var(--shadow);
         }
 
         .stat-icon {
-            width: 50px;
-            height: 50px;
             background: var(--accent);
-            border-radius: 50%;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
 
         .stat-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+            font-size: 1.2rem;
+            line-height: 1.2;
         }
 
         .stat-info p {
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
+        .progress {
+            height: 6px;
             background: var(--border);
             border-radius: 10px;
-            overflow: hidden;
             margin: 20px 0;
+            overflow: hidden;
+            display: none;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), #a78bfa);
-            transition: width 0.5s;
+            background: var(--accent);
             width: 0%;
+            transition: width 0.3s;
         }
 
         .search-box {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid var(--border);
+            padding: 14px 18px;
+            border: 1.5px solid var(--border);
             border-radius: 50px;
-            background: var(--bg-primary);
+            background: var(--bg-surface);
             color: var(--text-primary);
             font-size: 1rem;
-            margin: 20px 0;
-            padding-right: 50px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+            margin-bottom: 20px;
+            padding-right: 45px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
             background-repeat: no-repeat;
-            background-position: right 20px center;
+            background-position: right 18px center;
         }
 
         .search-box:focus {
@@ -279,109 +299,95 @@
             border-color: var(--accent);
         }
 
-        /* تخطيط العمودين */
-        .split-layout {
+        /* layout */
+        .layout {
             display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
-        .image-card {
-            background: var(--bg-secondary);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-            position: relative;
+        @media (min-width: 768px) {
+            .layout {
+                grid-template-columns: 2fr 1fr;
+            }
         }
 
-        .image-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -10px var(--accent);
+        /* image grid */
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .image-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .image-card:active {
+            transform: scale(0.98);
         }
 
         .image-preview {
             width: 100%;
-            height: 160px;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
+            background: var(--bg-body);
             cursor: pointer;
-            background: var(--bg-primary);
-            transition: transform 0.3s;
         }
 
-        .image-preview:hover {
-            transform: scale(1.02);
+        .image-badges {
+            padding: 8px 8px 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
         }
 
-        .image-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.7);
+        .badge-order {
+            background: var(--accent);
             color: white;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            backdrop-filter: blur(4px);
+            padding: 2px 8px;
+            border-radius: 20px;
         }
 
-        .private-badge {
-            position: absolute;
-            top: 8px;
-            left: 8px;
+        .badge-private {
             background: #f97316;
             color: white;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            backdrop-filter: blur(4px);
+            padding: 2px 8px;
+            border-radius: 20px;
         }
 
-        .image-footer {
-            padding: 15px;
-        }
-
-        .image-footer .url {
-            font-size: 0.75rem;
+        .image-url {
+            padding: 0 8px 8px;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             word-break: break-all;
-            background: var(--bg-primary);
-            padding: 8px;
-            border-radius: 12px;
-            margin: 8px 0;
             direction: ltr;
         }
 
         .image-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 8px;
+            padding: 0 8px 8px;
+            gap: 6px;
         }
 
         .image-actions button {
             flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 12px;
-            background: var(--bg-primary);
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 6px;
+            font-size: 0.7rem;
             color: var(--text-primary);
             cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .image-actions button:hover {
@@ -389,85 +395,119 @@
             color: white;
         }
 
-        /* الشريط الجانبي */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
+        /* sidebar cards */
         .info-card {
-            background: var(--bg-secondary);
-            border-radius: 24px;
-            padding: 20px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 20px;
             border: 1px solid var(--border);
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--shadow);
         }
 
         .info-card h3 {
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: var(--accent);
         }
 
         .user-info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 10px;
         }
 
-        .user-info-item {
-            background: var(--bg-primary);
-            padding: 12px;
-            border-radius: 16px;
+        .user-item {
+            background: var(--bg-body);
+            border-radius: var(--radius-sm);
+            padding: 10px;
             text-align: center;
         }
 
-        .user-info-item .label {
-            font-size: 0.8rem;
+        .user-item .label {
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
-        .user-info-item .value {
-            font-weight: bold;
-            font-size: 1.1rem;
+        .user-item .value {
+            font-weight: 600;
         }
 
         .location-item {
-            background: var(--bg-primary);
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 15px;
+            background: var(--bg-body);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 12px;
         }
 
-        .coord {
+        .coord-row {
             display: flex;
             justify-content: space-between;
-            background: var(--bg-secondary);
-            padding: 10px;
-            border-radius: 12px;
+            background: var(--bg-surface);
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
             margin: 10px 0;
             font-family: monospace;
+            font-size: 0.8rem;
         }
 
-        .map-preview {
-            width: 100%;
-            height: 150px;
-            border-radius: 16px;
+        .map-placeholder {
+            background: #e2e8f0;
+            border-radius: var(--radius-sm);
+            height: 120px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 0.8rem;
             overflow: hidden;
-            margin: 15px 0;
         }
 
-        .map-preview iframe {
+        .map-placeholder iframe {
             width: 100%;
             height: 100%;
             border: 0;
         }
 
-        /* مودال عرض الصور */
+        .dark .map-placeholder {
+            background: #334155;
+            color: #cbd5e1;
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .location-actions button,
+        .location-actions a {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .location-actions button:hover,
+        .location-actions a:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* modal */
         .modal {
             display: none;
             position: fixed;
@@ -475,274 +515,280 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
-            justify-content: center;
             align-items: center;
-            backdrop-filter: blur(8px);
+            justify-content: center;
+            backdrop-filter: blur(6px);
         }
 
         .modal-content {
             position: relative;
-            max-width: 90%;
-            max-height: 90%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content img {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px black;
+            max-width: 95%;
+            max-height: 85%;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
         .modal-close {
             position: absolute;
-            top: -40px;
-            right: -40px;
+            top: 20px;
+            left: 20px;
             color: white;
             font-size: 2rem;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
             background: rgba(255,255,255,0.2);
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            background: rgba(255,255,255,0.3);
         }
 
         .modal-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
             background: rgba(255,255,255,0.2);
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .modal-nav:hover {
-            background: rgba(255,255,255,0.3);
         }
 
         .modal-prev {
-            left: -70px;
+            right: 10px;
         }
-
         .modal-next {
-            right: -70px;
+            left: 10px;
         }
 
-        @media (max-width: 768px) {
-            .split-layout {
-                grid-template-columns: 1fr;
-            }
-            .modal-prev { left: 10px; }
-            .modal-next { right: 10px; }
+        @media (min-width: 768px) {
+            .modal-prev { right: 30px; }
+            .modal-next { left: 30px; }
         }
 
         .footer {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 30px;
             color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* empty state */
+        .empty-state {
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 30px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-cube"></i> عارض JSON المتطور</h1>
+            <h1><i class="fas fa-cube"></i> JSON عارض</h1>
             <div class="theme-toggle" onclick="toggleTheme()">
                 <i class="fas fa-moon"></i>
-                <span>الوضع الليلي</span>
+                <span>ليلي</span>
             </div>
         </div>
 
-        <div class="input-card">
+        <!-- input card -->
+        <div class="card">
             <textarea id="jsonInput" placeholder="الصق JSON هنا أو اسحب ملف..."></textarea>
             <div class="button-group">
                 <button class="btn btn-primary" onclick="parseJSON()"><i class="fas fa-play"></i> تحليل</button>
-                <button class="btn btn-outline" onclick="pasteJSON()"><i class="fas fa-paste"></i> لصق</button>
-                <button class="btn btn-outline" onclick="clearAll()"><i class="fas fa-trash"></i> مسح</button>
-                <button class="btn btn-outline" onclick="downloadReport()"><i class="fas fa-download"></i> تقرير</button>
+                <button class="btn" onclick="pasteJSON()"><i class="fas fa-paste"></i> لصق</button>
+                <button class="btn" onclick="clearAll()"><i class="fas fa-trash"></i> مسح</button>
+                <button class="btn" onclick="loadSample()"><i class="fas fa-flask"></i> عينة</button>
             </div>
             <div class="quick-actions">
-                <button class="quick-btn" onclick="loadSample()"><i class="fas fa-flask"></i> تجربة</button>
-                <button class="quick-btn" onclick="copyAllUrls()"><i class="fas fa-copy"></i> نسخ جميع الروابط</button>
+                <button class="quick-btn" onclick="copyAllUrls()"><i class="fas fa-copy"></i> نسخ الروابط</button>
                 <button class="quick-btn" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
-                <button class="quick-btn" onclick="saveToLocal()"><i class="fas fa-save"></i> حفظ محلياً</button>
+                <button class="quick-btn" onclick="downloadReport()"><i class="fas fa-download"></i> تقرير</button>
+                <button class="quick-btn" onclick="saveToLocal()"><i class="fas fa-save"></i> حفظ</button>
                 <button class="quick-btn" onclick="shareData()"><i class="fas fa-share-alt"></i> مشاركة</button>
             </div>
             <div id="error" class="error-message"></div>
         </div>
 
-        <!-- الإحصائيات -->
-        <div class="stats-grid" id="statsContainer" style="display: none;">
-            <div class="stat-card">
+        <!-- stats row (hidden initially) -->
+        <div id="statsRow" class="stats-row" style="display: none;">
+            <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-image"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalImages">0</h3>
-                    <p>إجمالي الصور</p>
+                    <h3 id="statImages">0</h3>
+                    <p>صورة</p>
                 </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-lock"></i></div>
                 <div class="stat-info">
-                    <h3 id="privateImages">0</h3>
+                    <h3 id="statPrivate">0</h3>
                     <p>خاصة</p>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-globe"></i></div>
-                <div class="stat-info">
-                    <h3 id="publicImages">0</h3>
-                    <p>عامة</p>
-                </div>
-            </div>
-            <div class="stat-card">
+            <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
                 <div class="stat-info">
-                    <h3 id="totalLocations">0</h3>
-                    <p>المواقع</p>
+                    <h3 id="statLocations">0</h3>
+                    <p>موقع</p>
                 </div>
             </div>
         </div>
 
-        <div class="progress-bar" id="progressBar" style="display: none;">
+        <div class="progress" id="progress">
             <div class="progress-fill" id="progressFill"></div>
         </div>
 
+        <!-- search (hidden initially) -->
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن صورة..." style="display: none;">
 
-        <div class="split-layout">
-            <div class="images-section">
-                <h2 style="margin-bottom: 20px;"><i class="fas fa-images"></i> معرض الصور</h2>
-                <div id="imagesContainer" class="images-grid"></div>
+        <!-- main layout -->
+        <div class="layout">
+            <!-- left: images -->
+            <div>
+                <h2 style="margin-bottom: 16px; font-size: 1.3rem;"><i class="fas fa-images" style="color: var(--accent);"></i> الصور</h2>
+                <div id="imagesContainer" class="images-grid">
+                    <div class="empty-state">لا توجد صور بعد</div>
+                </div>
             </div>
-            <div class="sidebar">
+
+            <!-- right: info panels -->
+            <div>
                 <div class="info-card">
-                    <h3><i class="fas fa-user"></i> معلومات المستخدم</h3>
-                    <div id="userInfoContainer" class="user-info-grid">
-                        <p style="color: var(--text-secondary);">لا توجد بيانات مستخدم</p>
+                    <h3><i class="fas fa-user"></i> المستخدم</h3>
+                    <div id="userInfo" class="user-info-grid">
+                        <div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>
                     </div>
                 </div>
+
                 <div class="info-card">
                     <h3><i class="fas fa-map-marked-alt"></i> المواقع</h3>
-                    <div id="locationsContainer"></div>
+                    <div id="locationsContainer">
+                        <div class="empty-state">لا توجد مواقع</div>
+                    </div>
                 </div>
+
                 <div class="info-card">
-                    <h3><i class="fas fa-chart-pie"></i> إحصائيات متقدمة</h3>
-                    <div id="advancedStats"></div>
+                    <h3><i class="fas fa-chart-simple"></i> إحصائيات JSON</h3>
+                    <div id="advancedStats">
+                        <div class="empty-state">قم بتحليل JSON</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="footer">
-            <p>جميع الحقوق محفوظة © 2024 | تصميم وتطوير المساعد الذكي</p>
+            <p>جميع الحقوق متاحة — تصميم متجاوب</p>
         </div>
     </div>
 
-    <!-- مودال عرض الصور -->
-    <div id="imageModal" class="modal">
+    <!-- Modal for image -->
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <span class="modal-nav modal-prev" onclick="prevImage()"><i class="fas fa-chevron-right"></i></span>
-            <span class="modal-nav modal-next" onclick="nextImage()"><i class="fas fa-chevron-left"></i></span>
-            <img id="modalImage" src="" alt="صورة">
+            <span class="modal-close" onclick="closeModal(event)">&times;</span>
+            <span class="modal-nav modal-prev" onclick="prevImage(event)"><i class="fas fa-chevron-right"></i></span>
+            <span class="modal-nav modal-next" onclick="nextImage(event)"><i class="fas fa-chevron-left"></i></span>
+            <img id="modalImage" src="" alt="">
         </div>
     </div>
 
     <script>
-        // متغيرات عامة
+        // ---------- Global variables ----------
         let currentImages = [];
         let currentLocations = [];
-        let userData = {};
+        let currentUser = {};
         let currentImageIndex = 0;
 
-        // التبديل بين الوضع الليلي والنهاري
+        // ---------- Theme ----------
         function toggleTheme() {
             document.body.classList.toggle('dark');
-            const toggleBtn = document.querySelector('.theme-toggle span');
+            const span = document.querySelector('.theme-toggle span');
+            const icon = document.querySelector('.theme-toggle i');
             if (document.body.classList.contains('dark')) {
-                toggleBtn.textContent = 'الوضع النهاري';
-                document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+                span.textContent = 'نهاري';
+                icon.className = 'fas fa-sun';
             } else {
-                toggleBtn.textContent = 'الوضع الليلي';
-                document.querySelector('.theme-toggle i').className = 'fas fa-moon';
+                span.textContent = 'ليلي';
+                icon.className = 'fas fa-moon';
             }
         }
 
-        // لصق من الحافظة
+        // ---------- Paste from clipboard ----------
         async function pasteJSON() {
             try {
                 const text = await navigator.clipboard.readText();
                 document.getElementById('jsonInput').value = text;
                 parseJSON();
-            } catch {
-                alert('تعذر الوصول إلى الحافظة، الصق يدوياً.');
+            } catch (err) {
+                alert('تعذر الوصول للحافظة، الصق يدوياً');
             }
         }
 
-        // تحليل JSON
+        // ---------- Parse JSON ----------
         function parseJSON() {
-            const jsonInput = document.getElementById('jsonInput').value;
+            const jsonStr = document.getElementById('jsonInput').value;
             const errorDiv = document.getElementById('error');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
+            const progress = document.getElementById('progress');
+            const fill = document.getElementById('progressFill');
 
             errorDiv.style.display = 'none';
-            progressBar.style.display = 'block';
-            progressFill.style.width = '30%';
+            progress.style.display = 'block';
+            fill.style.width = '30%';
 
             try {
-                const data = JSON.parse(jsonInput);
-                progressFill.style.width = '60%';
+                const data = JSON.parse(jsonStr);
+                fill.style.width = '60%';
 
-                // استخراج البيانات
+                // extract data
                 currentImages = extractImages(data);
                 currentLocations = extractLocations(data);
-                userData = extractUserInfo(data);
+                currentUser = extractUser(data);
 
-                progressFill.style.width = '100%';
+                fill.style.width = '100%';
                 setTimeout(() => {
-                    progressBar.style.display = 'none';
-                }, 500);
+                    progress.style.display = 'none';
+                    fill.style.width = '0%';
+                }, 400);
 
-                // عرض النتائج
+                // update UI
                 displayImages(currentImages);
                 displayLocations(currentLocations);
-                displayUserInfo(userData);
+                displayUser(currentUser);
                 updateStats();
                 displayAdvancedStats(data);
 
-                document.getElementById('statsContainer').style.display = 'grid';
+                document.getElementById('statsRow').style.display = 'flex';
                 document.getElementById('searchInput').style.display = 'block';
                 document.getElementById('searchInput').value = '';
 
-                if (currentImages.length === 0 && currentLocations.length === 0 && Object.keys(userData).length === 0) {
-                    errorDiv.textContent = '⚠️ لم يتم العثور على صور أو مواقع أو بيانات مستخدم';
+                if (currentImages.length === 0 && currentLocations.length === 0 && Object.keys(currentUser).length === 0) {
+                    errorDiv.textContent = '⚠️ لم نعثر على صور أو مواقع أو بيانات مستخدم.';
                     errorDiv.style.display = 'block';
                 }
             } catch (e) {
-                errorDiv.textContent = '❌ JSON غير صالح: ' + e.message;
+                errorDiv.textContent = '❌ JSON غير صحيح: ' + e.message;
                 errorDiv.style.display = 'block';
-                progressBar.style.display = 'none';
+                progress.style.display = 'none';
             }
         }
 
-        // استخراج الصور
+        // extract images
         function extractImages(obj, arr = []) {
             if (!obj || typeof obj !== 'object') return arr;
             if (obj.url && typeof obj.url === 'string' && /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(obj.url)) {
@@ -750,18 +796,18 @@
                     url: obj.url,
                     order: obj.order || null,
                     isPrivate: obj.isPrivate || false,
-                    id: obj.id || `img_${Date.now()}_${Math.random()}`
                 });
             }
-            Object.values(obj).forEach(val => {
-                if (val && typeof val === 'object') extractImages(val, arr);
+            Object.values(obj).forEach(v => {
+                if (v && typeof v === 'object') extractImages(v, arr);
             });
             return arr.filter((v, i, a) => a.findIndex(t => t.url === v.url) === i);
         }
 
-        // استخراج المواقع
+        // extract locations
         function extractLocations(obj, arr = []) {
             if (!obj || typeof obj !== 'object') return arr;
+            // location object
             if (obj.location && (obj.location.longitude || obj.location.lon || obj.location.lng) && (obj.location.latitude || obj.location.lat)) {
                 arr.push({
                     longitude: obj.location.longitude || obj.location.lon || obj.location.lng,
@@ -769,6 +815,7 @@
                     name: obj.name || obj.title || 'موقع'
                 });
             }
+            // direct coordinates
             if ((obj.longitude || obj.lon || obj.lng) && (obj.latitude || obj.lat)) {
                 arr.push({
                     longitude: obj.longitude || obj.lon || obj.lng,
@@ -776,56 +823,56 @@
                     name: obj.name || obj.title || 'موقع'
                 });
             }
-            Object.values(obj).forEach(val => {
-                if (val && typeof val === 'object') extractLocations(val, arr);
+            Object.values(obj).forEach(v => {
+                if (v && typeof v === 'object') extractLocations(v, arr);
             });
             return arr.filter((v, i, a) => a.findIndex(t => t.longitude === v.longitude && t.latitude === v.latitude) === i);
         }
 
-        // استخراج معلومات المستخدم
-        function extractUserInfo(obj) {
+        // extract user info (common fields)
+        function extractUser(obj) {
             let info = {};
-            if (obj.user) obj = obj.user; // تعمق إذا كان هناك مفتاح user
-            if (obj.name) info.name = obj.name;
-            if (obj.age) info.age = obj.age;
-            if (obj.height) info.height = obj.height;
-            if (obj.weight) info.weight = obj.weight;
-            if (obj.userHandle) info.handle = obj.userHandle;
-            if (obj.profileText) info.bio = obj.profileText;
-            if (obj.userSexRole) info.role = obj.userSexRole;
-            if (obj.userEthnicity) info.ethnicity = obj.userEthnicity;
+            if (obj.user) obj = obj.user; // dive if user wrapper
+            const fields = ['name', 'age', 'height', 'weight', 'userHandle', 'profileText', 'userSexRole', 'userEthnicity'];
+            fields.forEach(f => {
+                if (obj[f] !== undefined) info[f] = obj[f];
+            });
             return info;
         }
 
-        // عرض الصور
+        // display images
         function displayImages(images) {
             const container = document.getElementById('imagesContainer');
-            container.innerHTML = '';
+            if (!images.length) {
+                container.innerHTML = '<div class="empty-state">🚫 لا توجد صور</div>';
+                return;
+            }
             images.sort((a, b) => (a.order || 999) - (b.order || 999));
-            images.forEach((img, index) => {
-                const card = document.createElement('div');
-                card.className = 'image-card';
-                card.innerHTML = `
-                    <img class="image-preview" src="${img.url}" onclick="openModal(${index})" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=خطأ'">
-                    ${img.order ? `<div class="image-badge"><i class="fas fa-sort"></i> ${img.order}</div>` : ''}
-                    ${img.isPrivate ? '<div class="private-badge"><i class="fas fa-lock"></i> خاص</div>' : ''}
-                    <div class="image-footer">
-                        <div class="url">${img.url.substring(0, 50)}...</div>
+            let html = '';
+            images.forEach((img, idx) => {
+                html += `
+                    <div class="image-card">
+                        <img class="image-preview" src="${img.url}" onclick="openModal(${idx})" loading="lazy" onerror="this.src='https://placehold.co/300x300/e2e8f0/475569?text=خطأ'">
+                        <div class="image-badges">
+                            ${img.order ? `<span class="badge-order"><i class="fas fa-sort"></i> ${img.order}</span>` : '<span></span>'}
+                            ${img.isPrivate ? '<span class="badge-private"><i class="fas fa-lock"></i> خاص</span>' : ''}
+                        </div>
+                        <div class="image-url">${img.url.substring(0, 40)}...</div>
                         <div class="image-actions">
                             <button onclick="copyToClipboard('${img.url}', event)"><i class="fas fa-copy"></i> نسخ</button>
                             <button onclick="downloadImage('${img.url}', event)"><i class="fas fa-download"></i> تحميل</button>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
             });
+            container.innerHTML = html;
         }
 
-        // عرض المواقع
+        // display locations
         function displayLocations(locations) {
             const container = document.getElementById('locationsContainer');
             if (!locations.length) {
-                container.innerHTML = '<p style="color: var(--text-secondary);">لا توجد مواقع</p>';
+                container.innerHTML = '<div class="empty-state">📍 لا توجد مواقع</div>';
                 return;
             }
             let html = '';
@@ -833,20 +880,20 @@
                 const mapSrc = `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}&output=embed`;
                 html += `
                     <div class="location-item">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span><i class="fas fa-map-pin" style="color:var(--accent);"></i> ${loc.name || 'موقع'}</span>
-                            <small>#${i+1}</small>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span><i class="fas fa-map-pin" style="color:var(--accent);"></i> ${loc.name}</span>
+                            <small>${i+1}</small>
                         </div>
-                        <div class="coord">
-                            <span>خط الطول: ${loc.longitude}</span>
-                            <span>خط العرض: ${loc.latitude}</span>
+                        <div class="coord-row">
+                            <span>ط: ${loc.longitude}</span>
+                            <span>ع: ${loc.latitude}</span>
                         </div>
-                        <div class="map-preview">
+                        <div class="map-placeholder">
                             <iframe src="${mapSrc}" loading="lazy"></iframe>
                         </div>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <button class="quick-btn" onclick="copyCoordinates(${loc.latitude}, ${loc.longitude})"><i class="fas fa-copy"></i> نسخ</button>
-                            <a href="https://www.google.com/maps?q=${loc.latitude},${loc.longitude}" target="_blank" class="quick-btn" style="text-decoration:none; text-align:center;"><i class="fas fa-external-link-alt"></i> فتح</a>
+                        <div class="location-actions">
+                            <button onclick="copyCoordinates(${loc.latitude}, ${loc.longitude})"><i class="fas fa-copy"></i> نسخ</button>
+                            <a href="https://www.google.com/maps?q=${loc.latitude},${loc.longitude}" target="_blank"><i class="fas fa-external-link-alt"></i> فتح</a>
                         </div>
                     </div>
                 `;
@@ -854,49 +901,47 @@
             container.innerHTML = html;
         }
 
-        // عرض معلومات المستخدم
-        function displayUserInfo(info) {
-            const container = document.getElementById('userInfoContainer');
-            if (!Object.keys(info).length) {
-                container.innerHTML = '<p style="color: var(--text-secondary);">لا توجد بيانات مستخدم</p>';
+        // display user info
+        function displayUser(user) {
+            const container = document.getElementById('userInfo');
+            if (!Object.keys(user).length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>';
                 return;
             }
-            let html = '';
-            const fields = {
+            const labels = {
                 name: 'الاسم',
                 age: 'العمر',
                 height: 'الطول',
                 weight: 'الوزن',
-                handle: 'المعرف',
-                role: 'الدور',
-                ethnicity: 'الأصل',
-                bio: 'نبذة'
+                userHandle: 'المعرف',
+                profileText: 'نبذة',
+                userSexRole: 'الدور',
+                userEthnicity: 'الأصل'
             };
-            Object.entries(info).forEach(([key, val]) => {
-                if (fields[key]) {
+            let html = '';
+            Object.entries(user).forEach(([key, val]) => {
+                if (labels[key]) {
                     html += `
-                        <div class="user-info-item">
-                            <div class="label">${fields[key]}</div>
+                        <div class="user-item">
+                            <div class="label">${labels[key]}</div>
                             <div class="value">${val}</div>
                         </div>
                     `;
                 }
             });
-            container.innerHTML = html;
+            container.innerHTML = html || '<div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>';
         }
 
-        // تحديث الإحصائيات
+        // update stats
         function updateStats() {
-            document.getElementById('totalImages').textContent = currentImages.length;
-            document.getElementById('privateImages').textContent = currentImages.filter(i => i.isPrivate).length;
-            document.getElementById('publicImages').textContent = currentImages.filter(i => !i.isPrivate).length;
-            document.getElementById('totalLocations').textContent = currentLocations.length;
+            document.getElementById('statImages').textContent = currentImages.length;
+            document.getElementById('statPrivate').textContent = currentImages.filter(i => i.isPrivate).length;
+            document.getElementById('statLocations').textContent = currentLocations.length;
         }
 
-        // إحصائيات متقدمة
+        // advanced stats
         function displayAdvancedStats(data) {
             const container = document.getElementById('advancedStats');
-            // عدّ الحقول والمصفوفات
             const countKeys = (obj) => {
                 if (!obj || typeof obj !== 'object') return 0;
                 let c = 0;
@@ -908,60 +953,62 @@
             };
             const totalKeys = countKeys(data);
             const jsonSize = new Blob([JSON.stringify(data)]).size;
+            const date = new Date().toLocaleString('ar');
             container.innerHTML = `
-                <div style="background: var(--bg-primary); padding: 15px; border-radius: 16px;">
+                <div style="background: var(--bg-body); padding: 16px; border-radius: var(--radius-md);">
                     <p><i class="fas fa-key"></i> إجمالي الحقول: ${totalKeys}</p>
-                    <p><i class="fas fa-weight"></i> حجم JSON: ${(jsonSize / 1024).toFixed(2)} KB</p>
-                    <p><i class="fas fa-calendar"></i> آخر تحديث: ${new Date().toLocaleString('ar')}</p>
+                    <p><i class="fas fa-weight"></i> الحجم: ${(jsonSize / 1024).toFixed(2)} KB</p>
+                    <p><i class="fas fa-clock"></i> ${date}</p>
                 </div>
             `;
         }
 
-        // بحث
+        // search
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             const filtered = currentImages.filter(img => img.url.toLowerCase().includes(term));
             displayImages(filtered);
         });
 
-        // مودال الصور
+        // modal functions
         function openModal(index) {
             currentImageIndex = index;
             document.getElementById('modalImage').src = currentImages[index].url;
             document.getElementById('imageModal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('imageModal').style.display = 'none';
+        function closeModal(e) {
+            if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
+                document.getElementById('imageModal').style.display = 'none';
+            }
         }
 
-        function prevImage() {
+        function prevImage(e) {
+            e.stopPropagation();
             if (currentImageIndex > 0) {
                 currentImageIndex--;
                 document.getElementById('modalImage').src = currentImages[currentImageIndex].url;
             }
         }
 
-        function nextImage() {
+        function nextImage(e) {
+            e.stopPropagation();
             if (currentImageIndex < currentImages.length - 1) {
                 currentImageIndex++;
                 document.getElementById('modalImage').src = currentImages[currentImageIndex].url;
             }
         }
 
-        // نسخ النص
+        // helpers
         function copyToClipboard(text, event) {
             if (event) event.stopPropagation();
-            navigator.clipboard.writeText(text).then(() => {
-                alert('تم النسخ!');
-            });
+            navigator.clipboard.writeText(text).then(() => alert('تم النسخ'));
         }
 
         function copyCoordinates(lat, lon) {
             navigator.clipboard.writeText(`${lat}, ${lon}`).then(() => alert('تم نسخ الإحداثيات'));
         }
 
-        // تحميل صورة
         function downloadImage(url, event) {
             event.stopPropagation();
             const a = document.createElement('a');
@@ -970,47 +1017,26 @@
             a.click();
         }
 
-        // مسح الكل
         function clearAll() {
             document.getElementById('jsonInput').value = '';
-            document.getElementById('imagesContainer').innerHTML = '';
-            document.getElementById('locationsContainer').innerHTML = '<p style="color: var(--text-secondary);">لا توجد مواقع</p>';
-            document.getElementById('userInfoContainer').innerHTML = '<p style="color: var(--text-secondary);">لا توجد بيانات مستخدم</p>';
-            document.getElementById('statsContainer').style.display = 'none';
+            document.getElementById('imagesContainer').innerHTML = '<div class="empty-state">لا توجد صور بعد</div>';
+            document.getElementById('locationsContainer').innerHTML = '<div class="empty-state">لا توجد مواقع</div>';
+            document.getElementById('userInfo').innerHTML = '<div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>';
+            document.getElementById('statsRow').style.display = 'none';
             document.getElementById('searchInput').style.display = 'none';
             document.getElementById('error').style.display = 'none';
+            document.getElementById('advancedStats').innerHTML = '<div class="empty-state">قم بتحليل JSON</div>';
             currentImages = [];
             currentLocations = [];
-            userData = {};
+            currentUser = {};
         }
 
-        // تحميل تقرير نصي
-        function downloadReport() {
-            if (!currentImages.length && !currentLocations.length) return alert('لا توجد بيانات');
-            let text = `تقرير JSON\nتاريخ: ${new Date().toLocaleString('ar')}\n`;
-            text += `عدد الصور: ${currentImages.length}\nعدد المواقع: ${currentLocations.length}\n\n`;
-            text += 'الصور:\n';
-            currentImages.forEach((img, i) => {
-                text += `${i+1}. ${img.url} [${img.isPrivate ? 'خاص' : 'عام'}]\n`;
-            });
-            text += '\nالمواقع:\n';
-            currentLocations.forEach((loc, i) => {
-                text += `${i+1}. ${loc.latitude}, ${loc.longitude}\n`;
-            });
-            const blob = new Blob([text], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `report_${new Date().toISOString().slice(0,10)}.txt`;
-            a.click();
-        }
-
-        // نسخ جميع الروابط
         function copyAllUrls() {
+            if (!currentImages.length) return alert('لا توجد صور');
             const urls = currentImages.map(img => img.url).join('\n');
             navigator.clipboard.writeText(urls).then(() => alert('تم نسخ جميع الروابط'));
         }
 
-        // تصدير CSV
         function exportCSV() {
             if (!currentImages.length) return alert('لا توجد صور');
             let csv = 'الترتيب,الرابط,نوع\n';
@@ -1024,13 +1050,30 @@
             a.click();
         }
 
-        // حفظ في localStorage
+        function downloadReport() {
+            if (!currentImages.length && !currentLocations.length) return alert('لا توجد بيانات');
+            let txt = `تقرير JSON\nتاريخ: ${new Date().toLocaleString('ar')}\n`;
+            txt += `عدد الصور: ${currentImages.length}\nعدد المواقع: ${currentLocations.length}\n\n`;
+            txt += 'الصور:\n';
+            currentImages.forEach((img, i) => {
+                txt += `${i+1}. ${img.url} [${img.isPrivate ? 'خاص' : 'عام'}]\n`;
+            });
+            txt += '\nالمواقع:\n';
+            currentLocations.forEach((loc, i) => {
+                txt += `${i+1}. ${loc.latitude}, ${loc.longitude}\n`;
+            });
+            const blob = new Blob([txt], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `report_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+        }
+
         function saveToLocal() {
             localStorage.setItem('lastJson', document.getElementById('jsonInput').value);
             alert('تم حفظ آخر JSON في المتصفح');
         }
 
-        // مشاركة عبر رابط مشفر (بسيط)
         function shareData() {
             const data = document.getElementById('jsonInput').value;
             if (!data) return alert('لا يوجد JSON');
@@ -1039,27 +1082,26 @@
             navigator.clipboard.writeText(url).then(() => alert('تم نسخ رابط المشاركة'));
         }
 
-        // تحميل عينة
         function loadSample() {
             const sample = {
                 result: {
                     user: {
-                        name: 'أحمد',
-                        age: 28,
-                        height: 175,
-                        weight: 70,
-                        userHandle: 'ahmed123',
-                        profileText: 'مرحباً',
-                        userSexRole: 'Top',
-                        userEthnicity: 'عربي',
+                        name: 'سارة',
+                        age: 26,
+                        height: 162,
+                        weight: 55,
+                        userHandle: 'sara_22',
+                        profileText: 'مصورة',
+                        userSexRole: 'Bottom',
+                        userEthnicity: 'عربية',
                         location: {
                             longitude: 50.0158,
                             latitude: 26.5584
                         },
                         userImages: [
-                            { order: 1, isPrivate: false, imageFile: { url: 'https://via.placeholder.com/300/09f/fff?text=صورة+1' } },
-                            { order: 2, isPrivate: true, imageFile: { url: 'https://via.placeholder.com/300/f90/fff?text=صورة+2' } },
-                            { order: 3, isPrivate: false, imageFile: { url: 'https://via.placeholder.com/300/0af/fff?text=صورة+3' } }
+                            { order: 1, isPrivate: false, imageFile: { url: 'https://placehold.co/400/3b82f6/white?text=صورة+1' } },
+                            { order: 2, isPrivate: true, imageFile: { url: 'https://placehold.co/400/f97316/white?text=صورة+2' } },
+                            { order: 3, isPrivate: false, imageFile: { url: 'https://placehold.co/400/10b981/white?text=صورة+3' } }
                         ]
                     }
                 }
@@ -1068,7 +1110,7 @@
             parseJSON();
         }
 
-        // استرجاع من الرابط إذا وجد
+        // load from URL param or local storage
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
             const data = params.get('data');
@@ -1078,30 +1120,29 @@
                     document.getElementById('jsonInput').value = decoded;
                     parseJSON();
                 } catch (e) {
-                    console.error('خطأ في فك تشفير الرابط');
+                    console.warn('Invalid shared data');
                 }
             } else {
-                // محاولة استرجاع من localStorage
                 const saved = localStorage.getItem('lastJson');
                 if (saved) {
                     document.getElementById('jsonInput').value = saved;
                     parseJSON();
                 } else {
-                    loadSample(); // تحميل عينة للترحيب
+                    loadSample(); // welcome sample
                 }
             }
         };
 
-        // دعم السحب والإفلات
+        // drag & drop
         const dropArea = document.getElementById('jsonInput');
-        dropArea.addEventListener('dragover', (e) => e.preventDefault());
-        dropArea.addEventListener('drop', (e) => {
+        dropArea.addEventListener('dragover', e => e.preventDefault());
+        dropArea.addEventListener('drop', e => {
             e.preventDefault();
             const file = e.dataTransfer.files[0];
             if (file && file.type === 'application/json') {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    dropArea.value = event.target.result;
+                reader.onload = ev => {
+                    dropArea.value = ev.target.result;
                     parseJSON();
                 };
                 reader.readAsText(file);
