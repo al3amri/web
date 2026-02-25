@@ -6,6 +6,7 @@
     <title>عارض JSON المتطور - الصور والمواقع مع المعرفات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* (نفس التصميم السابق، لم يتم تغييره) */
         * {
             margin: 0;
             padding: 0;
@@ -586,7 +587,6 @@
             padding: 30px;
         }
 
-        /* Toast message */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -639,7 +639,7 @@
             <div id="error" class="error-message"></div>
         </div>
 
-        <!-- إحصائيات سريعة (تظهر بعد التحليل) -->
+        <!-- إحصائيات سريعة -->
         <div id="statsRow" class="stats-row" style="display: none;">
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-image"></i></div>
@@ -674,7 +674,6 @@
 
         <!-- التخطيط الرئيسي -->
         <div class="layout">
-            <!-- القسم الأيسر: الصور -->
             <div>
                 <h2 style="margin-bottom: 16px; font-size: 1.3rem;"><i class="fas fa-images" style="color: var(--accent);"></i> الصور</h2>
                 <div id="imagesContainer" class="images-grid">
@@ -682,7 +681,6 @@
                 </div>
             </div>
 
-            <!-- القسم الأيمن: معلومات المستخدم والمواقع والإحصائيات -->
             <div>
                 <div class="info-card">
                     <h3><i class="fas fa-user"></i> المستخدم</h3>
@@ -783,6 +781,16 @@
                 currentLocations = extractLocations(data);
                 currentUser = extractUser(data);
 
+                // إذا كان هناك معرف عام ولم تجده الصور، نضيفه لها
+                if (currentUser.userHandle) {
+                    currentImages = currentImages.map(img => {
+                        if (!img.userHandle) {
+                            return { ...img, userHandle: currentUser.userHandle };
+                        }
+                        return img;
+                    });
+                }
+
                 fill.style.width = '100%';
                 setTimeout(() => {
                     progress.style.display = 'none';
@@ -812,11 +820,10 @@
             }
         }
 
-        // ---------- استخراج الصور مع ربط userHandle بكل صورة ----------
+        // ---------- استخراج الصور ----------
         function extractImages(obj, arr = []) {
             if (!obj || typeof obj !== 'object') return arr;
 
-            // إذا كان الكائن الحالي يحوي رابط صورة
             if (obj.url && typeof obj.url === 'string' && /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(obj.url)) {
                 let userHandle = null;
                 // ابحث عن userHandle في نفس المستوى
@@ -828,11 +835,10 @@
                     url: obj.url,
                     order: obj.order || null,
                     isPrivate: obj.isPrivate || false,
-                    userHandle: userHandle   // ربط المعرف بهذه الصورة
+                    userHandle: userHandle
                 });
             }
 
-            // البحث في جميع الخصائص
             for (let key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const val = obj[key];
@@ -842,7 +848,6 @@
                 }
             }
 
-            // إزالة التكرار (نفس الرابط)
             return arr.filter((v, i, a) => a.findIndex(t => t.url === v.url) === i);
         }
 
@@ -910,7 +915,7 @@
             return user;
         }
 
-        // ---------- عرض الصور (مع زر معرف لكل صورة إذا توفر) ----------
+        // ---------- عرض الصور ----------
         function displayImages(images) {
             const container = document.getElementById('imagesContainer');
             if (!images.length) {
@@ -1004,14 +1009,14 @@
             container.innerHTML = html || '<div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>';
         }
 
-        // ---------- تحديث الإحصائيات السريعة ----------
+        // ---------- تحديث الإحصائيات ----------
         function updateStats() {
             document.getElementById('statImages').textContent = currentImages.length;
             document.getElementById('statPrivate').textContent = currentImages.filter(i => i.isPrivate).length;
             document.getElementById('statLocations').textContent = currentLocations.length;
         }
 
-        // ---------- إحصائيات متقدمة عن JSON ----------
+        // ---------- إحصائيات متقدمة ----------
         function displayAdvancedStats(data) {
             const container = document.getElementById('advancedStats');
             function countKeys(obj) {
@@ -1072,7 +1077,7 @@
             }
         }
 
-        // ---------- دوال مساعدة للنسخ والتحميل ----------
+        // ---------- دوال مساعدة ----------
         function copyToClipboard(text, event) {
             if (event) event.stopPropagation();
             navigator.clipboard.writeText(text).then(() => showToast('📋 تم نسخ الرابط'));
@@ -1155,7 +1160,7 @@
             a.click();
         }
 
-        // ---------- حفظ آخر JSON في المتصفح ----------
+        // ---------- حفظ آخر JSON ----------
         function saveToLocal() {
             localStorage.setItem('lastJson', document.getElementById('jsonInput').value);
             showToast('تم حفظ آخر JSON في المتصفح');
@@ -1217,7 +1222,7 @@
                     document.getElementById('jsonInput').value = saved;
                     parseJSON();
                 } else {
-                    loadSample(); // عينة ترحيبية
+                    loadSample();
                 }
             }
         };
