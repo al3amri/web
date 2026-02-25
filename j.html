@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>عارض JSON المتكامل - الصور والمواقع</title>
+    <title>عارض JSON المتطور - الصور والمواقع مع المعرفات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -585,6 +585,29 @@
             text-align: center;
             padding: 30px;
         }
+
+        /* Toast message */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+            z-index: 2000;
+            animation: fadeInOut 2s ease forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
     </style>
 </head>
 <body>
@@ -597,6 +620,7 @@
             </div>
         </div>
 
+        <!-- بطاقة الإدخال -->
         <div class="card">
             <textarea id="jsonInput" placeholder="الصق JSON هنا أو اسحب ملف..."></textarea>
             <div class="button-group">
@@ -615,6 +639,7 @@
             <div id="error" class="error-message"></div>
         </div>
 
+        <!-- إحصائيات سريعة (تظهر بعد التحليل) -->
         <div id="statsRow" class="stats-row" style="display: none;">
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-image"></i></div>
@@ -639,13 +664,17 @@
             </div>
         </div>
 
+        <!-- شريط التقدم -->
         <div class="progress" id="progress">
             <div class="progress-fill" id="progressFill"></div>
         </div>
 
+        <!-- مربع البحث -->
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن صورة..." style="display: none;">
 
+        <!-- التخطيط الرئيسي -->
         <div class="layout">
+            <!-- القسم الأيسر: الصور -->
             <div>
                 <h2 style="margin-bottom: 16px; font-size: 1.3rem;"><i class="fas fa-images" style="color: var(--accent);"></i> الصور</h2>
                 <div id="imagesContainer" class="images-grid">
@@ -653,6 +682,7 @@
                 </div>
             </div>
 
+            <!-- القسم الأيمن: معلومات المستخدم والمواقع والإحصائيات -->
             <div>
                 <div class="info-card">
                     <h3><i class="fas fa-user"></i> المستخدم</h3>
@@ -682,6 +712,7 @@
         </div>
     </div>
 
+    <!-- نافذة تكبير الصور -->
     <div id="imageModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal(event)">&times;</span>
@@ -692,11 +723,22 @@
     </div>
 
     <script>
+        // ---------- المتغيرات العامة ----------
         let currentImages = [];
         let currentLocations = [];
         let currentUser = {};
         let currentImageIndex = 0;
 
+        // ---------- دالة عرض رسالة toast ----------
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // ---------- الوضع الليلي/النهاري ----------
         function toggleTheme() {
             document.body.classList.toggle('dark');
             const span = document.querySelector('.theme-toggle span');
@@ -710,16 +752,18 @@
             }
         }
 
+        // ---------- لصق من الحافظة ----------
         async function pasteJSON() {
             try {
                 const text = await navigator.clipboard.readText();
                 document.getElementById('jsonInput').value = text;
                 parseJSON();
             } catch (err) {
-                alert('تعذر الوصول للحافظة، الصق يدوياً');
+                showToast('تعذر الوصول للحافظة، الصق يدوياً');
             }
         }
 
+        // ---------- تحليل JSON ----------
         function parseJSON() {
             const jsonStr = document.getElementById('jsonInput').value;
             const errorDiv = document.getElementById('error');
@@ -734,6 +778,7 @@
                 const data = JSON.parse(jsonStr);
                 fill.style.width = '60%';
 
+                // استخراج البيانات
                 currentImages = extractImages(data);
                 currentLocations = extractLocations(data);
                 currentUser = extractUser(data);
@@ -744,12 +789,14 @@
                     fill.style.width = '0%';
                 }, 400);
 
+                // تحديث واجهة المستخدم
                 displayImages(currentImages);
                 displayLocations(currentLocations);
                 displayUser(currentUser);
                 updateStats();
                 displayAdvancedStats(data);
 
+                // إظهار العناصر المخفية
                 document.getElementById('statsRow').style.display = 'flex';
                 document.getElementById('searchInput').style.display = 'block';
                 document.getElementById('searchInput').value = '';
@@ -765,15 +812,27 @@
             }
         }
 
+        // ---------- استخراج الصور مع ربط userHandle بكل صورة ----------
         function extractImages(obj, arr = []) {
             if (!obj || typeof obj !== 'object') return arr;
+
+            // إذا كان الكائن الحالي يحوي رابط صورة
             if (obj.url && typeof obj.url === 'string' && /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(obj.url)) {
+                let userHandle = null;
+                // ابحث عن userHandle في نفس المستوى
+                if (obj.userHandle) userHandle = obj.userHandle;
+                // أو داخل كائن user إذا وجد
+                if (obj.user && obj.user.userHandle) userHandle = obj.user.userHandle;
+                
                 arr.push({
                     url: obj.url,
                     order: obj.order || null,
                     isPrivate: obj.isPrivate || false,
+                    userHandle: userHandle   // ربط المعرف بهذه الصورة
                 });
             }
+
+            // البحث في جميع الخصائص
             for (let key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const val = obj[key];
@@ -782,11 +841,15 @@
                     }
                 }
             }
+
+            // إزالة التكرار (نفس الرابط)
             return arr.filter((v, i, a) => a.findIndex(t => t.url === v.url) === i);
         }
 
+        // ---------- استخراج المواقع ----------
         function extractLocations(obj, arr = []) {
             if (!obj || typeof obj !== 'object') return arr;
+
             if (obj.location) {
                 const loc = obj.location;
                 const lon = loc.longitude || loc.lon || loc.lng;
@@ -799,6 +862,7 @@
                     });
                 }
             }
+
             const lon = obj.longitude || obj.lon || obj.lng;
             const lat = obj.latitude || obj.lat;
             if (lon !== undefined && lat !== undefined) {
@@ -808,6 +872,7 @@
                     name: obj.name || obj.title || 'موقع'
                 });
             }
+
             for (let key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const val = obj[key];
@@ -816,9 +881,11 @@
                     }
                 }
             }
+
             return arr.filter((v, i, a) => a.findIndex(t => t.longitude === v.longitude && t.latitude === v.latitude) === i);
         }
 
+        // ---------- استخراج معلومات المستخدم العامة ----------
         function extractUser(obj) {
             let user = {};
             const fields = ['name', 'age', 'height', 'weight', 'userHandle', 'profileText', 'userSexRole', 'userEthnicity'];
@@ -843,6 +910,7 @@
             return user;
         }
 
+        // ---------- عرض الصور (مع زر معرف لكل صورة إذا توفر) ----------
         function displayImages(images) {
             const container = document.getElementById('imagesContainer');
             if (!images.length) {
@@ -852,6 +920,7 @@
             images.sort((a, b) => (a.order || 999) - (b.order || 999));
             let html = '';
             images.forEach((img, idx) => {
+                const hasUserHandle = !!img.userHandle;
                 html += `
                     <div class="image-card">
                         <img class="image-preview" src="${img.url}" onclick="openModal(${idx})" loading="lazy" onerror="this.src='https://placehold.co/300x300/e2e8f0/475569?text=خطأ'">
@@ -863,7 +932,7 @@
                         <div class="image-actions">
                             <button onclick="copyToClipboard('${img.url}', event)"><i class="fas fa-copy"></i> نسخ</button>
                             <button onclick="downloadImage('${img.url}', event)"><i class="fas fa-download"></i> تحميل</button>
-                            ${currentUser.userHandle ? `<button onclick="copyUserHandle(event)"><i class="fas fa-user"></i> معرف</button>` : ''}
+                            ${hasUserHandle ? `<button onclick="copyUserHandle('${img.userHandle}', event)"><i class="fas fa-user"></i> معرف</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -871,6 +940,7 @@
             container.innerHTML = html;
         }
 
+        // ---------- عرض المواقع ----------
         function displayLocations(locations) {
             const container = document.getElementById('locationsContainer');
             if (!locations.length) {
@@ -903,6 +973,7 @@
             container.innerHTML = html;
         }
 
+        // ---------- عرض معلومات المستخدم ----------
         function displayUser(user) {
             const container = document.getElementById('userInfo');
             if (!Object.keys(user).length) {
@@ -933,12 +1004,14 @@
             container.innerHTML = html || '<div class="empty-state" style="grid-column: span 2;">لا توجد بيانات</div>';
         }
 
+        // ---------- تحديث الإحصائيات السريعة ----------
         function updateStats() {
             document.getElementById('statImages').textContent = currentImages.length;
             document.getElementById('statPrivate').textContent = currentImages.filter(i => i.isPrivate).length;
             document.getElementById('statLocations').textContent = currentLocations.length;
         }
 
+        // ---------- إحصائيات متقدمة عن JSON ----------
         function displayAdvancedStats(data) {
             const container = document.getElementById('advancedStats');
             function countKeys(obj) {
@@ -962,12 +1035,14 @@
             `;
         }
 
+        // ---------- البحث في الصور ----------
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             const filtered = currentImages.filter(img => img.url.toLowerCase().includes(term));
             displayImages(filtered);
         });
 
+        // ---------- دوال نافذة التكبير ----------
         function openModal(index) {
             if (!currentImages.length) return;
             currentImageIndex = index;
@@ -997,22 +1072,23 @@
             }
         }
 
+        // ---------- دوال مساعدة للنسخ والتحميل ----------
         function copyToClipboard(text, event) {
             if (event) event.stopPropagation();
-            navigator.clipboard.writeText(text).then(() => alert('تم النسخ'));
+            navigator.clipboard.writeText(text).then(() => showToast('📋 تم نسخ الرابط'));
         }
 
-        function copyUserHandle(event) {
+        function copyUserHandle(handle, event) {
             if (event) event.stopPropagation();
-            if (currentUser.userHandle) {
-                navigator.clipboard.writeText(currentUser.userHandle).then(() => alert('تم نسخ المعرف'));
+            if (handle) {
+                navigator.clipboard.writeText(handle).then(() => showToast('👤 تم نسخ المعرف'));
             } else {
-                alert('لا يوجد معرف مستخدم');
+                showToast('⚠️ لا يوجد معرف');
             }
         }
 
         function copyCoordinates(lat, lon) {
-            navigator.clipboard.writeText(`${lat}, ${lon}`).then(() => alert('تم نسخ الإحداثيات'));
+            navigator.clipboard.writeText(`${lat}, ${lon}`).then(() => showToast('📍 تم نسخ الإحداثيات'));
         }
 
         function downloadImage(url, event) {
@@ -1023,6 +1099,7 @@
             a.click();
         }
 
+        // ---------- مسح الكل ----------
         function clearAll() {
             document.getElementById('jsonInput').value = '';
             document.getElementById('imagesContainer').innerHTML = '<div class="empty-state">لا توجد صور بعد</div>';
@@ -1037,17 +1114,19 @@
             currentUser = {};
         }
 
+        // ---------- نسخ جميع الروابط ----------
         function copyAllUrls() {
-            if (!currentImages.length) return alert('لا توجد صور');
+            if (!currentImages.length) return showToast('لا توجد صور');
             const urls = currentImages.map(img => img.url).join('\n');
-            navigator.clipboard.writeText(urls).then(() => alert('تم نسخ جميع الروابط'));
+            navigator.clipboard.writeText(urls).then(() => showToast('تم نسخ جميع الروابط'));
         }
 
+        // ---------- تصدير CSV ----------
         function exportCSV() {
-            if (!currentImages.length) return alert('لا توجد صور');
-            let csv = 'الترتيب,الرابط,نوع\n';
+            if (!currentImages.length) return showToast('لا توجد صور');
+            let csv = 'الترتيب,الرابط,نوع,معرف المستخدم\n';
             currentImages.forEach((img, i) => {
-                csv += `${img.order || i+1},${img.url},${img.isPrivate ? 'خاص' : 'عام'}\n`;
+                csv += `${img.order || i+1},${img.url},${img.isPrivate ? 'خاص' : 'عام'},${img.userHandle || ''}\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
@@ -1056,17 +1135,18 @@
             a.click();
         }
 
+        // ---------- تحميل تقرير نصي ----------
         function downloadReport() {
-            if (!currentImages.length && !currentLocations.length) return alert('لا توجد بيانات');
+            if (!currentImages.length && !currentLocations.length) return showToast('لا توجد بيانات');
             let txt = `تقرير JSON\nتاريخ: ${new Date().toLocaleString('ar')}\n`;
             txt += `عدد الصور: ${currentImages.length}\nعدد المواقع: ${currentLocations.length}\n\n`;
             txt += 'الصور:\n';
             currentImages.forEach((img, i) => {
-                txt += `${i+1}. ${img.url} [${img.isPrivate ? 'خاص' : 'عام'}]\n`;
+                txt += `${i+1}. ${img.url} [${img.isPrivate ? 'خاص' : 'عام'}] معرف: ${img.userHandle || 'لا يوجد'}\n`;
             });
             txt += '\nالمواقع:\n';
             currentLocations.forEach((loc, i) => {
-                txt += `${i+1}. ${loc.latitude}, ${loc.longitude}\n`;
+                txt += `${i+1}. ${loc.latitude}, ${loc.longitude} (${loc.name})\n`;
             });
             const blob = new Blob([txt], { type: 'text/plain' });
             const a = document.createElement('a');
@@ -1075,19 +1155,22 @@
             a.click();
         }
 
+        // ---------- حفظ آخر JSON في المتصفح ----------
         function saveToLocal() {
             localStorage.setItem('lastJson', document.getElementById('jsonInput').value);
-            alert('تم حفظ آخر JSON في المتصفح');
+            showToast('تم حفظ آخر JSON في المتصفح');
         }
 
+        // ---------- مشاركة عبر رابط مشفر ----------
         function shareData() {
             const data = document.getElementById('jsonInput').value;
-            if (!data) return alert('لا يوجد JSON');
+            if (!data) return showToast('لا يوجد JSON');
             const encoded = btoa(encodeURIComponent(data));
             const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-            navigator.clipboard.writeText(url).then(() => alert('تم نسخ رابط المشاركة'));
+            navigator.clipboard.writeText(url).then(() => showToast('تم نسخ رابط المشاركة'));
         }
 
+        // ---------- تحميل عينة تجريبية ----------
         function loadSample() {
             const sample = {
                 result: {
@@ -1116,6 +1199,7 @@
             parseJSON();
         }
 
+        // ---------- عند تحميل الصفحة ----------
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
             const data = params.get('data');
@@ -1133,11 +1217,12 @@
                     document.getElementById('jsonInput').value = saved;
                     parseJSON();
                 } else {
-                    loadSample();
+                    loadSample(); // عينة ترحيبية
                 }
             }
         };
 
+        // ---------- سحب وإفلات الملف ----------
         const dropArea = document.getElementById('jsonInput');
         dropArea.addEventListener('dragover', e => e.preventDefault());
         dropArea.addEventListener('drop', e => {
@@ -1151,7 +1236,7 @@
                 };
                 reader.readAsText(file);
             } else {
-                alert('يرجى إسقاط ملف JSON صالح');
+                showToast('يرجى إسقاط ملف JSON صالح');
             }
         });
     </script>
