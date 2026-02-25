@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>عارض JSON - صور ومواقع المستخدمين</title>
+    <title>عارض JSON - صور ومواقع (يدعم مستخدم واحد أو عدة مستخدمين)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -41,7 +41,7 @@
         }
         .container {
             max-width: 1200px;
- margin: 0 auto;
+            margin: 0 auto;
         }
         .header {
             display: flex;
@@ -447,7 +447,7 @@
                 </div>
             </div>
             <div>
-                <!-- معلومات المستخدمين العامة (أول مستخدم كمثال) -->
+                <!-- معلومات أول مستخدم (إذا وجد) -->
                 <div class="info-card" id="userInfoCard" style="display: none;">
                     <h3><i class="fas fa-user"></i> معلومات المستخدم</h3>
                     <div id="userInfo" class="user-info-grid"></div>
@@ -507,7 +507,7 @@
                 }
             };
 
-            // ---------- تحليل JSON الرئيسي ----------
+            // ---------- تحليل JSON الرئيسي (يدعم الحالتين) ----------
             window.parseJSON = function() {
                 const jsonStr = document.getElementById('jsonInput').value.trim();
                 if (!jsonStr) {
@@ -518,41 +518,68 @@
                 try {
                     const data = JSON.parse(jsonStr);
 
-                    // استخراج الصور (مع ربط userHandle)
+                    // مصفوفة لتجميع الصور
                     const images = [];
                     const seenUrls = new Set();
 
+                    // مصفوفة لتجميع المواقع
+                    const locations = [];
+
+                    // دالة مساعدة لإضافة صورة
+                    const addImage = (url, order, isPrivate, userHandle) => {
+                        if (url && /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(url) && !seenUrls.has(url)) {
+                            seenUrls.add(url);
+                            images.push({ url, order, isPrivate, userHandle });
+                        }
+                    };
+
+                    // دالة مساعدة لإضافة موقع
+                    const addLocation = (location, name) => {
+                        if (location) {
+                            const lon = location.longitude || location.lon || location.lng;
+                            const lat = location.latitude || location.lat;
+                            if (lon !== undefined && lat !== undefined) {
+                                locations.push({
+                                    longitude: lon,
+                                    latitude: lat,
+                                    name: name || 'موقع'
+                                });
+                            }
+                        }
+                    };
+
+                    // التحقق من وجود result.users (مصفوفة)
                     if (data?.result?.users && Array.isArray(data.result.users)) {
+                        // حالة متعددة المستخدمين
                         data.result.users.forEach(user => {
                             const userHandle = user.userHandle || null;
+                            // إضافة صور هذا المستخدم
                             if (user.userImages && Array.isArray(user.userImages)) {
                                 user.userImages.forEach(img => {
                                     const url = img?.imageFile?.url;
-                                    if (url && /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i.test(url) && !seenUrls.has(url)) {
-                                        seenUrls.add(url);
-                                        images.push({
-                                            url: url,
-                                            order: img.order || null,
-                                            isPrivate: img.isPrivate || false,
-                                            userHandle: userHandle
-                                        });
-                                    }
+                                    addImage(url, img.order, img.isPrivate, userHandle);
                                 });
                             }
+                            // إضافة موقع هذا المستخدم
+                            addLocation(user.location, user.name);
                         });
-                    }
-
-                    // استخراج المواقع من جميع المستخدمين
-                    const locations = [];
-                    data?.result?.users?.forEach(user => {
-                        if (user.location && (user.location.longitude || user.location.lon || user.location.lng) && (user.location.latitude || user.location.lat)) {
-                            locations.push({
-                                longitude: user.location.longitude || user.location.lon || user.location.lng,
-                                latitude: user.location.latitude || user.location.lat,
-                                name: user.name || 'موقع'
+                    } 
+                    // التحقق من وجود result.user (مفرد)
+                    else if (data?.result?.user) {
+                        const user = data.result.user;
+                        const userHandle = user.userHandle || null;
+                        // إضافة صور المستخدم
+                        if (user.userImages && Array.isArray(user.userImages)) {
+                            user.userImages.forEach(img => {
+                                const url = img?.imageFile?.url;
+                                addImage(url, img.order, img.isPrivate, userHandle);
                             });
                         }
-                    });
+                        // إضافة موقع المستخدم
+                        addLocation(user.location, user.name);
+                    }
+
+                    // استخراج المواقع أيضاً من أي مكان آخر (اختياري) لكننا نكتفي بما سبق
 
                     currentImages = images;
                     currentLocations = locations;
@@ -568,8 +595,13 @@
                     document.getElementById('searchInput').style.display = 'block';
                     document.getElementById('searchInput').value = '';
 
-                    // عرض معلومات أول مستخدم (اختياري)
-                    const firstUser = data?.result?.users?.[0];
+                    // عرض معلومات أول مستخدم (إذا وجد)
+                    let firstUser = null;
+                    if (data?.result?.users && data.result.users.length > 0) {
+                        firstUser = data.result.users[0];
+                    } else if (data?.result?.user) {
+                        firstUser = data.result.user;
+                    }
                     if (firstUser) {
                         document.getElementById('userInfoCard').style.display = 'block';
                         displayUserInfo(firstUser);
@@ -827,8 +859,9 @@
                 }
             };
 
-            // تحميل عينة تجريبية
+            // تحميل عينة تجريبية (تختبر الحالتين)
             window.loadSample = function() {
+                // نستخدم عينة متعددة المستخدمين (يمكنك تغييرها)
                 const sample = {
                     result: {
                         users: [
