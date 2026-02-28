@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>عارض JSON وجلب المستخدمين بالـ IDs</title>
+    <title>عارض JSON وجلب بالـ IDs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* (نفس الأنماط السابقة) */
         * {
             margin: 0;
             padding: 0;
@@ -695,11 +696,22 @@
                 let idsText = document.getElementById('userIdsInput').value.trim();
                 if (!idsText) { showToast('الرجاء إدخال قائمة الـ IDs'); return; }
 
-                // محاولة تحليل النص كـ JSON أولاً (مصفوفة)
+                // محاولة تحليل النص كـ JSON (بأشكاله المختلفة)
                 let userIds = [];
                 try {
                     const parsed = JSON.parse(idsText);
-                    if (Array.isArray(parsed)) userIds = parsed;
+                    // إذا كان parsed مصفوفة مباشرة
+                    if (Array.isArray(parsed)) {
+                        userIds = parsed;
+                    }
+                    // إذا كان كائنًا يحوي result.userIds
+                    else if (parsed?.result?.userIds && Array.isArray(parsed.result.userIds)) {
+                        userIds = parsed.result.userIds;
+                    }
+                    // إذا كان كائنًا يحوي userIds مباشرة
+                    else if (parsed?.userIds && Array.isArray(parsed.userIds)) {
+                        userIds = parsed.userIds;
+                    }
                 } catch (e) {
                     // إذا لم يكن JSON صالحاً، نفترض أن كل سطر هو ID
                     userIds = idsText.split(/\n|,| /).map(s => s.trim()).filter(s => s.length > 0);
@@ -822,7 +834,15 @@
 
             window.loadSampleIds = function() {
                 // نضع عينة من الـ IDs التي أرسلها المستخدم
-                document.getElementById('userIdsInput').value = `["uFW8Q24WIb", "iz4Q7sGGZp", "9qJlqcaSNp"]`;
+                document.getElementById('userIdsInput').value = `{
+  "result": {
+    "userIds": [
+      "uFW8Q24WIb",
+      "iz4Q7sGGZp",
+      "9qJlqcaSNp"
+    ]
+  }
+}`;
                 // يمكن للمستخدم تعديلها
             };
 
