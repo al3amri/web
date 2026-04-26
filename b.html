@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>AskWho | عارض الملفات الشخصية</title>
+    <title>AskWho | عارض الملفات مع خرائط تفاعلية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         :root {
             --bg: #f4f7fb;
@@ -160,7 +163,7 @@
         }
         .profiles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 24px;
         }
         .profile-card {
@@ -170,10 +173,6 @@
             overflow: hidden;
             transition: 0.25s;
             box-shadow: var(--shadow);
-        }
-        .profile-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
         }
         .carousel {
             position: relative;
@@ -210,11 +209,9 @@
             font-size: 1rem;
             cursor: pointer;
             padding: 0 4px;
-            box-shadow: none;
         }
         .carousel-btn:hover {
             background: rgba(255,255,255,0.2);
-            transform: none;
         }
         .profile-info {
             padding: 16px 16px 12px;
@@ -271,6 +268,19 @@
             border-radius: 30px;
             padding: 4px 12px;
             font-size: 0.7rem;
+        }
+        .map-container {
+            height: 150px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 12px 0;
+            background: var(--bg);
+            position: relative;
+        }
+        .map-container .leaflet-container {
+            height: 100%;
+            width: 100%;
+            z-index: 1;
         }
         .actions {
             display: flex;
@@ -370,7 +380,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-users" style="color:var(--accent);"></i> AskWho · عارض الملفات</h1>
+            <h1><i class="fas fa-map-marked-alt" style="color:var(--accent);"></i> AskWho · عارض الملفات</h1>
             <div class="theme-toggle" onclick="document.body.classList.toggle('dark')">
                 <i class="fas fa-moon"></i> <span>ليلي</span>
             </div>
@@ -391,7 +401,7 @@
 
         <div id="profilesContainer" class="profiles-grid"></div>
         <div class="footer" style="text-align:center; margin-top:32px; font-size:0.75rem; color:var(--text-light);">
-            <p>جميع الحقوق محفوظة | يدعم معارض الصور والترتيب حسب الأقرب</p>
+            <p>جميع الحقوق محفوظة | يعرض الخريطة إذا وُجدت إحداثيات</p>
         </div>
     </div>
 
@@ -411,8 +421,8 @@
         let currentFiltered = [];
         let activeModalImages = [];
         let activeModalIndex = 0;
+        let allCarousels = new Map(); // لتخزين مؤشرات الكاروسيل لكل بطاقة
 
-        // دالة عرض رسالة
         function showToast(msg) {
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -421,7 +431,6 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
-        // دالة لصق من الحافظة
         window.pasteJSON = async function() {
             try {
                 const text = await navigator.clipboard.readText();
@@ -432,14 +441,12 @@
             }
         };
 
-        // استخراج الرقم من المسافة مثل "29 km away" -> 29
         function parseDistance(distanceStr) {
             if (!distanceStr) return Infinity;
             const match = distanceStr.match(/(\d+)/);
             return match ? parseInt(match[1], 10) : Infinity;
         }
 
-        // تحليل JSON وعرض البيانات
         window.parseData = function() {
             const raw = document.getElementById('jsonInput').value.trim();
             if (!raw) { showToast('أدخل JSON أولاً'); return; }
@@ -451,14 +458,10 @@
                 else if (json.result && Array.isArray(json.result)) profiles = json.result;
                 else { showToast('JSON لا يحتوي على مصفوفة data صالحة'); return; }
 
-                if (!profiles.length) { showToast('لا توجد بيانات'); return; }
-
-                // إضافة مسافة رقمية للترتيب
                 profiles = profiles.map(p => ({
                     ...p,
                     _distanceNum: parseDistance(p.distance)
                 }));
-                // ترتيب حسب الأقرب أولاً
                 profiles.sort((a,b) => a._distanceNum - b._distanceNum);
 
                 currentProfiles = profiles;
@@ -472,24 +475,39 @@
             }
         };
 
-        // دالة مساعدة لجمع كل صور الشخص
         function getAllImages(profile) {
             let images = [];
             if (profile.profile_image_imagekit) images.push(profile.profile_image_imagekit);
             if (profile.gallery && Array.isArray(profile.gallery)) {
                 images.push(...profile.gallery.filter(url => url && typeof url === 'string'));
             }
-            // إزالة التكرار
             return [...new Map(images.map(url => [url, url])).values()];
         }
 
-        // عرض البطاقات
+        // إنشاء خريطة باستخدام Leaflet
+        function initMap(elementId, lat, lng, name) {
+            if (!lat || !lng) return null;
+            const map = L.map(elementId).setView([lat, lng], 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            L.marker([lat, lng]).addTo(map).bindPopup(name || 'الموقع').openPopup();
+            return map;
+        }
+
         function renderProfiles(profiles) {
             const container = document.getElementById('profilesContainer');
             if (!profiles.length) {
                 container.innerHTML = '<div class="empty-state">🚫 لا توجد نتائج مطابقة</div>';
                 return;
             }
+
+            // إعادة تعيين الخرائط القديمة (لتجنب تراكم الخرائط)
+            if (window._maps) window._maps.forEach(m => m?.remove?.());
+            window._maps = [];
+
             let html = '';
             profiles.forEach((p, idx) => {
                 const profileId = p.id || p.local_id || 'غير معروف';
@@ -507,12 +525,12 @@
                 const occupation = p.occupation || '';
                 const interests = p.profile_interests || [];
                 const allImages = getAllImages(p);
-                const carouselId = `carousel-${idx}`;
-                
-                // إنشاء معرض مصغر
+                const hasLocation = p.latitude && p.longitude;
+                const mapId = `map-${idx}`;
+
                 html += `
                     <div class="profile-card" data-idx="${idx}">
-                        <div class="carousel" id="${carouselId}">
+                        <div class="carousel" id="carousel-${idx}">
                             <img class="carousel-image" src="${allImages[0] || ''}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=No+Image'">
                             ${allImages.length > 1 ? `<div class="carousel-nav">
                                 <button class="carousel-btn" data-dir="prev">‹</button>
@@ -536,6 +554,9 @@
                             ${occupation ? `<div class="info-row"><i class="fas fa-briefcase"></i> ${escapeHtml(occupation)}</div>` : ''}
                             ${statusText ? `<div class="info-row"><i class="fas fa-comment"></i> ${escapeHtml(statusText)}</div>` : ''}
                             ${interests.length ? `<div class="interests">${interests.map(i => `<span class="interest-tag">${escapeHtml(i.name)}</span>`).join('')}</div>` : ''}
+                            <div class="map-container" id="${mapId}">
+                                ${hasLocation ? '' : '<div style="text-align:center; padding:50px 0; color:var(--text-light);"><i class="fas fa-map"></i> لا توجد إحداثيات</div>'}
+                            </div>
                         </div>
                         <div class="actions">
                             <button onclick="copyId('${escapeHtml(String(profileId))}', event)"><i class="fas fa-id-card"></i> المعرف</button>
@@ -547,7 +568,7 @@
             });
             container.innerHTML = html;
 
-            // ربط أحداث الكاروسيل لكل بطاقة بعد التحميل
+            // تهيئة الكاروسيل لكل بطاقة (حدث الأزرار)
             profiles.forEach((p, idx) => {
                 const allImages = getAllImages(p);
                 if (allImages.length <= 1) return;
@@ -566,6 +587,22 @@
                 if (prevBtn) prevBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx-1); };
                 if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx+1); };
             });
+
+            // تهيئة الخرائط لكل بطاقة (تأخير قليل لضمان وجود العناصر)
+            setTimeout(() => {
+                profiles.forEach((p, idx) => {
+                    if (p.latitude && p.longitude) {
+                        const mapContainer = document.getElementById(`map-${idx}`);
+                        if (mapContainer && !mapContainer._mapInitialized) {
+                            const map = initMap(`map-${idx}`, p.latitude, p.longitude, p.firstname);
+                            if (map) {
+                                window._maps.push(map);
+                                mapContainer._mapInitialized = true;
+                            }
+                        }
+                    }
+                });
+            }, 50);
         }
 
         // فتح معرض التكبير
@@ -580,6 +617,7 @@
             document.getElementById('modalImage').src = activeModalImages[activeModalIndex];
             document.getElementById('imageModal').style.display = 'flex';
         };
+
         window.prevModalImage = function(e) {
             e.stopPropagation();
             if (!activeModalImages.length) return;
@@ -597,12 +635,10 @@
                 document.getElementById('imageModal').style.display = 'none';
         };
 
-        // نسخ المعرف
         window.copyId = function(id, event) {
             if (event) event.stopPropagation();
             navigator.clipboard.writeText(id).then(() => showToast('🆔 تم نسخ المعرف'));
         };
-        // نسخ جميع روابط الصور
         window.copyAllImages = function(joined, event) {
             if (event) event.stopPropagation();
             const urls = joined.split(',');
@@ -614,7 +650,6 @@
             statsDiv.innerHTML = `<div class="stat-card"><i class="fas fa-user-friends"></i> عدد الأشخاص: ${total}</div>`;
         }
 
-        // البحث
         document.getElementById('searchInput')?.addEventListener('input', (e) => {
             const term = e.target.value.trim().toLowerCase();
             if (!term) {
@@ -631,7 +666,6 @@
             updateStats(currentFiltered.length);
         });
 
-        // مسح الكل
         window.clearAll = function() {
             document.getElementById('jsonInput').value = '';
             document.getElementById('profilesContainer').innerHTML = '';
@@ -639,9 +673,9 @@
             document.getElementById('searchInput').style.display = 'none';
             currentProfiles = [];
             currentFiltered = [];
+            if (window._maps) window._maps.forEach(m => m?.remove?.());
         };
 
-        // تحميل عينة من البيانات المقدمة (أول 5 أشخاص كعينة)
         window.loadSample = function() {
             const sampleJson = {
                 "code": "1",
@@ -659,6 +693,8 @@
                         "zodiac": "♊ Gemini",
                         "status": "ENTP, I’m dora the explorer",
                         "main_goal": { "emoji": "😎", "title": "Community" },
+                        "latitude": 24.4539,
+                        "longitude": 54.3773,
                         "profile_interests": [{ "name": "☕ Coffee chats" }, { "name": "⛰️ Hiking trips" }],
                         "gallery": ["https://ik.imagekit.io/mxndmmcqtl/user_image/69a85a2648956b48a4ee74076caa2d02.jpg?tr=w-828"]
                     },
@@ -673,6 +709,8 @@
                         "nationality": "🇦🇪 Emirati",
                         "zodiac": "♎ Libra",
                         "main_goal": { "emoji": "👋", "title": "New Friends" },
+                        "latitude": 24.4667,
+                        "longitude": 54.3667,
                         "profile_interests": [{ "name": "☕ Coffee" }, { "name": "🍿 Cinema" }],
                         "gallery": []
                     }
@@ -692,7 +730,6 @@
             });
         }
 
-        // سحب وإفلات
         const dropArea = document.getElementById('jsonInput');
         if (dropArea) {
             dropArea.addEventListener('dragover', e => e.preventDefault());
