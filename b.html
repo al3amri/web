@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        /* (جميع الأنماط كما هي، لم تتغير) */
         * {
             margin: 0;
             padding: 0;
@@ -401,7 +402,7 @@
 
         <div id="profilesContainer" class="profiles-grid"></div>
         <div class="footer" style="text-align:center; margin-top:32px; font-size:0.75rem; color:var(--text-light);">
-            <p>جميع الحقوق محفوظة | يعرض الخريطة إذا وُجدت إحداثيات</p>
+            <p>جميع الحقوق محفوظة | يعرض الخريطة فقط إذا وُجدت إحداثيات</p>
         </div>
     </div>
 
@@ -421,7 +422,7 @@
         let currentFiltered = [];
         let activeModalImages = [];
         let activeModalIndex = 0;
-        let allCarousels = new Map(); // لتخزين مؤشرات الكاروسيل لكل بطاقة
+        let allCarousels = new Map();
 
         function showToast(msg) {
             const toast = document.createElement('div');
@@ -484,7 +485,6 @@
             return [...new Map(images.map(url => [url, url])).values()];
         }
 
-        // إنشاء خريطة باستخدام Leaflet
         function initMap(elementId, lat, lng, name) {
             if (!lat || !lng) return null;
             const map = L.map(elementId).setView([lat, lng], 12);
@@ -504,7 +504,7 @@
                 return;
             }
 
-            // إعادة تعيين الخرائط القديمة (لتجنب تراكم الخرائط)
+            // تنظيف الخرائط القديمة
             if (window._maps) window._maps.forEach(m => m?.remove?.());
             window._maps = [];
 
@@ -525,7 +525,7 @@
                 const occupation = p.occupation || '';
                 const interests = p.profile_interests || [];
                 const allImages = getAllImages(p);
-                const hasLocation = p.latitude && p.longitude;
+                const hasLocation = !!(p.latitude && p.longitude);
                 const mapId = `map-${idx}`;
 
                 html += `
@@ -554,9 +554,7 @@
                             ${occupation ? `<div class="info-row"><i class="fas fa-briefcase"></i> ${escapeHtml(occupation)}</div>` : ''}
                             ${statusText ? `<div class="info-row"><i class="fas fa-comment"></i> ${escapeHtml(statusText)}</div>` : ''}
                             ${interests.length ? `<div class="interests">${interests.map(i => `<span class="interest-tag">${escapeHtml(i.name)}</span>`).join('')}</div>` : ''}
-                            <div class="map-container" id="${mapId}">
-                                ${hasLocation ? '' : '<div style="text-align:center; padding:50px 0; color:var(--text-light);"><i class="fas fa-map"></i> لا توجد إحداثيات</div>'}
-                            </div>
+                            ${hasLocation ? `<div class="map-container" id="${mapId}"></div>` : ''}
                         </div>
                         <div class="actions">
                             <button onclick="copyId('${escapeHtml(String(profileId))}', event)"><i class="fas fa-id-card"></i> المعرف</button>
@@ -568,7 +566,7 @@
             });
             container.innerHTML = html;
 
-            // تهيئة الكاروسيل لكل بطاقة (حدث الأزرار)
+            // تهيئة الكاروسيل (الأزرار)
             profiles.forEach((p, idx) => {
                 const allImages = getAllImages(p);
                 if (allImages.length <= 1) return;
@@ -588,7 +586,7 @@
                 if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx+1); };
             });
 
-            // تهيئة الخرائط لكل بطاقة (تأخير قليل لضمان وجود العناصر)
+            // تهيئة الخرائط فقط للحالات التي فيها إحداثيات
             setTimeout(() => {
                 profiles.forEach((p, idx) => {
                     if (p.latitude && p.longitude) {
@@ -709,8 +707,7 @@
                         "nationality": "🇦🇪 Emirati",
                         "zodiac": "♎ Libra",
                         "main_goal": { "emoji": "👋", "title": "New Friends" },
-                        "latitude": 24.4667,
-                        "longitude": 54.3667,
+                        // لا توجد إحداثيات هنا لاختبار إخفاء الخريطة
                         "profile_interests": [{ "name": "☕ Coffee" }, { "name": "🍿 Cinema" }],
                         "gallery": []
                     }
