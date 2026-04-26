@@ -21,7 +21,7 @@
             --accent-light: #8b5cf6;
             --border: #e2e8f0;
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
-            --radius: 20px;
+            --radius: 24px;
         }
         body.dark {
             --bg: #0f172a;
@@ -40,7 +40,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
         }
         .header {
@@ -49,26 +49,25 @@
             align-items: center;
             margin-bottom: 24px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
         .header h1 {
             font-size: 1.8rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-weight: 700;
         }
         .theme-toggle {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 40px;
-            padding: 8px 18px;
+            padding: 8px 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: var(--shadow);
             font-weight: 500;
+            box-shadow: var(--shadow);
         }
         .input-area {
             background: var(--surface);
@@ -89,8 +88,8 @@
             font-family: monospace;
             direction: ltr;
             resize: vertical;
+            font-size: 13px;
             margin-bottom: 16px;
-            font-size: 14px;
         }
         textarea:focus {
             outline: none;
@@ -106,7 +105,6 @@
             padding: 10px 20px;
             border: none;
             border-radius: 40px;
-            font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             background: var(--surface);
@@ -114,9 +112,9 @@
             border: 1px solid var(--border);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: 0.2s;
-            box-shadow: var(--shadow);
+            font-size: 0.9rem;
         }
         button.primary {
             background: var(--accent);
@@ -135,17 +133,16 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .stat-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 8px 20px;
+            border-radius: 60px;
+            padding: 6px 20px;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: var(--shadow);
             font-weight: 500;
         }
         .search-box {
@@ -161,10 +158,6 @@
             background-repeat: no-repeat;
             background-position: right 20px center;
         }
-        .search-box:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
         .profiles-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -175,43 +168,16 @@
             border: 1px solid var(--border);
             border-radius: 28px;
             overflow: hidden;
-            transition: all 0.25s ease;
+            transition: 0.25s;
             box-shadow: var(--shadow);
         }
         .profile-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        .profile-header {
-            padding: 16px 18px 0 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        .profile-name {
-            font-size: 1.2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .profile-badge {
-            background: var(--accent);
-            color: white;
-            border-radius: 30px;
-            padding: 4px 10px;
-            font-size: 0.7rem;
-            font-weight: normal;
-        }
-        .profile-id {
-            font-size: 0.7rem;
-            color: var(--text-light);
-            direction: ltr;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
         }
         .carousel {
             position: relative;
-            margin: 12px 12px 0 12px;
+            margin: 16px 16px 0 16px;
             border-radius: 24px;
             overflow: hidden;
             background: var(--bg);
@@ -227,23 +193,23 @@
             position: absolute;
             bottom: 12px;
             right: 12px;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            border-radius: 30px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 40px;
             padding: 6px 12px;
             color: white;
             font-size: 0.75rem;
             display: flex;
-            gap: 8px;
+            gap: 12px;
             z-index: 2;
         }
         .carousel-btn {
-            background: transparent;
+            background: none;
             border: none;
             color: white;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
-            padding: 2px;
+            padding: 0 4px;
             box-shadow: none;
         }
         .carousel-btn:hover {
@@ -253,11 +219,38 @@
         .profile-info {
             padding: 16px 16px 12px;
         }
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .profile-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .profile-badge {
+            background: var(--accent);
+            color: white;
+            border-radius: 40px;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+        }
+        .profile-id {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            direction: ltr;
+        }
         .info-row {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 0.85rem;
             color: var(--text-light);
             flex-wrap: wrap;
@@ -270,7 +263,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin: 12px 0 8px;
+            margin: 12px 0;
         }
         .interest-tag {
             background: var(--bg);
@@ -278,7 +271,6 @@
             border-radius: 30px;
             padding: 4px 12px;
             font-size: 0.7rem;
-            color: var(--text);
         }
         .actions {
             display: flex;
@@ -293,42 +285,15 @@
             font-size: 0.75rem;
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            z-index: 2000;
-            animation: fadeOut 2s ease forwards;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        @keyframes fadeOut {
-            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
         }
         .modal {
             display: none;
             position: fixed;
-            top:0; left:0; width:100%; height:100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(8px);
         }
         .modal-content {
             position: relative;
@@ -339,7 +304,6 @@
             max-width: 100%;
             max-height: 85vh;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         .modal-close {
             position: absolute;
@@ -373,20 +337,32 @@
         }
         .modal-prev { right: -60px; }
         .modal-next { left: -60px; }
-        @media (max-width:768px){
+        @media (max-width: 768px) {
             .modal-prev { right: 10px; }
             .modal-next { left: 10px; }
         }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            z-index: 2000;
+            animation: fadeOut 2s ease forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
         .empty-state {
             text-align: center;
-            color: var(--text-light);
-            padding: 60px 20px;
-            font-size: 1.1rem;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.75rem;
+            padding: 60px;
             color: var(--text-light);
         }
     </style>
@@ -414,12 +390,12 @@
         <input type="text" id="searchInput" class="search-box" placeholder="ابحث بالاسم أو المدينة..." style="display: none;">
 
         <div id="profilesContainer" class="profiles-grid"></div>
-        <div class="footer">
-            <p>عرض الصور والمعلومات من JSON | يدعم معارض الصور المتعددة</p>
+        <div class="footer" style="text-align:center; margin-top:32px; font-size:0.75rem; color:var(--text-light);">
+            <p>جميع الحقوق محفوظة | يدعم معارض الصور والترتيب حسب الأقرب</p>
         </div>
     </div>
 
-    <!-- مودال العرض -->
+    <!-- مودال الصور -->
     <div id="imageModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal(event)">&times;</span>
@@ -430,13 +406,13 @@
     </div>
 
     <script>
-        // ---------- المتغيرات العامة ----------
-        let currentProfiles = [];      // مصفوفة الأشخاص بعد التحليل
+        // متغيرات عامة
+        let currentProfiles = [];
         let currentFiltered = [];
-        let activeModalImages = [];     // مصفوفة الروابط المعروضة حالياً في المودال
+        let activeModalImages = [];
         let activeModalIndex = 0;
 
-        // ---------- دوال مساعدة ----------
+        // دالة عرض رسالة
         function showToast(msg) {
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -445,7 +421,7 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
-        // لصق من الحافظة
+        // دالة لصق من الحافظة
         window.pasteJSON = async function() {
             try {
                 const text = await navigator.clipboard.readText();
@@ -456,28 +432,35 @@
             }
         };
 
-        // تحليل JSON
+        // استخراج الرقم من المسافة مثل "29 km away" -> 29
+        function parseDistance(distanceStr) {
+            if (!distanceStr) return Infinity;
+            const match = distanceStr.match(/(\d+)/);
+            return match ? parseInt(match[1], 10) : Infinity;
+        }
+
+        // تحليل JSON وعرض البيانات
         window.parseData = function() {
             const raw = document.getElementById('jsonInput').value.trim();
             if (!raw) { showToast('أدخل JSON أولاً'); return; }
             try {
                 const json = JSON.parse(raw);
-                // توقع وجود data كمصفوفة
                 let profiles = [];
-                if (Array.isArray(json)) {
-                    profiles = json;
-                } else if (json.data && Array.isArray(json.data)) {
-                    profiles = json.data;
-                } else if (json.result && Array.isArray(json.result)) {
-                    profiles = json.result;
-                } else {
-                    showToast('JSON لا يحتوي على مصفوفة data صالحة');
-                    return;
-                }
-                if (profiles.length === 0) {
-                    showToast('لا توجد بيانات');
-                    return;
-                }
+                if (Array.isArray(json)) profiles = json;
+                else if (json.data && Array.isArray(json.data)) profiles = json.data;
+                else if (json.result && Array.isArray(json.result)) profiles = json.result;
+                else { showToast('JSON لا يحتوي على مصفوفة data صالحة'); return; }
+
+                if (!profiles.length) { showToast('لا توجد بيانات'); return; }
+
+                // إضافة مسافة رقمية للترتيب
+                profiles = profiles.map(p => ({
+                    ...p,
+                    _distanceNum: parseDistance(p.distance)
+                }));
+                // ترتيب حسب الأقرب أولاً
+                profiles.sort((a,b) => a._distanceNum - b._distanceNum);
+
                 currentProfiles = profiles;
                 currentFiltered = [...profiles];
                 renderProfiles(currentFiltered);
@@ -488,6 +471,17 @@
                 showToast('JSON غير صالح: '+e.message);
             }
         };
+
+        // دالة مساعدة لجمع كل صور الشخص
+        function getAllImages(profile) {
+            let images = [];
+            if (profile.profile_image_imagekit) images.push(profile.profile_image_imagekit);
+            if (profile.gallery && Array.isArray(profile.gallery)) {
+                images.push(...profile.gallery.filter(url => url && typeof url === 'string'));
+            }
+            // إزالة التكرار
+            return [...new Map(images.map(url => [url, url])).values()];
+        }
 
         // عرض البطاقات
         function renderProfiles(profiles) {
@@ -500,7 +494,7 @@
             profiles.forEach((p, idx) => {
                 const profileId = p.id || p.local_id || 'غير معروف';
                 const name = p.firstname || 'بدون اسم';
-                const age = p.age ? `, ${p.age}` : '';
+                const age = p.age ? `، ${p.age}` : '';
                 const city = p.city || '';
                 const distance = p.distance || '';
                 const nationality = p.nationality || '';
@@ -511,36 +505,29 @@
                 const personality = p.personality_type?.title || '';
                 const relationship = p.relationship_status || '';
                 const occupation = p.occupation || '';
-                // اهتمامات
                 const interests = p.profile_interests || [];
-                // تجميع الصور (الأولى أساسية ثم باقي المعرض)
-                let allImages = [];
-                if (p.profile_image_imagekit && typeof p.profile_image_imagekit === 'string')
-                    allImages.push(p.profile_image_imagekit);
-                if (p.gallery && Array.isArray(p.gallery) && p.gallery.length) {
-                    allImages.push(...p.gallery.filter(url => url && typeof url === 'string'));
-                }
-                // إزالة التكرار
-                allImages = [...new Map(allImages.map(url => [url, url])).values()];
-
-                // إنشاء كائن carousel لكل شخص (سيتم التحكم به عبر JS لاحقاً)
+                const allImages = getAllImages(p);
                 const carouselId = `carousel-${idx}`;
+                
+                // إنشاء معرض مصغر
                 html += `
-                    <div class="profile-card" data-profile-idx="${idx}">
-                        <div class="profile-header">
-                            <div>
+                    <div class="profile-card" data-idx="${idx}">
+                        <div class="carousel" id="${carouselId}">
+                            <img class="carousel-image" src="${allImages[0] || ''}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=No+Image'">
+                            ${allImages.length > 1 ? `<div class="carousel-nav">
+                                <button class="carousel-btn" data-dir="prev">‹</button>
+                                <span>1/${allImages.length}</span>
+                                <button class="carousel-btn" data-dir="next">›</button>
+                            </div>` : ''}
+                        </div>
+                        <div class="profile-info">
+                            <div class="info-header">
                                 <div class="profile-name">
                                     ${escapeHtml(name)}${age}
                                     ${mainGoal ? `<span class="profile-badge">${mainGoalEmoji} ${escapeHtml(mainGoal)}</span>` : ''}
                                 </div>
-                                <div class="profile-id">🆔 ${escapeHtml(profileId)}</div>
+                                <div class="profile-id">🆔 ${escapeHtml(String(profileId))}</div>
                             </div>
-                        </div>
-                        <div class="carousel" id="${carouselId}">
-                            <img class="carousel-image" src="${allImages[0] || ''}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=No+Image'">
-                            ${allImages.length > 1 ? `<div class="carousel-nav"><button class="carousel-btn" data-dir="prev">‹</button><span>1/${allImages.length}</span><button class="carousel-btn" data-dir="next">›</button></div>` : ''}
-                        </div>
-                        <div class="profile-info">
                             ${city ? `<div class="info-row"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(city)} ${distance ? `· ${escapeHtml(distance)}` : ''}</div>` : ''}
                             ${nationality ? `<div class="info-row"><i class="fas fa-flag"></i> ${escapeHtml(nationality)}</div>` : ''}
                             ${zodiac ? `<div class="info-row"><i class="fas fa-star"></i> ${escapeHtml(zodiac)}</div>` : ''}
@@ -551,7 +538,7 @@
                             ${interests.length ? `<div class="interests">${interests.map(i => `<span class="interest-tag">${escapeHtml(i.name)}</span>`).join('')}</div>` : ''}
                         </div>
                         <div class="actions">
-                            <button onclick="copyId('${escapeHtml(profileId)}', event)"><i class="fas fa-id-card"></i> المعرف</button>
+                            <button onclick="copyId('${escapeHtml(String(profileId))}', event)"><i class="fas fa-id-card"></i> المعرف</button>
                             <button onclick="copyAllImages('${allImages.join(',')}', event)"><i class="fas fa-images"></i> الروابط</button>
                             <button onclick="openGallery(${idx}, 0, event)"><i class="fas fa-expand"></i> معرض</button>
                         </div>
@@ -560,60 +547,48 @@
             });
             container.innerHTML = html;
 
-            // إضافة أحداث الكاروسيل لكل بطاقة بعد التحميل
+            // ربط أحداث الكاروسيل لكل بطاقة بعد التحميل
             profiles.forEach((p, idx) => {
-                const allImages = getAllImagesForProfile(p);
+                const allImages = getAllImages(p);
                 if (allImages.length <= 1) return;
                 const carouselDiv = document.getElementById(`carousel-${idx}`);
                 if (!carouselDiv) return;
                 const imgEl = carouselDiv.querySelector('.carousel-image');
                 const navSpan = carouselDiv.querySelector('.carousel-nav span');
-                let currentIndex = 0;
-                const updateImage = (newIndex) => {
-                    currentIndex = (newIndex + allImages.length) % allImages.length;
-                    imgEl.src = allImages[currentIndex];
-                    if (navSpan) navSpan.innerText = `${currentIndex+1}/${allImages.length}`;
+                let currentIdx = 0;
+                const update = (newIdx) => {
+                    currentIdx = (newIdx + allImages.length) % allImages.length;
+                    imgEl.src = allImages[currentIdx];
+                    if (navSpan) navSpan.innerText = `${currentIdx+1}/${allImages.length}`;
                 };
                 const prevBtn = carouselDiv.querySelector('.carousel-btn[data-dir="prev"]');
                 const nextBtn = carouselDiv.querySelector('.carousel-btn[data-dir="next"]');
-                if (prevBtn) prevBtn.onclick = (e) => { e.stopPropagation(); updateImage(currentIndex-1); };
-                if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); updateImage(currentIndex+1); };
+                if (prevBtn) prevBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx-1); };
+                if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx+1); };
             });
         }
 
-        // دالة لجمع كل صور الشخص (مركزية)
-        function getAllImagesForProfile(p) {
-            let images = [];
-            if (p.profile_image_imagekit && typeof p.profile_image_imagekit === 'string')
-                images.push(p.profile_image_imagekit);
-            if (p.gallery && Array.isArray(p.gallery) && p.gallery.length)
-                images.push(...p.gallery.filter(url => url && typeof url === 'string'));
-            return [...new Map(images.map(url => [url, url])).values()];
-        }
-
-        // فتح معرض للمستخدم المحدد
+        // فتح معرض التكبير
         window.openGallery = function(profileIdx, startIndex, event) {
             if (event) event.stopPropagation();
             const profile = currentFiltered[profileIdx];
             if (!profile) return;
-            const allImages = getAllImagesForProfile(profile);
-            if (!allImages.length) return;
-            activeModalImages = allImages;
-            activeModalIndex = startIndex % allImages.length;
+            const images = getAllImages(profile);
+            if (!images.length) return;
+            activeModalImages = images;
+            activeModalIndex = startIndex % images.length;
             document.getElementById('modalImage').src = activeModalImages[activeModalIndex];
             document.getElementById('imageModal').style.display = 'flex';
         };
-
-        // التنقل في المودال
         window.prevModalImage = function(e) {
             e.stopPropagation();
-            if (activeModalImages.length === 0) return;
+            if (!activeModalImages.length) return;
             activeModalIndex = (activeModalIndex - 1 + activeModalImages.length) % activeModalImages.length;
             document.getElementById('modalImage').src = activeModalImages[activeModalIndex];
         };
         window.nextModalImage = function(e) {
             e.stopPropagation();
-            if (activeModalImages.length === 0) return;
+            if (!activeModalImages.length) return;
             activeModalIndex = (activeModalIndex + 1) % activeModalImages.length;
             document.getElementById('modalImage').src = activeModalImages[activeModalIndex];
         };
@@ -627,15 +602,13 @@
             if (event) event.stopPropagation();
             navigator.clipboard.writeText(id).then(() => showToast('🆔 تم نسخ المعرف'));
         };
-        // نسخ جميع الروابط
-        window.copyAllImages = function(joinedUrls, event) {
+        // نسخ جميع روابط الصور
+        window.copyAllImages = function(joined, event) {
             if (event) event.stopPropagation();
-            const urls = joinedUrls.split(',');
-            const text = urls.join('\n');
-            navigator.clipboard.writeText(text).then(() => showToast(`📸 تم نسخ ${urls.length} رابط`));
+            const urls = joined.split(',');
+            navigator.clipboard.writeText(urls.join('\n')).then(() => showToast(`📸 تم نسخ ${urls.length} رابط`));
         };
 
-        // تحديث الإحصائيات
         function updateStats(total) {
             const statsDiv = document.getElementById('stats');
             statsDiv.innerHTML = `<div class="stat-card"><i class="fas fa-user-friends"></i> عدد الأشخاص: ${total}</div>`;
@@ -668,7 +641,7 @@
             currentFiltered = [];
         };
 
-        // تحميل عينة من البيانات المقدمة
+        // تحميل عينة من البيانات المقدمة (أول 5 أشخاص كعينة)
         window.loadSample = function() {
             const sampleJson = {
                 "code": "1",
@@ -679,14 +652,13 @@
                         "id": 732846,
                         "firstname": "Meera",
                         "age": 26,
-                        "gender": "Female",
                         "profile_image_imagekit": "https://ik.imagekit.io/mxndmmcqtl/profile_image/8834771d36c88b19e5e68ce48fb9ced9.jpg?tr=w-828",
                         "city": "Abu Dhabi",
                         "distance": "29 km away",
-                        "main_goal": { "icon": "", "emoji": "😎", "title": "Community" },
                         "nationality": "🇦🇪 Emirati",
                         "zodiac": "♊ Gemini",
                         "status": "ENTP, I’m dora the explorer",
+                        "main_goal": { "emoji": "😎", "title": "Community" },
                         "profile_interests": [{ "name": "☕ Coffee chats" }, { "name": "⛰️ Hiking trips" }],
                         "gallery": ["https://ik.imagekit.io/mxndmmcqtl/user_image/69a85a2648956b48a4ee74076caa2d02.jpg?tr=w-828"]
                     },
@@ -698,9 +670,9 @@
                         "profile_image_imagekit": "https://ik.imagekit.io/mxndmmcqtl/profile_image/0bfe5d74bf9a357d366f6ead94ab3d41.jpg?tr=w-828",
                         "city": "Abu Dhabi",
                         "distance": "35 km away",
-                        "main_goal": { "emoji": "👋", "title": "New Friends" },
                         "nationality": "🇦🇪 Emirati",
                         "zodiac": "♎ Libra",
+                        "main_goal": { "emoji": "👋", "title": "New Friends" },
                         "profile_interests": [{ "name": "☕ Coffee" }, { "name": "🍿 Cinema" }],
                         "gallery": []
                     }
@@ -709,6 +681,16 @@
             document.getElementById('jsonInput').value = JSON.stringify(sampleJson, null, 2);
             parseData();
         };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
 
         // سحب وإفلات
         const dropArea = document.getElementById('jsonInput');
@@ -725,16 +707,6 @@
                     };
                     reader.readAsText(file);
                 } else showToast('يرجى إسقاط ملف JSON صالح');
-            });
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
             });
         }
     </script>
