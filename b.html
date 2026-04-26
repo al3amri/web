@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>AskWho | عارض الملفات مع خرائط تفاعلية</title>
+    <title>AskWho | عارض الملفات (يدعم مستخدم واحد أو عدة مستخدمين)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* (جميع الأنماط كما هي، لم تتغير) */
+        /* جميع الأنماط كما هي سابقة ولكن تم تعديل بعض التنسيقات لتتناسب مع المعلومات الإضافية */
         * {
             margin: 0;
             padding: 0;
@@ -164,7 +163,7 @@
         }
         .profiles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 24px;
         }
         .profile-card {
@@ -388,7 +387,7 @@
         </div>
 
         <div class="input-area">
-            <textarea id="jsonInput" placeholder='الصق JSON هنا (يجب أن يحتوي على مصفوفة "data")...' dir="ltr"></textarea>
+            <textarea id="jsonInput" placeholder='الصق JSON هنا (يدعم data كمصفوفة أو ككائن)...' dir="ltr"></textarea>
             <div class="btn-group">
                 <button class="primary" onclick="parseData()"><i class="fas fa-play"></i> عرض</button>
                 <button onclick="pasteJSON()"><i class="fas fa-paste"></i> لصق</button>
@@ -402,11 +401,10 @@
 
         <div id="profilesContainer" class="profiles-grid"></div>
         <div class="footer" style="text-align:center; margin-top:32px; font-size:0.75rem; color:var(--text-light);">
-            <p>جميع الحقوق محفوظة | يعرض الخريطة فقط إذا وُجدت إحداثيات</p>
+            <p>جميع الحقوق محفوظة | يدعم مصفوفة أو كائن واحد، ويعرض الخريطة عند وجود إحداثيات</p>
         </div>
     </div>
 
-    <!-- مودال الصور -->
     <div id="imageModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal(event)">&times;</span>
@@ -417,12 +415,10 @@
     </div>
 
     <script>
-        // متغيرات عامة
         let currentProfiles = [];
         let currentFiltered = [];
         let activeModalImages = [];
         let activeModalIndex = 0;
-        let allCarousels = new Map();
 
         function showToast(msg) {
             const toast = document.createElement('div');
@@ -454,11 +450,26 @@
             try {
                 const json = JSON.parse(raw);
                 let profiles = [];
-                if (Array.isArray(json)) profiles = json;
-                else if (json.data && Array.isArray(json.data)) profiles = json.data;
-                else if (json.result && Array.isArray(json.result)) profiles = json.result;
-                else { showToast('JSON لا يحتوي على مصفوفة data صالحة'); return; }
+                // دعم الحالتين: data كمصفوفة أو كائن
+                if (Array.isArray(json)) {
+                    profiles = json;
+                } else if (json.data && Array.isArray(json.data)) {
+                    profiles = json.data;
+                } else if (json.data && typeof json.data === 'object') {
+                    // حالة المستخدم الواحد (كائن)
+                    profiles = [json.data];
+                } else if (json.result && Array.isArray(json.result)) {
+                    profiles = json.result;
+                } else if (json.result && typeof json.result === 'object') {
+                    profiles = [json.result];
+                } else {
+                    showToast('JSON لا يحتوي على data صالحة (لا مصفوفة ولا كائن)');
+                    return;
+                }
 
+                if (!profiles.length) { showToast('لا توجد بيانات'); return; }
+
+                // إضافة مسافة رقمية للترتيب
                 profiles = profiles.map(p => ({
                     ...p,
                     _distanceNum: parseDistance(p.distance)
@@ -476,9 +487,12 @@
             }
         };
 
+        // دالة لجمع الصور من أي بنية (profile_image_imagekit أو profile_image_thumbnail أو gallery)
         function getAllImages(profile) {
             let images = [];
             if (profile.profile_image_imagekit) images.push(profile.profile_image_imagekit);
+            else if (profile.profile_image_thumbnail) images.push(profile.profile_image_thumbnail);
+            else if (profile.profile_image) images.push(profile.profile_image);
             if (profile.gallery && Array.isArray(profile.gallery)) {
                 images.push(...profile.gallery.filter(url => url && typeof url === 'string'));
             }
@@ -487,13 +501,13 @@
 
         function initMap(elementId, lat, lng, name) {
             if (!lat || !lng) return null;
-            const map = L.map(elementId).setView([lat, lng], 12);
+            const map = L.map(elementId).setView([parseFloat(lat), parseFloat(lng)], 12);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
                 subdomains: 'abcd',
                 maxZoom: 19
             }).addTo(map);
-            L.marker([lat, lng]).addTo(map).bindPopup(name || 'الموقع').openPopup();
+            L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map).bindPopup(name || 'الموقع').openPopup();
             return map;
         }
 
@@ -504,18 +518,17 @@
                 return;
             }
 
-            // تنظيف الخرائط القديمة
             if (window._maps) window._maps.forEach(m => m?.remove?.());
             window._maps = [];
 
             let html = '';
             profiles.forEach((p, idx) => {
                 const profileId = p.id || p.local_id || 'غير معروف';
-                const name = p.firstname || 'بدون اسم';
+                const name = (p.firstname || '') + (p.lastname ? ' ' + p.lastname : '');
                 const age = p.age ? `، ${p.age}` : '';
                 const city = p.city || '';
                 const distance = p.distance || '';
-                const nationality = p.nationality || '';
+                const nationality = p.nationality || p.nationality_icon || '';
                 const zodiac = p.zodiac || '';
                 const statusText = p.status || '';
                 const mainGoal = p.main_goal?.title || '';
@@ -525,13 +538,29 @@
                 const occupation = p.occupation || '';
                 const interests = p.profile_interests || [];
                 const allImages = getAllImages(p);
-                const hasLocation = !!(p.latitude && p.longitude);
+                const hasLocation = !!(p.lat || p.latitude) && !!(p.lng || p.longitude);
                 const mapId = `map-${idx}`;
+
+                // معلومات إضافية
+                const email = p.email || '';
+                const phone = p.phone || '';
+                const instagram = p.insta_profile || '';
+                const gender = p.gender || '';
+                const verification = p.verification_status || '';
+                const eventHost = p.event_host_status || '';
+                const freemium = p.freemium_status || '';
+                const appVersion = p.app_version || '';
+                const deviceType = p.device_type === 'I' ? 'iOS' : (p.device_type === 'A' ? 'Android' : '');
+                const friendsCount = p.count_friends || 0;
+                const isPrivateProfile = p.account_settings?.is_private_profile ? 'خاص' : 'عام';
+                const createdAt = p.created_at_raw || (p.created_at ? new Date(p.created_at * 1000).toLocaleDateString('ar') : '');
+                const birthday = p.birthday || '';
+                const accountSettings = p.account_settings;
 
                 html += `
                     <div class="profile-card" data-idx="${idx}">
                         <div class="carousel" id="carousel-${idx}">
-                            <img class="carousel-image" src="${allImages[0] || ''}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=No+Image'">
+                            <img class="carousel-image" src="${allImages[0] || ''}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=لا+صورة'">
                             ${allImages.length > 1 ? `<div class="carousel-nav">
                                 <button class="carousel-btn" data-dir="prev">‹</button>
                                 <span>1/${allImages.length}</span>
@@ -541,7 +570,7 @@
                         <div class="profile-info">
                             <div class="info-header">
                                 <div class="profile-name">
-                                    ${escapeHtml(name)}${age}
+                                    ${escapeHtml(name.trim() || 'بدون اسم')}${age}
                                     ${mainGoal ? `<span class="profile-badge">${mainGoalEmoji} ${escapeHtml(mainGoal)}</span>` : ''}
                                 </div>
                                 <div class="profile-id">🆔 ${escapeHtml(String(profileId))}</div>
@@ -549,10 +578,22 @@
                             ${city ? `<div class="info-row"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(city)} ${distance ? `· ${escapeHtml(distance)}` : ''}</div>` : ''}
                             ${nationality ? `<div class="info-row"><i class="fas fa-flag"></i> ${escapeHtml(nationality)}</div>` : ''}
                             ${zodiac ? `<div class="info-row"><i class="fas fa-star"></i> ${escapeHtml(zodiac)}</div>` : ''}
-                            ${personality ? `<div class="info-row"><i class="fas fa-brain"></i> ${escapeHtml(personality)}</div>` : ''}
+                            ${gender ? `<div class="info-row"><i class="fas fa-venus-mars"></i> ${escapeHtml(gender === 'Female' ? 'أنثى' : gender)}</div>` : ''}
                             ${relationship ? `<div class="info-row"><i class="fas fa-heart"></i> ${escapeHtml(relationship)}</div>` : ''}
+                            ${personality ? `<div class="info-row"><i class="fas fa-brain"></i> ${escapeHtml(personality)}</div>` : ''}
                             ${occupation ? `<div class="info-row"><i class="fas fa-briefcase"></i> ${escapeHtml(occupation)}</div>` : ''}
                             ${statusText ? `<div class="info-row"><i class="fas fa-comment"></i> ${escapeHtml(statusText)}</div>` : ''}
+                            ${email ? `<div class="info-row"><i class="fas fa-envelope"></i> ${escapeHtml(email)}</div>` : ''}
+                            ${phone ? `<div class="info-row"><i class="fas fa-phone"></i> ${escapeHtml(phone)}</div>` : ''}
+                            ${instagram ? `<div class="info-row"><i class="fab fa-instagram"></i> ${escapeHtml(instagram)}</div>` : ''}
+                            ${birthday ? `<div class="info-row"><i class="fas fa-cake-candles"></i> ${escapeHtml(birthday)}</div>` : ''}
+                            ${createdAt ? `<div class="info-row"><i class="fas fa-calendar-alt"></i> انضم: ${escapeHtml(createdAt)}</div>` : ''}
+                            ${verification ? `<div class="info-row"><i class="fas fa-check-circle"></i> التحقق: ${escapeHtml(verification === 'verified' ? 'موثّق' : 'غير موثّق')}</div>` : ''}
+                            ${freemium ? `<div class="info-row"><i class="fas fa-gem"></i> الحالة: ${escapeHtml(freemium === 'free' ? 'مجاني' : 'مميز')}</div>` : ''}
+                            ${appVersion ? `<div class="info-row"><i class="fas fa-code-branch"></i> الإصدار: ${escapeHtml(appVersion)}</div>` : ''}
+                            ${deviceType ? `<div class="info-row"><i class="fas fa-mobile-alt"></i> الجهاز: ${escapeHtml(deviceType)}</div>` : ''}
+                            ${friendsCount ? `<div class="info-row"><i class="fas fa-user-friends"></i> الأصدقاء: ${friendsCount}</div>` : ''}
+                            ${isPrivateProfile ? `<div class="info-row"><i class="fas fa-lock"></i> الملف: ${escapeHtml(isPrivateProfile)}</div>` : ''}
                             ${interests.length ? `<div class="interests">${interests.map(i => `<span class="interest-tag">${escapeHtml(i.name)}</span>`).join('')}</div>` : ''}
                             ${hasLocation ? `<div class="map-container" id="${mapId}"></div>` : ''}
                         </div>
@@ -566,7 +607,7 @@
             });
             container.innerHTML = html;
 
-            // تهيئة الكاروسيل (الأزرار)
+            // إعداد الكاروسيل (أزرار التنقل)
             profiles.forEach((p, idx) => {
                 const allImages = getAllImages(p);
                 if (allImages.length <= 1) return;
@@ -586,13 +627,15 @@
                 if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); update(currentIdx+1); };
             });
 
-            // تهيئة الخرائط فقط للحالات التي فيها إحداثيات
+            // تهيئة الخرائط (بعد التأكد من وجود الإحداثيات)
             setTimeout(() => {
                 profiles.forEach((p, idx) => {
-                    if (p.latitude && p.longitude) {
+                    const lat = p.lat || p.latitude;
+                    const lng = p.lng || p.longitude;
+                    if (lat && lng) {
                         const mapContainer = document.getElementById(`map-${idx}`);
                         if (mapContainer && !mapContainer._mapInitialized) {
-                            const map = initMap(`map-${idx}`, p.latitude, p.longitude, p.firstname);
+                            const map = initMap(`map-${idx}`, lat, lng, p.firstname);
                             if (map) {
                                 window._maps.push(map);
                                 mapContainer._mapInitialized = true;
@@ -603,7 +646,6 @@
             }, 50);
         }
 
-        // فتح معرض التكبير
         window.openGallery = function(profileIdx, startIndex, event) {
             if (event) event.stopPropagation();
             const profile = currentFiltered[profileIdx];
@@ -653,7 +695,7 @@
             if (!term) {
                 currentFiltered = [...currentProfiles];
             } else {
-                currentFiltered = currentProfiles.filter(p => 
+                currentFiltered = currentProfiles.filter(p =>
                     (p.firstname && p.firstname.toLowerCase().includes(term)) ||
                     (p.city && p.city.toLowerCase().includes(term)) ||
                     (p.nationality && p.nationality.toLowerCase().includes(term)) ||
@@ -675,45 +717,39 @@
         };
 
         window.loadSample = function() {
-            const sampleJson = {
+            // عينة توضح كلتا الحالتين: مستخدم واحد (مثل المثال الجديد) ومستخدمين متعددين
+            const sampleOne = {
                 "code": "1",
                 "message": "OK",
-                "data": [
-                    {
-                        "local_id": 426337666,
-                        "id": 732846,
-                        "firstname": "Meera",
-                        "age": 26,
-                        "profile_image_imagekit": "https://ik.imagekit.io/mxndmmcqtl/profile_image/8834771d36c88b19e5e68ce48fb9ced9.jpg?tr=w-828",
-                        "city": "Abu Dhabi",
-                        "distance": "29 km away",
-                        "nationality": "🇦🇪 Emirati",
-                        "zodiac": "♊ Gemini",
-                        "status": "ENTP, I’m dora the explorer",
-                        "main_goal": { "emoji": "😎", "title": "Community" },
-                        "latitude": 24.4539,
-                        "longitude": 54.3773,
-                        "profile_interests": [{ "name": "☕ Coffee chats" }, { "name": "⛰️ Hiking trips" }],
-                        "gallery": ["https://ik.imagekit.io/mxndmmcqtl/user_image/69a85a2648956b48a4ee74076caa2d02.jpg?tr=w-828"]
-                    },
-                    {
-                        "local_id": 426337664,
-                        "id": 2174891,
-                        "firstname": "Sara",
-                        "age": 26,
-                        "profile_image_imagekit": "https://ik.imagekit.io/mxndmmcqtl/profile_image/0bfe5d74bf9a357d366f6ead94ab3d41.jpg?tr=w-828",
-                        "city": "Abu Dhabi",
-                        "distance": "35 km away",
-                        "nationality": "🇦🇪 Emirati",
-                        "zodiac": "♎ Libra",
-                        "main_goal": { "emoji": "👋", "title": "New Friends" },
-                        // لا توجد إحداثيات هنا لاختبار إخفاء الخريطة
-                        "profile_interests": [{ "name": "☕ Coffee" }, { "name": "🍿 Cinema" }],
-                        "gallery": []
-                    }
-                ]
+                "data": {
+                    "id": 618762,
+                    "firstname": "Reem",
+                    "lastname": "S",
+                    "age": 42,
+                    "status": null,
+                    "profile_image_thumbnail": "https://ik.imagekit.io/mxndmmcqtl/profile_image/1d73c81b72b1e1d43b39f5a0600cd28d.jpg?tr=w-828",
+                    "birthday": "21/04/1984",
+                    "relationship_status": "Married",
+                    "nationality": "🇦🇪 Emirati",
+                    "city": "Abu Dhabi",
+                    "distance": "48 km away",
+                    "lat": "24.482042187298443",
+                    "lng": "54.40544904088728",
+                    "email": "stvbf9s2cm@privaterelay.appleid.com",
+                    "gender": "Female",
+                    "verification_status": "notVerified",
+                    "freemium_status": "free",
+                    "app_version": "7.5.5.196",
+                    "device_type": "I",
+                    "count_friends": 3,
+                    "account_settings": { "is_private_profile": false },
+                    "main_goal": { "emoji": "🤔", "title": "Not Sure Yet" },
+                    "personality_type": { "title": "📒 Organizer" },
+                    "zodiac": "♉ Taurus",
+                    "profile_interests": []
+                }
             };
-            document.getElementById('jsonInput').value = JSON.stringify(sampleJson, null, 2);
+            document.getElementById('jsonInput').value = JSON.stringify(sampleOne, null, 2);
             parseData();
         };
 
