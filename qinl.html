@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BYD Qin L - Ultimate Smart Hub</title>
+    <title>BYD Qin L - Daily Companion Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Noto+Kufi+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
@@ -16,9 +16,21 @@
             --accent-dark: #000000;
             --accent-gray: #e2e8f0;
             --bar-bg: #f1f5f9;
+            --border-color: rgba(0, 0, 0, 0.04);
         }
 
-        * { box-sizing: border-box; }
+        body.dark-theme {
+            --bg-color: #090d16;
+            --card-bg: #131c2e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-dark: #ffffff;
+            --accent-gray: #1e293b;
+            --bar-bg: #1e293b;
+            --border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 
         body {
             font-family: 'Noto Kufi Arabic', 'Plus Jakarta Sans', sans-serif;
@@ -38,180 +50,115 @@
             background-color: var(--card-bg);
             border-radius: 32px;
             padding: 30px 25px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            margin-bottom: 40px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            position: relative;
         }
 
-        /* Car Image Header */
-        .car-header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--accent-gray);
-            padding-bottom: 20px;
+        .theme-toggle-btn {
+            position: absolute; top: 25px; left: 25px; background-color: var(--bar-bg); border: none;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; font-size: 18px; z-index: 10;
         }
 
-        .car-header img {
-            width: 100%;
-            max-width: 320px;
-            height: auto;
-            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.1));
-            margin-bottom: 10px;
-            transition: transform 0.3s ease;
-        }
+        .car-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--accent-gray); padding-bottom: 20px; position: relative; }
+        .car-header img { width: 100%; max-width: 310px; height: auto; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.08)); margin-bottom: 5px; }
+        body.dark-theme .car-header img { filter: drop-shadow(0 10px 25px rgba(255,255,255,0.05)) brightness(0.95); }
+        .car-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 17px; font-weight: 800; letter-spacing: 2px; color: var(--accent-dark); margin-top: 5px; }
+        .car-subtitle { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
 
-        .car-header img:hover {
-            transform: scale(1.02);
-        }
-
-        .car-title {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--accent-dark);
-        }
-
-        .car-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* Main Navigation Tabs */
-        .nav-tabs {
-            display: flex;
-            background-color: var(--bar-bg);
-            border-radius: 16px;
-            padding: 5px;
-            margin-bottom: 25px;
-        }
-
-        .nav-tab {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 12px 5px;
-            font-family: 'Noto Kufi Arabic', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-tab.active {
-            background-color: var(--accent-dark);
-            color: #ffffff;
-        }
+        .nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background-color: var(--bar-bg); border-radius: 16px; padding: 6px; margin-bottom: 25px; }
+        .nav-tab { background: transparent; border: none; padding: 12px 5px; font-family: 'Noto Kufi Arabic', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 11px; text-align: center; }
+        .nav-tab.active { background-color: var(--accent-dark); color: var(--card-bg); font-weight: 700; }
 
         .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
         .tab-content.active { display: block; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Forms & Inputs */
-        .input-block { margin-bottom: 20px; }
-        .input-block label {
-            display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;
-        }
+        .sub-toggle { display: flex; border-bottom: 2px solid var(--bar-bg); margin-bottom: 20px; }
+        .sub-btn { flex: 1; background: transparent; border: none; padding: 10px; font-family: 'Noto Kufi Arabic'; font-size: 13px; color: var(--text-muted); cursor: pointer; text-align: center; font-weight: 600; }
+        .sub-btn.active { color: var(--accent-dark); border-bottom: 2px solid var(--accent-dark); }
+
+        .input-block { margin-bottom: 18px; }
+        .input-block label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
         .field-box { position: relative; display: flex; align-items: center; }
-        .field-box input {
-            width: 100%; background-color: var(--bar-bg); border: 1px solid transparent; border-radius: 14px;
-            padding: 14px 20px; font-size: 16px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.2s;
-        }
-        .field-box input:focus { border-color: var(--accent-dark); background-color: #fff; }
-        .unit-tag { position: absolute; left: 15px; font-family: 'Plus Jakarta Sans'; font-size: 13px; color: var(--text-muted); font-weight: 700; }
+        .field-box input, select { width: 100%; background-color: var(--bar-bg); border: 1px solid transparent; border-radius: 14px; padding: 14px 20px; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.2s; appearance: none; }
+        .field-box input:focus, select:focus { border-color: var(--accent-dark); background-color: var(--card-bg); }
+        .unit-tag { position: absolute; left: 18px; font-family: 'Plus Jakarta Sans'; font-size: 13px; color: var(--text-muted); font-weight: 700; }
 
-        .btn-prime {
-            width: 100%; background-color: var(--accent-dark); color: #fff; border: none; border-radius: 14px;
-            padding: 16px; font-family: 'Noto Kufi Arabic'; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s;
-        }
+        .btn-prime { width: 100%; background-color: var(--accent-dark); color: var(--card-bg); border: none; border-radius: 14px; padding: 16px; font-family: 'Noto Kufi Arabic'; font-size: 14px; font-weight: 700; cursor: pointer; }
         .btn-prime:hover { opacity: 0.9; }
+        .btn-secondary { background: transparent; border: 1px solid var(--accent-dark); color: var(--accent-dark); font-weight: 600; margin-top: 10px; }
+        .btn-secondary:hover { background: var(--accent-dark); color: var(--card-bg); }
+        .btn-cancel { background: #ef4444; color: #fff; margin-top: 10px; border: none; }
+        .btn-cancel:hover { background: #dc2626; }
 
-        /* Real-time HUD */
-        .live-hud { text-align: center; margin-top: 25px; padding: 20px; border-radius: 16px; background-color: var(--bar-bg); display: none; }
-        .timer-display { font-family: 'Plus Jakarta Sans'; font-size: 42px; font-weight: 800; color: var(--accent-dark); margin: 10px 0; font-variant-numeric: tabular-nums; }
-        .progress-bar-container { width: 100%; height: 6px; background-color: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 15px 0; }
+        .live-hud { text-align: center; margin-top: 25px; padding: 20px; border-radius: 18px; background-color: var(--bar-bg); display: none; }
+        .timer-display { font-family: 'Plus Jakarta Sans'; font-size: 38px; font-weight: 800; color: var(--accent-dark); margin: 8px 0; font-variant-numeric: tabular-nums; }
+        .progress-bar-container { width: 100%; height: 6px; background-color: var(--accent-gray); border-radius: 10px; overflow: hidden; margin: 15px 0; }
         .progress-bar-fill { height: 100%; width: 0%; background-color: var(--accent-dark); transition: width 0.5s linear; }
 
-        /* Data grids */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .info-tile { background-color: #fff; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid var(--accent-gray); }
-        .info-tile .lbl { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
-        .info-tile .val { font-family: 'Plus Jakarta Sans'; font-size: 14px; font-weight: 700; color: var(--accent-dark); }
+        .info-tile { background-color: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center; border: 1px solid var(--accent-gray); }
+        .info-tile .lbl { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .info-tile .val { font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic'; font-size: 14px; font-weight: 700; color: var(--accent-dark); }
 
-        /* History Section */
-        .history-list { margin-top: 20px; font-size: 12px; max-height: 150px; overflow-y: auto; }
-        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--accent-gray); }
-        .history-item:last-child { border-bottom: none; }
-        
-        /* Select Dropdown */
-        select {
-            width: 100%; background-color: var(--bar-bg); border: none; border-radius: 14px;
-            padding: 14px 20px; font-family: 'Noto Kufi Arabic'; font-size: 13px; font-weight: 600; color: var(--text-main);
-            appearance: none; outline: none; margin-bottom: 15px; cursor: pointer;
-        }
-        .diag-result {
-            background: var(--bar-bg); padding: 15px; border-radius: 14px; font-size: 13px; line-height: 1.6; color: var(--text-main);
-            border-right: 4px solid var(--accent-dark); display: none;
-        }
+        .history-section { margin-top: 25px; border-top: 1px dashed var(--accent-gray); padding-top: 20px; }
+        .history-list { margin-top: 10px; font-size: 12px; max-height: 160px; overflow-y: auto; }
+        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--accent-gray); }
 
-        .save-btn { margin-top: 15px; background: transparent; border: 1px solid var(--accent-dark); color: var(--accent-dark); }
-        .save-btn:hover { background: var(--accent-dark); color: #fff; }
+        .maint-card { display: flex; justify-content: space-between; align-items: center; background: var(--bar-bg); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; font-size: 13px; }
+        .maint-due { font-weight: 700; font-family: 'Plus Jakarta Sans'; }
+        .status-ok { color: #22c55e; font-weight: 700; }
+        .status-alert { color: #ef4444; font-weight: 700; }
+        .badge-alert { margin-top: 15px; font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.5; }
     </style>
 </head>
-<body>
+<body class="light-theme">
 
 <div class="dashboard-container">
+    <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
     
-    <!-- Premium Car Header -->
     <div class="car-header">
         <img src="https://data.carnewschina.com/media/models/b7b630edfb9541408f0220bb41555b50332x0.png" alt="BYD Qin L">
         <div class="car-title">BYD QIN L</div>
-        <div class="car-subtitle">DM-i HYBRID PLATFORM</div>
+        <div class="car-subtitle">DM-i HYBRID HUB &bull; DAILY EDITION</div>
     </div>
 
-    <!-- Smart Navigation -->
     <div class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('tab-charge', this)">⚡ الشحن و V2L</button>
-        <button class="nav-tab" onclick="switchTab('tab-range', this)">🌍 المدى والتوفير</button>
-        <button class="nav-tab" onclick="switchTab('tab-diag', this)">🛠️ الدعم والتشخيص</button>
+        <button class="nav-tab active" onclick="switchTab('tab-charge', this)">⚡ الشحن والبر</button>
+        <button class="nav-tab" onclick="switchTab('tab-trip', this)">🛣️ حاسبة الرحلات</button>
+        <button class="nav-tab" onclick="switchTab('tab-maint', this)">⚙️ صيانة الموتر</button>
+        <button class="nav-tab" onclick="switchTab('tab-diag', this)">🛠️ الدعم الذكي</button>
     </div>
 
-    <!-- ================= TAB 1: CHARGING & V2L ================= -->
+    <!-- TAB 1: CHARGING -->
     <div id="tab-charge" class="tab-content active">
-        <div class="nav-tabs" style="background: transparent; padding: 0; border-bottom: 2px solid var(--bar-bg); border-radius: 0; margin-bottom: 20px;">
-            <button id="sub-charge" class="nav-tab active" style="border-radius: 0;" onclick="setMode('charge')">الشحن</button>
-            <button id="sub-v2l" class="nav-tab" style="border-radius: 0;" onclick="setMode('v2l')">وضع البر</button>
+        <div class="sub-toggle">
+            <button id="sub-charge" class="sub-btn active" onclick="setMode('charge')">تفويل الشحن</button>
+            <button id="sub-v2l" class="sub-btn" onclick="setMode('v2l')">تشغيل أجهزة البر</button>
         </div>
 
         <div class="input-block">
-            <label id="lbl-soc">نسبة البطارية الحالية</label>
+            <label id="lbl-soc">نسبة طاقة الخلايا الحالية</label>
             <div class="field-box">
-                <input type="number" id="charge-soc" placeholder="أدخل النسبة (0-100)">
+                <input type="number" id="charge-soc" placeholder="مثال: 30">
                 <span class="unit-tag">%</span>
             </div>
         </div>
         <div class="input-block">
-            <label id="lbl-pwr">معدل نقل الطاقة</label>
+            <label id="lbl-pwr">معدل سحب تدفق الطاقة اللحظي</label>
             <div class="field-box">
-                <input type="number" id="charge-pwr" placeholder="أدخل القيمة (مثال: 2.85)">
+                <input type="number" id="charge-pwr" placeholder="مثال: 2.8">
                 <span class="unit-tag">kW</span>
             </div>
         </div>
 
-        <button class="btn-prime" onclick="startProcess()">بدء العملية والعداد الحي</button>
+        <button class="btn-prime" onclick="startProcess()">إطلاق العداد التنازلي الحي</button>
 
         <div id="charge-hud" class="live-hud">
-            <div style="font-size: 11px; font-weight: 600;" id="hud-title">الوقت المتبقي الحي</div>
+            <div style="font-size: 11px; font-weight: 600;" id="hud-title">الوقت التنازلي المتبقي</div>
             <div id="live-timer" class="timer-display">00:00:00</div>
-            
             <div class="progress-bar-container"><div id="hud-bar" class="progress-bar-fill"></div></div>
             
             <div class="info-grid">
@@ -224,275 +171,332 @@
                     <div class="val" id="tile2-val">--</div>
                 </div>
             </div>
-            
-            <button class="btn-prime save-btn" onclick="saveHistory()">💾 حفظ القراءة في السجل</button>
-        </div>
-
-        <div class="history-list" id="history-box">
-            <!-- السجل يظهر هنا -->
-        </div>
-    </div>
-
-    <!-- ================= TAB 2: RANGE & SAVINGS ================= -->
-    <div id="tab-range" class="tab-content">
-        <div style="margin-bottom: 25px;">
-            <div class="car-title" style="font-size: 14px;">حاسبة المدى الكهربائي (EV)</div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">بناءً على استهلاك سيارتك الفعلي (4.8 kWh/100km)</div>
-            
-            <div class="input-block">
-                <label>نسبة البطارية الحالية</label>
-                <div class="field-box">
-                    <input type="number" id="range-soc" placeholder="مثال: 100" oninput="calcRange()">
-                    <span class="unit-tag">%</span>
-                </div>
-            </div>
-            <div class="live-hud" id="range-res" style="display:block; padding: 15px; margin-top: 10px;">
-                <div style="font-size: 12px; font-weight: 600;">الممشى التقريبي الصافي (بدون بترول):</div>
-                <div class="timer-display" id="range-km" style="font-size: 32px;">0 KM</div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-prime btn-secondary" onclick="saveHistory()">💾 توثيق وحفظ</button>
+                <button class="btn-prime btn-cancel" onclick="cancelTimer()">إلغاء العداد</button>
             </div>
         </div>
 
-        <div style="border-top: 1px solid var(--accent-gray); padding-top: 25px;">
-            <div class="car-title" style="font-size: 14px;">كم وفرت فلوس؟ 💰</div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">مقارنة بسيارة بترول عادية تصرف 7 لتر/100كم</div>
-            
-            <div class="input-block">
-                <label>كم كيلومتر مشيت بالكهرباء؟</label>
-                <div class="field-box">
-                    <input type="number" id="save-km" placeholder="مثال: 500" oninput="calcSavings()">
-                    <span class="unit-tag">KM</span>
-                </div>
+        <div class="history-section">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-weight:700; font-size: 13px;">📋 السجلات التاريخية للشحن:</div>
+                <button class="btn-prime btn-secondary" style="width: auto; padding: 6px 12px; font-size: 11px; margin: 0;" onclick="exportToExcel()">📊 تصدير Excel</button>
             </div>
-            <div class="info-grid">
-                <div class="info-tile" style="background-color: #fef2f2; border-color: #fca5a5;">
-                    <div class="lbl">تكلفة البترول العادي</div>
-                    <div class="val" id="cost-petrol" style="color: #ef4444;">0 AED</div>
-                </div>
-                <div class="info-tile" style="background-color: #f0fdf4; border-color: #86efac;">
-                    <div class="lbl">تكلفة سيارتك BYD</div>
-                    <div class="val" id="cost-ev" style="color: #22c55e;">0 AED</div>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 15px; font-weight: 700; font-size: 15px;">
-                صافي التوفير: <span id="total-saved" style="color: #22c55e;">0 AED</span> 🎉
-            </div>
+            <div class="history-list" id="history-box"></div>
         </div>
     </div>
 
-    <!-- ================= TAB 3: DIAGNOSTICS ================= -->
+    <!-- TAB 2: TRIP PLANNER -->
+    <div id="tab-trip" class="tab-content">
+        <div class="input-block"><label>نسبة شحن البطارية الحالية</label><div class="field-box"><input type="number" id="trip-soc" value="100" oninput="runTripPlanner()"><span class="unit-tag">%</span></div></div>
+        <div class="input-block"><label>المسافة الإجمالية للوجهة المقصودة</label><div class="field-box"><input type="number" id="trip-dist" placeholder="مثال: 140" oninput="runTripPlanner()"><span class="unit-tag">KM</span></div></div>
+        <div class="live-hud" style="display:block; padding: 18px; margin-top: 15px; text-align: right;">
+            <div style="font-weight: 700; font-size: 13px; margin-bottom: 12px; border-bottom: 1px solid var(--accent-gray); padding-bottom: 8px;">📊 تحليل خطة مسار الرحلة المتوقع:</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 13px;"><span>الممشى بالكهرباء (EV الصافي):</span><span id="trip-ev-km" style="font-weight:700;">0 KM</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 13px;"><span>الاعتماد على البترول (الهايبرد):</span><span id="trip-petrol-km" style="font-weight:700;">0 KM</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size: 13px;"><span>التكلفة الإجمالية للرحلة:</span><span id="trip-total-cost" style="font-weight:700; color: #22c55e;">0.00 AED</span></div>
+            <div style="background-color: var(--card-bg); border-radius: 10px; padding: 10px; border: 1px solid var(--accent-gray); font-size: 12px; text-align: center;">وفرت في هذا المشوار مقارنة بالمواتر العادية: <span id="trip-savings" style="font-weight:800; color:#22c55e;">0 AED</span></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: MAINTENANCE -->
+    <div id="tab-maint" class="tab-content">
+        <div class="input-block"><label>أدخل قراءة عداد الممشى اللحظي للسيارة (Odometer)</label><div class="field-box"><input type="number" id="maint-odo" placeholder="مثال: 12500" oninput="checkMaintenance()"><span class="unit-tag">KM</span></div></div>
+        <div style="margin-top: 20px;">
+            <div style="font-weight: 700; font-size: 13px; margin-bottom: 12px;">🛠️ جدول الصيانة الدورية الذكي لـ BYD Qin L:</div>
+            <div class="maint-card"><div><div style="font-weight:700;">زيت المحرك والفلتر</div><div style="font-size:11px; color:var(--text-muted);" id="oil-status">أدخل العداد للمراقبة</div></div><div class="maint-due" id="oil-due">-- KM</div></div>
+            <div class="maint-card"><div><div style="font-weight:700;">تدوير التواير وموازنتها</div><div style="font-size:11px; color:var(--text-muted);" id="tire-status">أدخل العداد للمراقبة</div></div><div class="maint-due" id="tire-due">-- KM</div></div>
+            <div class="maint-card"><div><div style="font-weight:700;">فلتر المكيف وتنقية الهواء</div><div style="font-size:11px; color:var(--text-muted);" id="filter-status">أدخل العداد للمراقبة</div></div><div class="maint-due" id="filter-due">-- KM</div></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: DIAGNOSTICS -->
     <div id="tab-diag" class="tab-content">
-        <div class="car-title" style="font-size: 14px; margin-bottom: 15px;">المساعد الذكي لأعطال الشحن</div>
-        <select id="diag-select" onchange="showDiag()">
-            <option value="0">-- اختر المشكلة التي تواجهك --</option>
-            <option value="1">الشاحن الجداري يضيء باللون الأحمر</option>
-            <option value="2">السيارة تفصل الشحن فجأة</option>
-            <option value="3">سرعة الشحن بطيئة جداً (أقل من 1.5kW)</option>
-            <option value="4">المسدس عالق في السيارة ولا يخرج</option>
-        </select>
-
-        <div id="diag-answer" class="diag-result"></div>
+        <div class="input-block">
+            <label>دليل المساعدة الفوري لأعطال وحلول منظومة الشحن</label>
+            <div class="field-box">
+                <select id="diag-select" onchange="runDiagnostics()">
+                    <option value="0">-- اضغط هنا واختر المشكلة الملاحظة --</option>
+                    <option value="1">وميض أحمر في رأس الشاحن الجداري</option>
+                    <option value="2">السيارة تفصل الطاقة وتتوقف فجأة أثناء النوم</option>
+                    <option value="3">سرعة تعبئة الشحن بطيئة جداً ومقيدة</option>
+                    <option value="4">مقبس الشاحن (المسدس) عالق بالمنفذ ولا يخرج</option>
+                </select>
+            </div>
+        </div>
+        <div id="diag-output" style="background: var(--bar-bg); padding: 15px; border-radius: 14px; font-size: 13px; line-height: 1.6; border-right: 4px solid var(--accent-dark); display: none;"></div>
     </div>
 
+    <div class="badge-alert">تمت تهيئة المنظومة لتعمل بشكل يومي مباشر في تليفونك.</div>
 </div>
 
 <script>
-    // Constants
-    const BATTERY = 10.08; 
-    let activeMode = 'charge';
-    let countdownInterval = null;
-    let totalSecondsRemaining = 0;
+    const BATTERY_CAP = 10.08;
+    let currentMode = 'charge';
+    let liveInterval = null;
+    let secondsLeft = 0;
 
-    // Load history on start
-    window.onload = () => { loadHistory(); };
+    window.onload = () => {
+        loadHistory();
+        document.getElementById('trip-soc').value = 100;
+        document.getElementById('trip-dist').value = 140;
+        runTripPlanner();
+        
+        // Restore Theme
+        if(localStorage.getItem('byd_theme') === 'dark') {
+            document.body.classList.replace('light-theme', 'dark-theme');
+            document.getElementById('theme-btn').innerText = "☀️";
+        }
+        
+        // Restore Timer if active
+        restoreActiveTimer();
+    };
 
-    // Audio Context Beep for Timer End
-    function playBeep() {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(800, ctx.currentTime);
-            osc.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.5);
-        } catch(e) {}
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        if(body.classList.contains('light-theme')) {
+            body.classList.replace('light-theme', 'dark-theme');
+            btn.innerText = "☀️";
+            localStorage.setItem('byd_theme', 'dark');
+        } else {
+            body.classList.replace('dark-theme', 'light-theme');
+            btn.innerText = "🌙";
+            localStorage.setItem('byd_theme', 'light');
+        }
     }
 
-    // Tabs Switching
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-tabs > .nav-tab').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        btn.classList.add('active');
+    function switchTab(id, buttonElement) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        buttonElement.classList.add('active');
     }
 
-    // Charging vs V2L Sub-Tabs
     function setMode(mode) {
-        activeMode = mode;
+        currentMode = mode;
         document.getElementById('sub-charge').classList.toggle('active', mode === 'charge');
         document.getElementById('sub-v2l').classList.toggle('active', mode === 'v2l');
         
-        document.getElementById('lbl-soc').innerText = mode === 'charge' ? "نسبة البطارية الحالية" : "نسبة البطارية المتوفرة للبر";
-        document.getElementById('lbl-pwr').innerText = mode === 'charge' ? "معدل نقل الطاقة للشحن" : "إجمالي سحب الأجهزة الموصولة";
-        document.getElementById('hud-title').innerText = mode === 'charge' ? "الوقت المتبقي الحي للفل" : "الوقت المتبقي قبل فصل الطاقة";
-        document.getElementById('tile1-lbl').innerText = mode === 'charge' ? "الطاقة المستهدفة" : "الطاقة المتاحة";
-        document.getElementById('tile2-lbl').innerText = mode === 'charge' ? "التكلفة (AED)" : "الحمل الكلي (W)";
-        
-        clearInterval(countdownInterval);
-        document.getElementById('charge-hud').style.display = 'none';
+        document.getElementById('lbl-soc').innerText = mode === 'charge' ? "نسبة طاقة الخلايا الحالية" : "نسبة طاقة الخلايا المتوفرة للبر";
+        document.getElementById('lbl-pwr').innerText = mode === 'charge' ? "معدل سحب تدفق الطاقة اللحظي" : "إجمالي سحب الأجهزة الموصولة";
+        document.getElementById('hud-title').innerText = mode === 'charge' ? "الوقت التنازلي المتبقي للتفويل" : "الوقت المتبقي قبل فصل الأمان التلقائي";
+        document.getElementById('tile1-lbl').innerText = mode === 'charge' ? "السعة المطلوبة للفل" : "السعة الصافية المتاحة";
+        document.getElementById('tile2-lbl').innerText = mode === 'charge' ? "التكلفة التقديرية (AED)" : "الحمل الإجمالي (Watt)";
     }
 
-    // Main Timer Process
     function startProcess() {
         const soc = parseFloat(document.getElementById('charge-soc').value);
         const pwr = parseFloat(document.getElementById('charge-pwr').value);
         
         if (isNaN(soc) || isNaN(pwr) || soc < 0 || soc > 100 || pwr <= 0) {
-            alert('أدخل أرقام صحيحة الغالي.');
-            return;
+            alert('يرجى التحقق من صحة القراءات المدخلة.'); return;
         }
 
         document.getElementById('charge-hud').style.display = 'block';
-        clearInterval(countdownInterval);
+        clearInterval(liveInterval);
 
-        let hours = 0, energy = 0;
+        let energy = 0, hours = 0;
+        let tile1Str = "", tile2Str = "";
 
-        if (activeMode === 'charge') {
-            if (soc === 100) { displayTime(0); return; }
-            energy = ((100 - soc) / 100) * BATTERY;
-            hours = (energy / pwr) * 1.05; // 5% efficiency loss
+        if (currentMode === 'charge') {
+            if (soc === 100) { updateTimerUI(0); return; }
+            energy = ((100 - soc) / 100) * BATTERY_CAP;
+            hours = (energy / pwr) * 1.05; 
+            tile1Str = energy.toFixed(2) + " kWh";
+            tile2Str = (energy * 0.23).toFixed(2);
             
-            document.getElementById('tile1-val').innerText = energy.toFixed(2) + " kWh";
-            document.getElementById('tile2-val').innerText = (energy * 0.23).toFixed(2);
             document.getElementById('hud-bar').style.width = soc + "%";
-            // Animate bar to 100%
             setTimeout(() => { document.getElementById('hud-bar').style.width = '100%'; }, 100);
-            
         } else {
-            if (soc === 0) { displayTime(0); return; }
-            energy = (soc / 100) * BATTERY;
+            if (soc === 0) { updateTimerUI(0); return; }
+            energy = (soc / 100) * BATTERY_CAP;
             hours = energy / pwr;
+            tile1Str = energy.toFixed(2) + " kWh";
+            tile2Str = (pwr * 1000).toFixed(0) + " W";
             
-            document.getElementById('tile1-val').innerText = energy.toFixed(2) + " kWh";
-            document.getElementById('tile2-val').innerText = (pwr * 1000).toFixed(0);
             document.getElementById('hud-bar').style.width = '100%';
-            // Animate bar to 0%
             setTimeout(() => { document.getElementById('hud-bar').style.width = '0%'; }, 100);
         }
 
-        totalSecondsRemaining = Math.floor(hours * 3600);
-        runTimer();
+        document.getElementById('tile1-val').innerText = tile1Str;
+        document.getElementById('tile2-val').innerText = tile2Str;
+
+        secondsLeft = Math.floor(hours * 3600);
+        
+        // Save to Local Storage to survive refresh
+        const targetEndTime = Date.now() + (secondsLeft * 1000);
+        const timerData = {
+            endTime: targetEndTime,
+            mode: currentMode,
+            t1: tile1Str,
+            t2: tile2Str
+        };
+        localStorage.setItem('byd_active_timer', JSON.stringify(timerData));
+
+        executeTimerLoop();
     }
 
-    function runTimer() {
-        displayTime(totalSecondsRemaining);
-        countdownInterval = setInterval(() => {
-            totalSecondsRemaining--;
-            if (totalSecondsRemaining <= 0) {
-                clearInterval(countdownInterval);
-                displayTime(0);
+    function executeTimerLoop() {
+        updateTimerUI(secondsLeft);
+        liveInterval = setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft <= 0) {
+                clearInterval(liveInterval);
+                updateTimerUI(0);
+                localStorage.removeItem('byd_active_timer');
                 playBeep();
             } else {
-                displayTime(totalSecondsRemaining);
+                updateTimerUI(secondsLeft);
             }
         }, 1000);
     }
 
-    function displayTime(totalSeconds) {
-        if(totalSeconds <= 0) {
-            document.getElementById('live-timer').innerText = "00:00:00";
-            return;
+    function restoreActiveTimer() {
+        const saved = localStorage.getItem('byd_active_timer');
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                const now = Date.now();
+                
+                if(data.endTime > now) {
+                    // Timer is still valid, restore UI
+                    setMode(data.mode);
+                    document.getElementById('charge-hud').style.display = 'block';
+                    document.getElementById('tile1-val').innerText = data.t1;
+                    document.getElementById('tile2-val').innerText = data.t2;
+                    
+                    document.getElementById('hud-bar').style.width = data.mode === 'charge' ? '100%' : '0%';
+                    
+                    secondsLeft = Math.floor((data.endTime - now) / 1000);
+                    executeTimerLoop();
+                } else {
+                    localStorage.removeItem('byd_active_timer');
+                }
+            } catch(e) {
+                localStorage.removeItem('byd_active_timer');
+            }
         }
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        const s = totalSeconds % 60;
-        
-        const format = (num) => String(num).padStart(2, '0');
-        document.getElementById('live-timer').innerText = `${format(h)}:${format(m)}:${format(s)}`;
     }
 
-    // Save History Logging
+    function cancelTimer() {
+        clearInterval(liveInterval);
+        localStorage.removeItem('byd_active_timer');
+        document.getElementById('charge-hud').style.display = 'none';
+        document.getElementById('hud-bar').style.width = '0%';
+        updateTimerUI(0);
+    }
+
+    function updateTimerUI(secs) {
+        if(secs <= 0) { document.getElementById('live-timer').innerText = "00:00:00"; return; }
+        const h = Math.floor(secs / 3600);
+        const m = Math.floor((secs % 3600) / 60);
+        const s = secs % 60;
+        const pad = (n) => String(n).padStart(2, '0');
+        document.getElementById('live-timer').innerText = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    function playBeep() {
+        try {
+            let ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = ctx.createOscillator();
+            osc.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + 0.5);
+        } catch(e){}
+    }
+
     function saveHistory() {
         const soc = document.getElementById('charge-soc').value;
         const pwr = document.getElementById('charge-pwr').value;
         if(!soc || !pwr) return;
 
-        const date = new Date();
-        const dateStr = `${date.getDate()}/${date.getMonth()+1} - ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
-        const record = { date: dateStr, mode: activeMode, soc: soc, pwr: pwr };
+        const d = new Date();
+        const dateString = `${d.getDate()}/${d.getMonth()+1} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+        const dataObj = { date: dateString, mode: currentMode === 'charge' ? 'شحن' : 'كشتة بر', soc: soc, pwr: pwr };
 
-        let history = JSON.parse(localStorage.getItem('byd_history') || '[]');
-        history.unshift(record);
-        if(history.length > 5) history.pop(); // Keep last 5
-        localStorage.setItem('byd_history', JSON.stringify(history));
-        
+        let logs = JSON.parse(localStorage.getItem('byd_daily_logs') || '[]');
+        logs.unshift(dataObj);
+        if(logs.length > 8) logs.pop();
+        localStorage.setItem('byd_daily_logs', JSON.stringify(logs));
         loadHistory();
-        alert('تم حفظ القراءة بنجاح! ✔️');
     }
 
     function loadHistory() {
-        const history = JSON.parse(localStorage.getItem('byd_history') || '[]');
+        const logs = JSON.parse(localStorage.getItem('byd_daily_logs') || '[]');
         const box = document.getElementById('history-box');
-        if(history.length === 0) {
-            box.innerHTML = '<div style="text-align:center; color: var(--text-muted);">لا توجد سجلات سابقة.</div>';
+        if(logs.length === 0) {
+            box.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding:10px;">لا توجد سجلات محفوظة لليوم.</div>';
             return;
         }
-        box.innerHTML = '<div style="font-weight:700; margin-bottom:10px;">📋 آخر القراءات المحفوظة:</div>';
-        history.forEach(item => {
-            const modeAr = item.mode === 'charge' ? 'شحن ⚡' : 'بر 🏕️';
-            box.innerHTML += `
-                <div class="history-item">
-                    <span>${item.date} (${modeAr})</span>
-                    <span style="font-weight:600;">بطارية: ${item.soc}% | سحب: ${item.pwr}kW</span>
-                </div>
-            `;
+        box.innerHTML = '';
+        logs.forEach(l => {
+            box.innerHTML += `<div class="history-item"><span>📅 ${l.date} - <b>${l.mode}</b></span><span>البطارية: ${l.soc}% | القدرة: ${l.pwr}kW</span></div>`;
         });
     }
 
-    // Range Calculator
-    function calcRange() {
-        let soc = parseFloat(document.getElementById('range-soc').value) || 0;
-        if(soc > 100) soc = 100;
-        const kwhAvailable = (soc / 100) * BATTERY;
-        // Formula based on user screen: 4.8 kWh per 100km -> 1 kWh = 20.83 km
-        const km = (kwhAvailable / 4.8) * 100;
-        document.getElementById('range-km').innerText = Math.round(km) + " KM";
+    function runTripPlanner() {
+        const soc = parseFloat(document.getElementById('trip-soc').value) || 0;
+        const dist = parseFloat(document.getElementById('trip-dist').value) || 0;
+        const maxEvKm = ((soc / 100) * BATTERY_CAP / 4.8) * 100;
+
+        let evKm = 0, petrolKm = 0, totalCost = 0;
+        if (dist <= maxEvKm) {
+            evKm = dist; petrolKm = 0; totalCost = (evKm / 100) * 4.8 * 0.23; 
+        } else {
+            evKm = maxEvKm; petrolKm = dist - maxEvKm;
+            totalCost = ((evKm / 100) * 4.8 * 0.23) + ((petrolKm / 100) * 4.1 * 3.03);
+        }
+
+        const normalCarCost = (dist / 100) * 7.5 * 3.03;
+        const savings = normalCarCost - totalCost;
+
+        document.getElementById('trip-ev-km').innerText = Math.round(evKm) + " KM";
+        document.getElementById('trip-petrol-km').innerText = Math.round(petrolKm) + " KM";
+        document.getElementById('trip-total-cost').innerText = totalCost.toFixed(2) + " AED";
+        document.getElementById('trip-savings').innerText = Math.max(0, Math.round(savings)) + " AED";
     }
 
-    // Savings Calculator
-    function calcSavings() {
-        const km = parseFloat(document.getElementById('save-km').value) || 0;
-        // Petrol cost: ~7L/100km, Price ~3 AED/L -> 21 AED / 100km
-        const petrolCost = (km / 100) * 21;
-        // EV cost: 4.8kWh/100km, Price 0.23 AED/kWh -> 1.1 AED / 100km
-        const evCost = (km / 100) * 1.104;
-        
-        document.getElementById('cost-petrol').innerText = petrolCost.toFixed(1) + " AED";
-        document.getElementById('cost-ev').innerText = evCost.toFixed(1) + " AED";
-        document.getElementById('total-saved').innerText = (petrolCost - evCost).toFixed(1) + " AED";
+    function checkMaintenance() {
+        const odo = parseFloat(document.getElementById('maint-odo').value) || 0;
+        updateMaintRow(odo, 7500, 'oil-due', 'oil-status');
+        updateMaintRow(odo, 10000, 'tire-due', 'tire-status');
+        updateMaintRow(odo, 15000, 'filter-due', 'filter-status');
     }
 
-    // Diagnostics System
-    function showDiag() {
+    function updateMaintRow(currentOdo, interval, dueId, statusId) {
+        const nextDue = Math.ceil((currentOdo + 1) / interval) * interval;
+        const remaining = nextDue - currentOdo;
+        document.getElementById(dueId).innerText = nextDue + " KM";
+        const statusEl = document.getElementById(statusId);
+        if(remaining > 1000) {
+            statusEl.innerHTML = `متبقي <span class="status-ok">${remaining} KM</span> - الحالة مستقرة`;
+        } else {
+            statusEl.innerHTML = `متبقي <span class="status-alert">${remaining} KM</span> - يرجى الحجز فوراً!`;
+        }
+    }
+
+    function exportToExcel() {
+        const logs = JSON.parse(localStorage.getItem('byd_daily_logs') || '[]');
+        if(logs.length === 0) { alert('السجل فارغ حالياً.'); return; }
+        let csvContent = "data:text/csv;charset=utf-8,التاريخ,الوضعية,نسبة البطارية %,معدل النقل kW\n";
+        logs.forEach(l => { csvContent += `${l.date},${l.mode},${l.soc},${l.pwr}\n`; });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "BYD_Qin_L_Charging_Logs.csv");
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function runDiagnostics() {
         const val = document.getElementById('diag-select').value;
-        const box = document.getElementById('diag-answer');
-        box.style.display = 'block';
-        
+        const out = document.getElementById('diag-output');
+        out.style.display = 'block';
         switch(val) {
-            case '1':
-                box.innerHTML = "<b>الحل:</b> يوجد مشكلة في التأريض (الـ Earth) أو الفولتية غير مستقرة. افصل الشاحن من الجدار لمدة دقيقة، تأكد من جودة كيبل الـ 4 مللي، ثم أعد التركيب.";
-                break;
-            case '2':
-                box.innerHTML = "<b>الحل:</b> السيارة تفصل تلقائياً لحماية البطارية إذا ارتفعت حرارة المنفذ. تأكد أنك تشحن في الظل إذا كان الوقت ظهراً، أو قم بتخفيض الأمبير من الشاحن بضغطة الزر الأسود.";
-                break;
-            case '3':
-                box.innerHTML = "<b>الحل:</b> الشاحن عالق على سرعة 6A أو 8A. قم بفصل المسدس من السيارة (وهو موصول بالجدار)، واضغط على الزر الأسود في المسدس ضغطات سريعة لرفعه إلى 13A أو 16A.";
-                break;
-            case '4':
-                box.innerHTML = "<b>الحل:</b> افتح قفل السيارة بالريموت مرتين متتاليتين. إذا لم يفتح، تأكد من إيقاف عملية الشحن من داخل الشاشة الكبيرة أولاً، ثم اسحب المسدس.";
-                break;
-            default:
-                box.style.display = 'none';
+            case '1': out.innerHTML = "<b>إجراء الحل:</b> افصل الشاحن بالكامل، وتأكد من توصيله بمقبس جداري أصلي مدعوم بأسلاك 4 مللي لتجنب مشاكل التأريض."; break;
+            case '2': out.innerHTML = "<b>إجراء الحل:</b> تأكد من تغطية فتحة الشحن بـ مظلة لتجنب الحرارة العالية، أو قم بتقليل الأمبير من رأس الشاحن لتقليل العبء الحراري."; break;
+            case '3': out.innerHTML = "<b>إجراء الحل:</b> افصل الكيبل عن السيارة، واضغط بضع ضغطات متتالية على الزر الأسود في علبة الشاحن لرفع التيار يدوياً إلى 13A أو 16A."; break;
+            case '4': out.innerHTML = "<b>إجراء الحل:</b> توجه لشاشة السيارة واضغط 'إيقاف الشحن'، ثم اضغط على زر فتح القفل في ريموت السيارة مرتين متتاليتين وسيتحرر المسدس."; break;
+            default: out.style.display = 'none';
         }
     }
 </script>
