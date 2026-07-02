@@ -3,432 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BYD Qin L Smart Hub</title>
-    <!-- Google Fonts for Modern Arabic Typography -->
+    <title>BYD Qin L - Ultimate Smart Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Noto+Kufi+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #070b19 0%, #0f172a 100%);
-            --panel-bg: rgba(30, 41, 59, 0.45);
-            --accent-cyan: #06b6d4;
-            --accent-green: #10b981;
-            --accent-purple: #8b5cf6;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-glow: rgba(6, 182, 212, 0.15);
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-dark: #000000;
+            --accent-gray: #e2e8f0;
+            --bar-bg: #f1f5f9;
         }
 
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Cairo', sans-serif;
-            background: var(--bg-gradient);
+            font-family: 'Noto Kufi Arabic', 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 0;
+            padding: 20px 10px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
-            overflow-x: hidden;
+            align-items: flex-start;
         }
 
-        /* Tech Background Grid Lines overlay */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .dashboard-wrapper {
+        .dashboard-container {
             width: 100%;
-            max-width: 540px;
-            padding: 20px;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: 32px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            margin-bottom: 40px;
         }
 
-        .glass-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        /* Top Cyber Accent Glow Line */
-        .glass-panel::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 10%; right: 10%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-        }
-
-        header {
+        /* Car Image Header */
+        .car-header {
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo-area {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-
-        .subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Custom Mode/Feature Toggle */
-        .mode-selector {
-            display: flex;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 5px;
-            border-radius: 12px;
             margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--accent-gray);
+            padding-bottom: 20px;
         }
 
-        .mode-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .car-header img {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.1));
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .car-header img:hover {
+            transform: scale(1.02);
+        }
+
+        .car-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--accent-dark);
+        }
+
+        .car-subtitle {
+            font-size: 11px;
             color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .mode-tab.active {
-            background: #0284c7;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-        }
-
-        .input-group {
-            margin-bottom: 22px;
-            position: relative;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-            padding-right: 4px;
-        }
-
-        .input-wrapper {
-            position: relative;
+        /* Main Navigation Tabs */
+        .nav-tabs {
             display: flex;
-            align-items: center;
+            background-color: var(--bar-bg);
+            border-radius: 16px;
+            padding: 5px;
+            margin-bottom: 25px;
         }
 
-        .input-wrapper input {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(15, 23, 42, 0.7);
-            color: #fff;
-            font-family: 'Orbitron', 'Cairo', sans-serif;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: all 0.3s;
-        }
-
-        .input-wrapper input:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
-            background: rgba(15, 23, 42, 0.9);
-        }
-
-        .input-unit {
-            position: absolute;
-            left: 16px;
-            font-size: 12px;
-            color: var(--text-muted);
-            font-family: 'Orbitron', sans-serif;
-            pointer-events: none;
-        }
-
-        /* Fancy Tech Action Button */
-        .action-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
-            color: white;
+        .nav-tab {
+            flex: 1;
+            background: transparent;
             border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
+            padding: 12px 5px;
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.2);
-            position: relative;
-            overflow: hidden;
+            border-radius: 12px;
+            transition: all 0.2s ease;
         }
 
-        .action-btn::after {
-            content: "";
-            position: absolute;
-            top: 0; left: -50%; width: 20%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: skewX(-25deg);
-            transition: 0.75s;
+        .nav-tab.active {
+            background-color: var(--accent-dark);
+            color: #ffffff;
         }
 
-        .action-btn:hover::after {
-            left: 120%;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(2, 132, 199, 0.4);
-            filter: brightness(1.1);
-        }
-
-        /* Multi-functional Dashboard Result Output */
-        .smart-panel {
-            margin-top: 30px;
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 24px;
-            display: none;
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
+        .tab-content.active { display: block; }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
+        /* Forms & Inputs */
+        .input-block { margin-bottom: 20px; }
+        .input-block label {
+            display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;
+        }
+        .field-box { position: relative; display: flex; align-items: center; }
+        .field-box input {
+            width: 100%; background-color: var(--bar-bg); border: 1px solid transparent; border-radius: 14px;
+            padding: 14px 20px; font-size: 16px; font-weight: 600; color: var(--text-main); outline: none; transition: 0.2s;
+        }
+        .field-box input:focus { border-color: var(--accent-dark); background-color: #fff; }
+        .unit-tag { position: absolute; left: 15px; font-family: 'Plus Jakarta Sans'; font-size: 13px; color: var(--text-muted); font-weight: 700; }
+
+        .btn-prime {
+            width: 100%; background-color: var(--accent-dark); color: #fff; border: none; border-radius: 14px;
+            padding: 16px; font-family: 'Noto Kufi Arabic'; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-prime:hover { opacity: 0.9; }
+
+        /* Real-time HUD */
+        .live-hud { text-align: center; margin-top: 25px; padding: 20px; border-radius: 16px; background-color: var(--bar-bg); display: none; }
+        .timer-display { font-family: 'Plus Jakarta Sans'; font-size: 42px; font-weight: 800; color: var(--accent-dark); margin: 10px 0; font-variant-numeric: tabular-nums; }
+        .progress-bar-container { width: 100%; height: 6px; background-color: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 15px 0; }
+        .progress-bar-fill { height: 100%; width: 0%; background-color: var(--accent-dark); transition: width 0.5s linear; }
+
+        /* Data grids */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .info-tile { background-color: #fff; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid var(--accent-gray); }
+        .info-tile .lbl { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+        .info-tile .val { font-family: 'Plus Jakarta Sans'; font-size: 14px; font-weight: 700; color: var(--accent-dark); }
+
+        /* History Section */
+        .history-list { margin-top: 20px; font-size: 12px; max-height: 150px; overflow-y: auto; }
+        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--accent-gray); }
+        .history-item:last-child { border-bottom: none; }
+        
+        /* Select Dropdown */
+        select {
+            width: 100%; background-color: var(--bar-bg); border: none; border-radius: 14px;
+            padding: 14px 20px; font-family: 'Noto Kufi Arabic'; font-size: 13px; font-weight: 600; color: var(--text-main);
+            appearance: none; outline: none; margin-bottom: 15px; cursor: pointer;
+        }
+        .diag-result {
+            background: var(--bar-bg); padding: 15px; border-radius: 14px; font-size: 13px; line-height: 1.6; color: var(--text-main);
+            border-right: 4px solid var(--accent-dark); display: none;
         }
 
-        .metric-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .metric-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .metric-value {
-            font-family: 'Orbitron', 'Cairo', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .time-display {
-            text-align: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .time-label {
-            font-size: 13px;
-            color: var(--accent-cyan);
-            font-weight: 600;
-        }
-
-        .time-large {
-            font-family: 'Orbitron', 'Cairo', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--accent-green);
-            margin: 8px 0;
-            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .smart-tip {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 15px;
-            text-align: center;
-            background: rgba(6, 182, 212, 0.05);
-            padding: 10px;
-            border-radius: 8px;
-            border-right: 3px solid var(--accent-cyan);
-        }
+        .save-btn { margin-top: 15px; background: transparent; border: 1px solid var(--accent-dark); color: var(--accent-dark); }
+        .save-btn:hover { background: var(--accent-dark); color: #fff; }
     </style>
 </head>
 <body>
 
-<div class="dashboard-wrapper">
-    <div class="glass-panel">
-        <header>
-            <div class="logo-area">BYD QIN L</div>
-            <div class="subtitle">SMART POWER DATA HUB &bull; 2026</div>
-        </header>
+<div class="dashboard-container">
+    
+    <!-- Premium Car Header -->
+    <div class="car-header">
+        <img src="https://data.carnewschina.com/media/models/b7b630edfb9541408f0220bb41555b50332x0.png" alt="BYD Qin L">
+        <div class="car-title">BYD QIN L</div>
+        <div class="car-subtitle">DM-i HYBRID PLATFORM</div>
+    </div>
 
-        <!-- Mode Toggle Switch (Feature Added) -->
-        <div class="mode-selector">
-            <div id="mode-charge" class="mode-tab active" onclick="switchMode('charge')">⚡ وضع الشحن المنزلي</div>
-            <div id="mode-v2l" class="mode-tab" onclick="switchMode('v2l')">🏕️ وضع كشتات البر V2L</div>
+    <!-- Smart Navigation -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('tab-charge', this)">⚡ الشحن و V2L</button>
+        <button class="nav-tab" onclick="switchTab('tab-range', this)">🌍 المدى والتوفير</button>
+        <button class="nav-tab" onclick="switchTab('tab-diag', this)">🛠️ الدعم والتشخيص</button>
+    </div>
+
+    <!-- ================= TAB 1: CHARGING & V2L ================= -->
+    <div id="tab-charge" class="tab-content active">
+        <div class="nav-tabs" style="background: transparent; padding: 0; border-bottom: 2px solid var(--bar-bg); border-radius: 0; margin-bottom: 20px;">
+            <button id="sub-charge" class="nav-tab active" style="border-radius: 0;" onclick="setMode('charge')">الشحن</button>
+            <button id="sub-v2l" class="nav-tab" style="border-radius: 0;" onclick="setMode('v2l')">وضع البر</button>
         </div>
 
-        <!-- Input 1: SoC -->
-        <div class="input-group">
-            <label id="label-soc" for="input-soc">نسبة بطارية السيارة الحالية</label>
-            <div class="input-wrapper">
-                <input type="number" id="input-soc" placeholder="مثال: 20" min="0" max="100">
-                <span class="input-unit">%</span>
+        <div class="input-block">
+            <label id="lbl-soc">نسبة البطارية الحالية</label>
+            <div class="field-box">
+                <input type="number" id="charge-soc" placeholder="أدخل النسبة (0-100)">
+                <span class="unit-tag">%</span>
+            </div>
+        </div>
+        <div class="input-block">
+            <label id="lbl-pwr">معدل نقل الطاقة</label>
+            <div class="field-box">
+                <input type="number" id="charge-pwr" placeholder="أدخل القيمة (مثال: 2.85)">
+                <span class="unit-tag">kW</span>
             </div>
         </div>
 
-        <!-- Input 2: Power Load -->
-        <div class="input-group">
-            <label id="label-power" for="input-power">معدل سحب طاقة الشاحن</label>
-            <div class="input-wrapper">
-                <input type="number" id="input-power" placeholder="مثال: 2.85" step="0.01" min="0.05">
-                <span class="input-unit">kW</span>
-            </div>
-        </div>
+        <button class="btn-prime" onclick="startProcess()">بدء العملية والعداد الحي</button>
 
-        <button class="action-btn" onclick="executeCalculation()">تحليل البيانات الذكية</button>
-
-        <!-- Futuristic Dashboard Panel -->
-        <div id="dashboard-panel" class="smart-panel">
-            <div class="time-display">
-                <div id="display-time-label" class="time-label">⏱️ الوقت التقريبي المتبقي للفل:</div>
-                <div id="main-time-output" class="time-large">--</div>
-            </div>
-
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div id="card1-label" class="metric-label">الطاقة المطلوبة</div>
-                    <div id="card1-value" class="metric-value">--</div>
+        <div id="charge-hud" class="live-hud">
+            <div style="font-size: 11px; font-weight: 600;" id="hud-title">الوقت المتبقي الحي</div>
+            <div id="live-timer" class="timer-display">00:00:00</div>
+            
+            <div class="progress-bar-container"><div id="hud-bar" class="progress-bar-fill"></div></div>
+            
+            <div class="info-grid">
+                <div class="info-tile">
+                    <div class="lbl" id="tile1-lbl">الطاقة المستهدفة</div>
+                    <div class="val" id="tile1-val">-- kWh</div>
                 </div>
-                <div class="metric-card">
-                    <div id="card2-label" class="metric-label">التكلفة التقريبية</div>
-                    <div id="card2-value" class="metric-value">--</div>
+                <div class="info-tile">
+                    <div class="lbl" id="tile2-lbl">التكلفة (AED)</div>
+                    <div class="val" id="tile2-val">--</div>
                 </div>
             </div>
+            
+            <button class="btn-prime save-btn" onclick="saveHistory()">💾 حفظ القراءة في السجل</button>
+        </div>
 
-            <div id="dynamic-tip" class="smart-tip">
-                نظام الأمان مستقر، القراءة ممتازة.
+        <div class="history-list" id="history-box">
+            <!-- السجل يظهر هنا -->
+        </div>
+    </div>
+
+    <!-- ================= TAB 2: RANGE & SAVINGS ================= -->
+    <div id="tab-range" class="tab-content">
+        <div style="margin-bottom: 25px;">
+            <div class="car-title" style="font-size: 14px;">حاسبة المدى الكهربائي (EV)</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">بناءً على استهلاك سيارتك الفعلي (4.8 kWh/100km)</div>
+            
+            <div class="input-block">
+                <label>نسبة البطارية الحالية</label>
+                <div class="field-box">
+                    <input type="number" id="range-soc" placeholder="مثال: 100" oninput="calcRange()">
+                    <span class="unit-tag">%</span>
+                </div>
+            </div>
+            <div class="live-hud" id="range-res" style="display:block; padding: 15px; margin-top: 10px;">
+                <div style="font-size: 12px; font-weight: 600;">الممشى التقريبي الصافي (بدون بترول):</div>
+                <div class="timer-display" id="range-km" style="font-size: 32px;">0 KM</div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--accent-gray); padding-top: 25px;">
+            <div class="car-title" style="font-size: 14px;">كم وفرت فلوس؟ 💰</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">مقارنة بسيارة بترول عادية تصرف 7 لتر/100كم</div>
+            
+            <div class="input-block">
+                <label>كم كيلومتر مشيت بالكهرباء؟</label>
+                <div class="field-box">
+                    <input type="number" id="save-km" placeholder="مثال: 500" oninput="calcSavings()">
+                    <span class="unit-tag">KM</span>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-tile" style="background-color: #fef2f2; border-color: #fca5a5;">
+                    <div class="lbl">تكلفة البترول العادي</div>
+                    <div class="val" id="cost-petrol" style="color: #ef4444;">0 AED</div>
+                </div>
+                <div class="info-tile" style="background-color: #f0fdf4; border-color: #86efac;">
+                    <div class="lbl">تكلفة سيارتك BYD</div>
+                    <div class="val" id="cost-ev" style="color: #22c55e;">0 AED</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px; font-weight: 700; font-size: 15px;">
+                صافي التوفير: <span id="total-saved" style="color: #22c55e;">0 AED</span> 🎉
             </div>
         </div>
     </div>
+
+    <!-- ================= TAB 3: DIAGNOSTICS ================= -->
+    <div id="tab-diag" class="tab-content">
+        <div class="car-title" style="font-size: 14px; margin-bottom: 15px;">المساعد الذكي لأعطال الشحن</div>
+        <select id="diag-select" onchange="showDiag()">
+            <option value="0">-- اختر المشكلة التي تواجهك --</option>
+            <option value="1">الشاحن الجداري يضيء باللون الأحمر</option>
+            <option value="2">السيارة تفصل الشحن فجأة</option>
+            <option value="3">سرعة الشحن بطيئة جداً (أقل من 1.5kW)</option>
+            <option value="4">المسدس عالق في السيارة ولا يخرج</option>
+        </select>
+
+        <div id="diag-answer" class="diag-result"></div>
+    </div>
+
 </div>
 
 <script>
-    let currentMode = 'charge';
-    const batteryMax = 10.08; // سعة بطارية بي واي دي تشين إل الكلية
+    // Constants
+    const BATTERY = 10.08; 
+    let activeMode = 'charge';
+    let countdownInterval = null;
+    let totalSecondsRemaining = 0;
 
-    function switchMode(mode) {
-        currentMode = mode;
-        document.getElementById('mode-charge').classList.toggle('active', mode === 'charge');
-        document.getElementById('mode-v2l').classList.toggle('active', mode === 'v2l');
-        
-        // تغيير النصوص على حسب الوضع
-        if(mode === 'charge') {
-            document.getElementById('label-soc').innerText = "نسبة بطارية السيارة الحالية";
-            document.getElementById('label-power').innerText = "معدل سحب طاقة الشاحن";
-            document.getElementById('input-power').placeholder = "مثال: 2.85";
-            document.getElementById('display-time-label').innerText = "⏱️ الوقت المتبقي لإتمام الشحن (100%):";
-            document.getElementById('card1-label').innerText = "الطاقة الناقصة للفل";
-            document.getElementById('card2-label').innerText = "التكلفة (الإمارات)";
-        } else {
-            document.getElementById('label-soc').innerText = "نسبة بطارية الموتر الحالية (البر)";
-            document.getElementById('label-power').innerText = "مجموع أحمال الأجهزة (سوني + شاشة إلخ)";
-            document.getElementById('input-power').placeholder = "مثال: 0.40";
-            document.getElementById('display-time-label').innerText = "⏳ كم ساعة بتكفيك البطارية في البر:";
-            document.getElementById('card1-label').innerText = "الطاقة المتوفرة حالياً";
-            document.getElementById('card2-label').innerText = "معدل التفريغ المستمر";
-        }
-        // إخفاء اللوحة عند التبديل لإعادة الحساب
-        document.getElementById('dashboard-panel').style.display = 'none';
+    // Load history on start
+    window.onload = () => { loadHistory(); };
+
+    // Audio Context Beep for Timer End
+    function playBeep() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.5);
+        } catch(e) {}
     }
 
-    function executeCalculation() {
-        const soc = parseFloat(document.getElementById('input-soc').value);
-        const power = parseFloat(document.getElementById('input-power').value);
-        const panel = document.getElementById('dashboard-panel');
+    // Tabs Switching
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-tabs > .nav-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
 
-        if (isNaN(soc) || isNaN(power) || soc < 0 || soc > 100 || power <= 0) {
-            alert('أفا! دخل أرقام صحيحة الغالي (البطارية بين 0-100 والقوة فوق الـ 0)');
+    // Charging vs V2L Sub-Tabs
+    function setMode(mode) {
+        activeMode = mode;
+        document.getElementById('sub-charge').classList.toggle('active', mode === 'charge');
+        document.getElementById('sub-v2l').classList.toggle('active', mode === 'v2l');
+        
+        document.getElementById('lbl-soc').innerText = mode === 'charge' ? "نسبة البطارية الحالية" : "نسبة البطارية المتوفرة للبر";
+        document.getElementById('lbl-pwr').innerText = mode === 'charge' ? "معدل نقل الطاقة للشحن" : "إجمالي سحب الأجهزة الموصولة";
+        document.getElementById('hud-title').innerText = mode === 'charge' ? "الوقت المتبقي الحي للفل" : "الوقت المتبقي قبل فصل الطاقة";
+        document.getElementById('tile1-lbl').innerText = mode === 'charge' ? "الطاقة المستهدفة" : "الطاقة المتاحة";
+        document.getElementById('tile2-lbl').innerText = mode === 'charge' ? "التكلفة (AED)" : "الحمل الكلي (W)";
+        
+        clearInterval(countdownInterval);
+        document.getElementById('charge-hud').style.display = 'none';
+    }
+
+    // Main Timer Process
+    function startProcess() {
+        const soc = parseFloat(document.getElementById('charge-soc').value);
+        const pwr = parseFloat(document.getElementById('charge-pwr').value);
+        
+        if (isNaN(soc) || isNaN(pwr) || soc < 0 || soc > 100 || pwr <= 0) {
+            alert('أدخل أرقام صحيحة الغالي.');
             return;
         }
 
-        if (currentMode === 'charge') {
-            // وضع الشحن المستمر للفل
-            if(soc === 100) {
-                alert('موترك مفلل وجاهز 100%!');
-                return;
-            }
-            const neededPercent = 100 - soc;
-            const neededEnergy = (neededPercent / 100) * batteryMax;
-            
-            // إضافة 5% وقت موازنة وضياع طاقة
-            const totalHours = (neededEnergy / power) * 1.05;
-            const h = Math.floor(totalHours);
-            const m = Math.round((totalHours - h) * 60);
-            
-            // حساب التكلفة التقريبية في الإمارات (بناءً على الشريحة السكنية العادية 23 فلس لكل كيلواط/ساعة)
-            const cost = neededEnergy * 0.23;
+        document.getElementById('charge-hud').style.display = 'block';
+        clearInterval(countdownInterval);
 
-            document.getElementById('main-time-output').innerText = `${h} س و ${m} د`;
-            document.getElementById('card1-value').innerText = neededEnergy.toFixed(2) + " kWh";
-            document.getElementById('card2-value').innerText = cost.toFixed(2) + " درهم";
-            
-            if(power >= 2.5) {
-                document.getElementById('dynamic-tip').innerText = "🎯 الواير الـ 4 مللي شغال عزم كامل ومستقر والفولتية ممتازة!";
-            } else {
-                document.getElementById('dynamic-tip').innerText = "⚠️ السحب بطيء شوي، تأكد أنك مركب تمديد ممتاز ورافع الأمبير من الشاحن.";
-            }
+        let hours = 0, energy = 0;
 
+        if (activeMode === 'charge') {
+            if (soc === 100) { displayTime(0); return; }
+            energy = ((100 - soc) / 100) * BATTERY;
+            hours = (energy / pwr) * 1.05; // 5% efficiency loss
+            
+            document.getElementById('tile1-val').innerText = energy.toFixed(2) + " kWh";
+            document.getElementById('tile2-val').innerText = (energy * 0.23).toFixed(2);
+            document.getElementById('hud-bar').style.width = soc + "%";
+            // Animate bar to 100%
+            setTimeout(() => { document.getElementById('hud-bar').style.width = '100%'; }, 100);
+            
         } else {
-            // وضع كشتات البر V2L
-            if(soc === 0) {
-                alert('البطارية مصفّرة، شغل الموتر يشتغل مكينة البترول تشحنها!');
-                return;
-            }
-            const currentEnergy = (soc / 100) * batteryMax;
-            const totalHours = currentEnergy / power;
-            const h = Math.floor(totalHours);
-            const m = Math.round((totalHours - h) * 60);
-
-            document.getElementById('main-time-output').innerText = `${h} س و ${m} د`;
-            document.getElementById('card1-value').innerText = currentEnergy.toFixed(2) + " kWh";
-            document.getElementById('card2-value').innerText = (power * 1000).toFixed(0) + " واط";
-            document.getElementById('dynamic-tip').innerText = "🏕️ العب سوني وشغل التلفزيون وأنت مستانس، نظام الحماية بيحفظ بطارية الموتر من الصفر التام!";
+            if (soc === 0) { displayTime(0); return; }
+            energy = (soc / 100) * BATTERY;
+            hours = energy / pwr;
+            
+            document.getElementById('tile1-val').innerText = energy.toFixed(2) + " kWh";
+            document.getElementById('tile2-val').innerText = (pwr * 1000).toFixed(0);
+            document.getElementById('hud-bar').style.width = '100%';
+            // Animate bar to 0%
+            setTimeout(() => { document.getElementById('hud-bar').style.width = '0%'; }, 100);
         }
 
-        panel.style.display = 'block';
+        totalSecondsRemaining = Math.floor(hours * 3600);
+        runTimer();
+    }
+
+    function runTimer() {
+        displayTime(totalSecondsRemaining);
+        countdownInterval = setInterval(() => {
+            totalSecondsRemaining--;
+            if (totalSecondsRemaining <= 0) {
+                clearInterval(countdownInterval);
+                displayTime(0);
+                playBeep();
+            } else {
+                displayTime(totalSecondsRemaining);
+            }
+        }, 1000);
+    }
+
+    function displayTime(totalSeconds) {
+        if(totalSeconds <= 0) {
+            document.getElementById('live-timer').innerText = "00:00:00";
+            return;
+        }
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        
+        const format = (num) => String(num).padStart(2, '0');
+        document.getElementById('live-timer').innerText = `${format(h)}:${format(m)}:${format(s)}`;
+    }
+
+    // Save History Logging
+    function saveHistory() {
+        const soc = document.getElementById('charge-soc').value;
+        const pwr = document.getElementById('charge-pwr').value;
+        if(!soc || !pwr) return;
+
+        const date = new Date();
+        const dateStr = `${date.getDate()}/${date.getMonth()+1} - ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
+        const record = { date: dateStr, mode: activeMode, soc: soc, pwr: pwr };
+
+        let history = JSON.parse(localStorage.getItem('byd_history') || '[]');
+        history.unshift(record);
+        if(history.length > 5) history.pop(); // Keep last 5
+        localStorage.setItem('byd_history', JSON.stringify(history));
+        
+        loadHistory();
+        alert('تم حفظ القراءة بنجاح! ✔️');
+    }
+
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('byd_history') || '[]');
+        const box = document.getElementById('history-box');
+        if(history.length === 0) {
+            box.innerHTML = '<div style="text-align:center; color: var(--text-muted);">لا توجد سجلات سابقة.</div>';
+            return;
+        }
+        box.innerHTML = '<div style="font-weight:700; margin-bottom:10px;">📋 آخر القراءات المحفوظة:</div>';
+        history.forEach(item => {
+            const modeAr = item.mode === 'charge' ? 'شحن ⚡' : 'بر 🏕️';
+            box.innerHTML += `
+                <div class="history-item">
+                    <span>${item.date} (${modeAr})</span>
+                    <span style="font-weight:600;">بطارية: ${item.soc}% | سحب: ${item.pwr}kW</span>
+                </div>
+            `;
+        });
+    }
+
+    // Range Calculator
+    function calcRange() {
+        let soc = parseFloat(document.getElementById('range-soc').value) || 0;
+        if(soc > 100) soc = 100;
+        const kwhAvailable = (soc / 100) * BATTERY;
+        // Formula based on user screen: 4.8 kWh per 100km -> 1 kWh = 20.83 km
+        const km = (kwhAvailable / 4.8) * 100;
+        document.getElementById('range-km').innerText = Math.round(km) + " KM";
+    }
+
+    // Savings Calculator
+    function calcSavings() {
+        const km = parseFloat(document.getElementById('save-km').value) || 0;
+        // Petrol cost: ~7L/100km, Price ~3 AED/L -> 21 AED / 100km
+        const petrolCost = (km / 100) * 21;
+        // EV cost: 4.8kWh/100km, Price 0.23 AED/kWh -> 1.1 AED / 100km
+        const evCost = (km / 100) * 1.104;
+        
+        document.getElementById('cost-petrol').innerText = petrolCost.toFixed(1) + " AED";
+        document.getElementById('cost-ev').innerText = evCost.toFixed(1) + " AED";
+        document.getElementById('total-saved').innerText = (petrolCost - evCost).toFixed(1) + " AED";
+    }
+
+    // Diagnostics System
+    function showDiag() {
+        const val = document.getElementById('diag-select').value;
+        const box = document.getElementById('diag-answer');
+        box.style.display = 'block';
+        
+        switch(val) {
+            case '1':
+                box.innerHTML = "<b>الحل:</b> يوجد مشكلة في التأريض (الـ Earth) أو الفولتية غير مستقرة. افصل الشاحن من الجدار لمدة دقيقة، تأكد من جودة كيبل الـ 4 مللي، ثم أعد التركيب.";
+                break;
+            case '2':
+                box.innerHTML = "<b>الحل:</b> السيارة تفصل تلقائياً لحماية البطارية إذا ارتفعت حرارة المنفذ. تأكد أنك تشحن في الظل إذا كان الوقت ظهراً، أو قم بتخفيض الأمبير من الشاحن بضغطة الزر الأسود.";
+                break;
+            case '3':
+                box.innerHTML = "<b>الحل:</b> الشاحن عالق على سرعة 6A أو 8A. قم بفصل المسدس من السيارة (وهو موصول بالجدار)، واضغط على الزر الأسود في المسدس ضغطات سريعة لرفعه إلى 13A أو 16A.";
+                break;
+            case '4':
+                box.innerHTML = "<b>الحل:</b> افتح قفل السيارة بالريموت مرتين متتاليتين. إذا لم يفتح، تأكد من إيقاف عملية الشحن من داخل الشاشة الكبيرة أولاً، ثم اسحب المسدس.";
+                break;
+            default:
+                box.style.display = 'none';
+        }
     }
 </script>
 
