@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYD Qin L Smart Hub</title>
+    <!-- Google Fonts for Modern Arabic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #070b19 0%, #0f172a 100%);
+            --panel-bg: rgba(30, 41, 59, 0.45);
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glow: rgba(6, 182, 212, 0.15);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Tech Background Grid Lines overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .dashboard-wrapper {
+            width: 100%;
+            max-width: 540px;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        /* Top Cyber Accent Glow Line */
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 10%; right: 10%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-area {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Custom Mode/Feature Toggle */
+        .mode-selector {
+            display: flex;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mode-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+        }
+
+        .mode-tab.active {
+            background: #0284c7;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            padding-right: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 23, 42, 0.7);
+            color: #fff;
+            font-family: 'Orbitron', 'Cairo', sans-serif;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .input-unit {
+            position: absolute;
+            left: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'Orbitron', sans-serif;
+            pointer-events: none;
+        }
+
+        /* Fancy Tech Action Button */
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::after {
+            content: "";
+            position: absolute;
+            top: 0; left: -50%; width: 20%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+        }
+
+        .action-btn:hover::after {
+            left: 120%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(2, 132, 199, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* Multi-functional Dashboard Result Output */
+        .smart-panel {
+            margin-top: 30px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-family: 'Orbitron', 'Cairo', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .time-display {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .time-label {
+            font-size: 13px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .time-large {
+            font-family: 'Orbitron', 'Cairo', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--accent-green);
+            margin: 8px 0;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .smart-tip {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 15px;
+            text-align: center;
+            background: rgba(6, 182, 212, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            border-right: 3px solid var(--accent-cyan);
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <div class="glass-panel">
+        <header>
+            <div class="logo-area">BYD QIN L</div>
+            <div class="subtitle">SMART POWER DATA HUB &bull; 2026</div>
+        </header>
+
+        <!-- Mode Toggle Switch (Feature Added) -->
+        <div class="mode-selector">
+            <div id="mode-charge" class="mode-tab active" onclick="switchMode('charge')">⚡ وضع الشحن المنزلي</div>
+            <div id="mode-v2l" class="mode-tab" onclick="switchMode('v2l')">🏕️ وضع كشتات البر V2L</div>
+        </div>
+
+        <!-- Input 1: SoC -->
+        <div class="input-group">
+            <label id="label-soc" for="input-soc">نسبة بطارية السيارة الحالية</label>
+            <div class="input-wrapper">
+                <input type="number" id="input-soc" placeholder="مثال: 20" min="0" max="100">
+                <span class="input-unit">%</span>
+            </div>
+        </div>
+
+        <!-- Input 2: Power Load -->
+        <div class="input-group">
+            <label id="label-power" for="input-power">معدل سحب طاقة الشاحن</label>
+            <div class="input-wrapper">
+                <input type="number" id="input-power" placeholder="مثال: 2.85" step="0.01" min="0.05">
+                <span class="input-unit">kW</span>
+            </div>
+        </div>
+
+        <button class="action-btn" onclick="executeCalculation()">تحليل البيانات الذكية</button>
+
+        <!-- Futuristic Dashboard Panel -->
+        <div id="dashboard-panel" class="smart-panel">
+            <div class="time-display">
+                <div id="display-time-label" class="time-label">⏱️ الوقت التقريبي المتبقي للفل:</div>
+                <div id="main-time-output" class="time-large">--</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div id="card1-label" class="metric-label">الطاقة المطلوبة</div>
+                    <div id="card1-value" class="metric-value">--</div>
+                </div>
+                <div class="metric-card">
+                    <div id="card2-label" class="metric-label">التكلفة التقريبية</div>
+                    <div id="card2-value" class="metric-value">--</div>
+                </div>
+            </div>
+
+            <div id="dynamic-tip" class="smart-tip">
+                نظام الأمان مستقر، القراءة ممتازة.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'charge';
+    const batteryMax = 10.08; // سعة بطارية بي واي دي تشين إل الكلية
+
+    function switchMode(mode) {
+        currentMode = mode;
+        document.getElementById('mode-charge').classList.toggle('active', mode === 'charge');
+        document.getElementById('mode-v2l').classList.toggle('active', mode === 'v2l');
+        
+        // تغيير النصوص على حسب الوضع
+        if(mode === 'charge') {
+            document.getElementById('label-soc').innerText = "نسبة بطارية السيارة الحالية";
+            document.getElementById('label-power').innerText = "معدل سحب طاقة الشاحن";
+            document.getElementById('input-power').placeholder = "مثال: 2.85";
+            document.getElementById('display-time-label').innerText = "⏱️ الوقت المتبقي لإتمام الشحن (100%):";
+            document.getElementById('card1-label').innerText = "الطاقة الناقصة للفل";
+            document.getElementById('card2-label').innerText = "التكلفة (الإمارات)";
+        } else {
+            document.getElementById('label-soc').innerText = "نسبة بطارية الموتر الحالية (البر)";
+            document.getElementById('label-power').innerText = "مجموع أحمال الأجهزة (سوني + شاشة إلخ)";
+            document.getElementById('input-power').placeholder = "مثال: 0.40";
+            document.getElementById('display-time-label').innerText = "⏳ كم ساعة بتكفيك البطارية في البر:";
+            document.getElementById('card1-label').innerText = "الطاقة المتوفرة حالياً";
+            document.getElementById('card2-label').innerText = "معدل التفريغ المستمر";
+        }
+        // إخفاء اللوحة عند التبديل لإعادة الحساب
+        document.getElementById('dashboard-panel').style.display = 'none';
+    }
+
+    function executeCalculation() {
+        const soc = parseFloat(document.getElementById('input-soc').value);
+        const power = parseFloat(document.getElementById('input-power').value);
+        const panel = document.getElementById('dashboard-panel');
+
+        if (isNaN(soc) || isNaN(power) || soc < 0 || soc > 100 || power <= 0) {
+            alert('أفا! دخل أرقام صحيحة الغالي (البطارية بين 0-100 والقوة فوق الـ 0)');
+            return;
+        }
+
+        if (currentMode === 'charge') {
+            // وضع الشحن المستمر للفل
+            if(soc === 100) {
+                alert('موترك مفلل وجاهز 100%!');
+                return;
+            }
+            const neededPercent = 100 - soc;
+            const neededEnergy = (neededPercent / 100) * batteryMax;
+            
+            // إضافة 5% وقت موازنة وضياع طاقة
+            const totalHours = (neededEnergy / power) * 1.05;
+            const h = Math.floor(totalHours);
+            const m = Math.round((totalHours - h) * 60);
+            
+            // حساب التكلفة التقريبية في الإمارات (بناءً على الشريحة السكنية العادية 23 فلس لكل كيلواط/ساعة)
+            const cost = neededEnergy * 0.23;
+
+            document.getElementById('main-time-output').innerText = `${h} س و ${m} د`;
+            document.getElementById('card1-value').innerText = neededEnergy.toFixed(2) + " kWh";
+            document.getElementById('card2-value').innerText = cost.toFixed(2) + " درهم";
+            
+            if(power >= 2.5) {
+                document.getElementById('dynamic-tip').innerText = "🎯 الواير الـ 4 مللي شغال عزم كامل ومستقر والفولتية ممتازة!";
+            } else {
+                document.getElementById('dynamic-tip').innerText = "⚠️ السحب بطيء شوي، تأكد أنك مركب تمديد ممتاز ورافع الأمبير من الشاحن.";
+            }
+
+        } else {
+            // وضع كشتات البر V2L
+            if(soc === 0) {
+                alert('البطارية مصفّرة، شغل الموتر يشتغل مكينة البترول تشحنها!');
+                return;
+            }
+            const currentEnergy = (soc / 100) * batteryMax;
+            const totalHours = currentEnergy / power;
+            const h = Math.floor(totalHours);
+            const m = Math.round((totalHours - h) * 60);
+
+            document.getElementById('main-time-output').innerText = `${h} س و ${m} د`;
+            document.getElementById('card1-value').innerText = currentEnergy.toFixed(2) + " kWh";
+            document.getElementById('card2-value').innerText = (power * 1000).toFixed(0) + " واط";
+            document.getElementById('dynamic-tip').innerText = "🏕️ العب سوني وشغل التلفزيون وأنت مستانس، نظام الحماية بيحفظ بطارية الموتر من الصفر التام!";
+        }
+
+        panel.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
