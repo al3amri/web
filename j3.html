@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>AskWho | عارض الملفات الكامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        :root {
+            --bg: #f4f7fb; --surface: #ffffff; --text: #1e293b; --text-light: #475569;
+            --accent: #7c3aed; --accent-light: #8b5cf6; --border: #e2e8f0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05); --radius: 24px;
+        }
+        body.dark {
+            --bg: #0f172a; --surface: #1e293b; --text: #f1f5f9; --text-light: #94a3b8;
+            --accent: #a855f7; --border: #334155; --shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        body { background: var(--bg); color: var(--text); transition: 0.2s; padding: 16px; min-height: 100vh; }
+        .container { max-width: 1440px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+        .header h1 { font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+        .theme-toggle { background: var(--surface); border: 1px solid var(--border); border-radius: 40px; padding: 8px 20px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; box-shadow: var(--shadow); color: var(--text); }
+        .input-area { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); }
+        textarea { width: 100%; height: 160px; padding: 14px; border: 1.5px solid var(--border); border-radius: 16px; background: var(--bg); color: var(--text); font-family: monospace; direction: ltr; resize: vertical; font-size: 13px; margin-bottom: 16px; }
+        textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,58,237,0.2); }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 40px; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text); border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; font-size: 0.9rem; }
+        button.primary { background: var(--accent); color: white; border: none; }
+        button.primary:hover { background: var(--accent-light); }
+        button:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 60px; padding: 6px 20px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .search-box { width: 100%; padding: 14px 20px; border: 1.5px solid var(--border); border-radius: 60px; background: var(--surface); color: var(--text); margin-bottom: 28px; padding-right: 50px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'); background-repeat: no-repeat; background-position: right 20px center; }
+        .search-box:focus { outline: none; border-color: var(--accent); }
+        .profiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px; }
+        .profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; overflow: hidden; transition: 0.25s; box-shadow: var(--shadow); }
+        .profile-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .carousel { position: relative; margin: 16px 16px 0 16px; border-radius: 24px; overflow: hidden; background: var(--bg); aspect-ratio: 1/1; }
+        .carousel-image { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
+        .carousel-nav { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border-radius: 40px; padding: 6px 12px; color: white; font-size: 0.75rem; display: flex; gap: 12px; z-index: 2; align-items: center; }
+        .carousel-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0 6px; line-height: 1; }
+        .carousel-btn:hover { background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .image-badges { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 2; }
+        .badge-order { background: rgba(0,0,0,0.7); color: white; padding: 3px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: bold; }
+        .badge-private { background: #f97316; color: white; padding: 3px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: bold; }
+        .profile-info { padding: 16px 16px 12px; }
+        .info-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; gap: 6px; }
+        .profile-name { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .profile-badge { background: var(--accent); color: white; border-radius: 40px; padding: 3px 10px; font-size: 0.7rem; }
+        .profile-id { font-size: 0.7rem; color: var(--text-light); direction: ltr; }
+        .info-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-light); flex-wrap: wrap; }
+        .info-row i { width: 22px; color: var(--accent); text-align: center; }
+        .info-row span { flex: 1; word-break: break-word; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0; }
+        .info-cell { background: var(--bg); border-radius: 12px; padding: 8px; text-align: center; }
+        .info-cell .lbl { font-size: 0.65rem; color: var(--text-light); margin-bottom: 3px; }
+        .info-cell .val { font-weight: 600; font-size: 0.85rem; }
+        .interests { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+        .interest-tag { background: var(--bg); border: 1px solid var(--border); border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; }
+        .map-container { height: 160px; border-radius: 16px; overflow: hidden; margin: 12px 0; background: var(--bg); position: relative; z-index: 0; }
+        .map-container .leaflet-container { height: 100%; width: 100%; z-index: 0; border-radius: 16px; }
+        .actions { display: flex; gap: 8px; padding: 8px 16px 16px; border-top: 1px solid var(--border); margin-top: 8px; flex-wrap: wrap; }
+        .actions button { flex: 1 1 auto; padding: 8px; font-size: 0.75rem; background: var(--bg); border: 1px solid var(--border); justify-content: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { position: relative; max-width: 90vw; max-height: 90vh; }
+        .modal-content img { max-width: 100%; max-height: 85vh; border-radius: 20px; display: block; }
+        .modal-close { position: absolute; top: -40px; left: 0; color: white; font-size: 2rem; cursor: pointer; background: rgba(0,0,0,0.5); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .modal-nav { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 2rem; cursor: pointer; background: rgba(0,0,0,0.5); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1001; }
+        .modal-prev { right: -60px; } .modal-next { left: -60px; }
+        @media (max-width: 768px) { .modal-prev { right: 10px; } .modal-next { left: 10px; } .profiles-grid { grid-template-columns: 1fr; } }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 10px 24px; border-radius: 40px; font-size: 0.85rem; z-index: 2000; animation: fadeOut 2s ease forwards; }
+        @keyframes fadeOut { 0% { opacity: 0; transform: translateX(-50%) translateY(10px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+        .empty-state { text-align: center; padding: 60px; color: var(--text-light); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-map-marked-alt" style="color:var(--accent);"></i> AskWho · عارض الملفات</h1>
+            <div class="theme-toggle" onclick="document.body.classList.toggle('dark')">
+                <i class="fas fa-moon"></i> <span>ليلي</span>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <textarea id="jsonInput" placeholder='الصق JSON هنا (result.user / result.users / data)...' dir="ltr"></textarea>
+            <div class="btn-group">
+                <button class="primary" onclick="parseData()"><i class="fas fa-play"></i> عرض</button>
+                <button onclick="pasteJSON()"><i class="fas fa-paste"></i> لصق</button>
+                <button onclick="clearAll()"><i class="fas fa-trash"></i> مسح</button>
+                <button onclick="loadSample()"><i class="fas fa-flask"></i> تجربة</button>
+            </div>
+        </div>
+
+        <div id="stats" class="stats" style="display: none;"></div>
+        <input type="text" id="searchInput" class="search-box" placeholder="ابحث بالاسم أو المعرف..." style="display: none;">
+
+        <div id="profilesContainer" class="profiles-grid"></div>
+        <div class="footer" style="text-align:center; margin-top:32px; font-size:0.75rem; color:var(--text-light);">
+            <p>يعرض كل المعلومات لكل مستخدم | خريطة عند وجود إحداثيات</p>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal(event)">&times;</span>
+            <span class="modal-nav modal-prev" onclick="prevModalImage(event)"><i class="fas fa-chevron-right"></i></span>
+            <span class="modal-nav modal-next" onclick="nextModalImage(event)"><i class="fas fa-chevron-left"></i></span>
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        let currentProfiles = [];
+        let currentFiltered = [];
+        let activeModalImages = [];
+        let activeModalIndex = 0;
+        let activeMaps = [];
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        window.pasteJSON = async function() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('jsonInput').value = text;
+                parseData();
+            } catch(e) { showToast('تعذر الوصول للحافظة'); }
+        };
+
+        function parseDistance(distanceStr) {
+            if (!distanceStr) return Infinity;
+            const match = String(distanceStr).match(/(\d+(\.\d+)?)/);
+            return match ? parseFloat(match[1]) : Infinity;
+        }
+
+        // تحويل أي بنية JSON إلى مصفوفة موحدة
+        function normalizeProfiles(json) {
+            let profiles = [];
+
+            // 1. data كمصفوفة (AskWho متعدد)
+            if (json.data && Array.isArray(json.data)) profiles = json.data;
+            // 2. data ككائن (AskWho مفرد)
+            else if (json.data && typeof json.data === 'object') profiles = [json.data];
+            // 3. result.users (مصفوفة)
+            else if (json.result?.users && Array.isArray(json.result.users)) profiles = json.result.users;
+            // 4. result.user (كائن مفرد) ← هذا اللي عندك
+            else if (json.result?.user && typeof json.result.user === 'object') profiles = [json.result.user];
+            // 5. مصفوفة مباشرة
+            else if (Array.isArray(json)) profiles = json;
+            // 6. كائن مفرد مباشر
+            else if (typeof json === 'object' && (json.id || json.firstname || json.name)) profiles = [json];
+
+            return profiles.map(p => {
+                // الإحداثيات (بكل الصيغ المحتملة)
+                const lat = p.lat || p.latitude || p.location?.latitude || p.location?.lat || null;
+                const lng = p.lng || p.longitude || p.location?.longitude || p.location?.lon || null;
+
+                // الاسم الكامل
+                const fullname = p.firstname
+                    ? (p.lastname ? `${p.firstname} ${p.lastname}` : p.firstname)
+                    : (p.name || 'بدون اسم');
+
+                // جمع كل الصور
+                let images = [];
+                // الصور من userImages (بنية Parse)
+                if (Array.isArray(p.userImages)) {
+                    // ترتيب حسب order
+                    const sorted = [...p.userImages].sort((a,b) => (a.order ?? 999) - (b.order ?? 999));
+                    sorted.forEach(img => {
+                        if (img?.imageFile?.url) {
+                            images.push({
+                                url: img.imageFile.url,
+                                order: img.order,
+                                isPrivate: img.isPrivate || false
+                            });
+                        }
+                    });
+                }
+                // صور بنية AskWho
+                if (p.profile_image_imagekit) images.push({ url: p.profile_image_imagekit, isPrivate: false });
+                else if (p.profile_image_thumbnail) images.push({ url: p.profile_image_thumbnail, isPrivate: false });
+                else if (p.profile_image) images.push({ url: p.profile_image, isPrivate: false });
+                if (Array.isArray(p.gallery)) {
+                    p.gallery.forEach(u => { if (u && typeof u === 'string') images.push({ url: u, isPrivate: false }); });
+                }
+                // إزالة التكرار
+                const seen = new Set();
+                images = images.filter(img => { if (seen.has(img.url)) return false; seen.add(img.url); return true; });
+
+                return {
+                    ...p,
+                    _name: fullname,
+                    _lat: lat ? parseFloat(lat) : null,
+                    _lng: lng ? parseFloat(lng) : null,
+                    _images: images,
+                    _distanceNum: parseDistance(p.distance)
+                };
+            });
+        }
+
+        window.parseData = function() {
+            const raw = document.getElementById('jsonInput').value.trim();
+            if (!raw) { showToast('أدخل JSON أولاً'); return; }
+            try {
+                const json = JSON.parse(raw);
+                const profiles = normalizeProfiles(json);
+
+                if (!profiles.length) { showToast('لا توجد بيانات صالحة'); return; }
+
+                profiles.sort((a,b) => a._distanceNum - b._distanceNum);
+
+                currentProfiles = profiles;
+                currentFiltered = [...profiles];
+                renderProfiles(currentFiltered);
+                updateStats(profiles.length);
+                document.getElementById('stats').style.display = 'flex';
+                document.getElementById('searchInput').style.display = 'block';
+            } catch(e) {
+                showToast('JSON غير صالح: ' + e.message);
+            }
+        };
+
+        function initMap(elementId, lat, lng, name) {
+            if (!lat || !lng) return null;
+            try {
+                const map = L.map(elementId, { scrollWheelZoom: false }).setView([lat, lng], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OSM &copy; CartoDB',
+                    subdomains: 'abcd', maxZoom: 19
+                }).addTo(map);
+                L.marker([lat, lng]).addTo(map).bindPopup(name || 'الموقع').openPopup();
+                return map;
+            } catch(e) { return null; }
+        }
+
+        function renderProfiles(profiles) {
+            const container = document.getElementById('profilesContainer');
+
+            activeMaps.forEach(m => { try { m.remove(); } catch(e) {} });
+            activeMaps = [];
+
+            if (!profiles.length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">🚫 لا توجد نتائج</div>';
+                return;
+            }
+
+            let html = '';
+            profiles.forEach((p, idx) => {
+                const name = p._name;
+                const age = p.age ? `، ${p.age}` : '';
+                const city = p.city || '';
+                const distance = p.distance || '';
+                const nationality = p.nationality || p.nationality_icon || '';
+                const zodiac = p.zodiac || '';
+                const statusText = p.status || '';
+                const profileText = p.profileText || '';
+                const mainGoal = p.main_goal?.title || '';
+                const mainGoalEmoji = p.main_goal?.emoji || '';
+                const personality = p.personality_type?.title || '';
+                const relationship = p.relationship_status || '';
+                const occupation = p.occupation || '';
+                const company = p.company_name || '';
+                const interests = p.profile_interests || p.interests || [];
+                const allImages = p._images;
+                const hasLocation = p._lat && p._lng;
+                const mapId = `map-${idx}`;
+
+                // معرفات
+                const profileId = p.id || p.local_id || 'غير معروف';
+                const userHandle = p.userHandle || '';
+
+                // حقول إضافية
+                const height = p.height || '';
+                const weight = p.weight || '';
+                const userSexRole = p.userSexRole || '';
+                const userActivity = p.userActivity || '';
+                const userEthnicity = p.userEthnicity || '';
+                const appVersion = p.appVersion || p.app_version || '';
+                const deviceType = p.deviceType || (p.device_type === 'I' ? 'iOS' : p.device_type === 'A' ? 'Android' : '');
+                const followedCount = p.followedUsersCount ?? null;
+                const followingCount = p.followingUsersCount ?? null;
+                const email = p.email || '';
+                const birthday = p.birthday || '';
+                const gender = p.gender || '';
+
+                // بناء الـ HTML للبطاقة
+                html += `
+                    <div class="profile-card">
+                        <div class="carousel" id="carousel-${idx}">
+                            ${allImages.length ? `
+                                <img class="carousel-image" src="${allImages[0].url}" alt="صورة" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=خطأ'">
+                                <div class="image-badges">
+                                    ${allImages[0].order !== undefined && allImages[0].order !== null ? `<span class="badge-order">#${allImages[0].order}</span>` : ''}
+                                    ${allImages[0].isPrivate ? '<span class="badge-private">🔒 خاص</span>' : ''}
+                                </div>
+                                ${allImages.length > 1 ? `<div class="carousel-nav">
+                                    <button class="carousel-btn" data-dir="prev">‹</button>
+                                    <span>1/${allImages.length}</span>
+                                    <button class="carousel-btn" data-dir="next">›</button>
+                                </div>` : ''}
+                            ` : `
+                                <img class="carousel-image" src="https://placehold.co/400x400/e2e8f0/475569?text=لا+صورة" alt="لا صورة">
+                            `}
+                        </div>
+                        <div class="profile-info">
+                            <div class="info-header">
+                                <div class="profile-name">
+                                    ${escapeHtml(name)}${age}
+                                    ${mainGoal ? `<span class="profile-badge">${mainGoalEmoji} ${escapeHtml(mainGoal)}</span>` : ''}
+                                </div>
+                                <div class="profile-id">🆔 ${escapeHtml(String(profileId))}</div>
+                            </div>
+                            
+                            ${userHandle ? `<div class="info-row"><i class="fas fa-at"></i><span><b>${escapeHtml(userHandle)}</b></span></div>` : ''}
+                            ${city ? `<div class="info-row"><i class="fas fa-map-marker-alt"></i><span>${escapeHtml(city)}${distance ? ' · ' + escapeHtml(distance) : ''}</span></div>` : ''}
+                            ${nationality ? `<div class="info-row"><i class="fas fa-flag"></i><span>${escapeHtml(nationality)}</span></div>` : ''}
+                            ${zodiac ? `<div class="info-row"><i class="fas fa-star"></i><span>${escapeHtml(zodiac)}</span></div>` : ''}
+                            ${relationship ? `<div class="info-row"><i class="fas fa-heart"></i><span>${escapeHtml(relationship)}</span></div>` : ''}
+                            ${personality ? `<div class="info-row"><i class="fas fa-brain"></i><span>${escapeHtml(personality)}</span></div>` : ''}
+                            ${occupation ? `<div class="info-row"><i class="fas fa-briefcase"></i><span>${escapeHtml(occupation)}${company ? ' · ' + escapeHtml(company) : ''}</span></div>` : ''}
+                            ${profileText ? `<div class="info-row"><i class="fas fa-quote-right"></i><span>${escapeHtml(profileText)}</span></div>` : ''}
+                            ${statusText ? `<div class="info-row"><i class="fas fa-comment"></i><span>${escapeHtml(statusText)}</span></div>` : ''}
+                            ${email ? `<div class="info-row"><i class="fas fa-envelope"></i><span>${escapeHtml(email)}</span></div>` : ''}
+                            ${birthday ? `<div class="info-row"><i class="fas fa-cake-candles"></i><span>${escapeHtml(birthday)}</span></div>` : ''}
+
+                            <!-- شبكة معلومات تفصيلية -->
+                            <div class="info-grid">
+                                ${height ? `<div class="info-cell"><div class="lbl">الطول</div><div class="val">${escapeHtml(String(height))} سم</div></div>` : ''}
+                                ${weight ? `<div class="info-cell"><div class="lbl">الوزن</div><div class="val">${escapeHtml(String(weight))} كغ</div></div>` : ''}
+                                ${userSexRole ? `<div class="info-cell"><div class="lbl">الدور</div><div class="val">${escapeHtml(userSexRole)}</div></div>` : ''}
+                                ${userActivity ? `<div class="info-cell"><div class="lbl">النشاط</div><div class="val">${escapeHtml(userActivity)}</div></div>` : ''}
+                                ${userEthnicity ? `<div class="info-cell"><div class="lbl">الأصل</div><div class="val">${escapeHtml(userEthnicity)}</div></div>` : ''}
+                                ${gender ? `<div class="info-cell"><div class="lbl">الجنس</div><div class="val">${escapeHtml(gender === 'Female' ? 'أنثى' : gender === 'Male' ? 'ذكر' : gender)}</div></div>` : ''}
+                                ${followedCount !== null ? `<div class="info-cell"><div class="lbl">المتابِعون</div><div class="val">${followedCount}</div></div>` : ''}
+                                ${followingCount !== null ? `<div class="info-cell"><div class="lbl">يتابع</div><div class="val">${followingCount}</div></div>` : ''}
+                                ${appVersion ? `<div class="info-cell"><div class="lbl">إصدار</div><div class="val">${escapeHtml(appVersion)}</div></div>` : ''}
+                                ${deviceType ? `<div class="info-cell"><div class="lbl">جهاز</div><div class="val">${escapeHtml(deviceType)}</div></div>` : ''}
+                            </div>
+
+                            ${interests.length ? `<div class="interests">${interests.map(i => `<span class="interest-tag">${escapeHtml(i.name || i)}</span>`).join('')}</div>` : ''}
+                            ${hasLocation ? `<div class="map-container" id="${mapId}"></div>` : ''}
+                        </div>
+                        <div class="actions">
+                            <button onclick="copyId('${escapeHtml(String(profileId))}', event)"><i class="fas fa-id-card"></i> ID</button>
+                            ${userHandle ? `<button onclick="copyId('${escapeHtml(userHandle)}', event)"><i class="fas fa-user"></i> Handle</button>` : ''}
+                            ${allImages.length ? `<button onclick="copyAllImages(${idx}, event)"><i class="fas fa-images"></i> روابط</button>` : ''}
+                            ${allImages.length ? `<button onclick="openGallery(${idx}, 0, event)"><i class="fas fa-expand"></i> معرض</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // تهيئة الكاروسيل
+            profiles.forEach((p, idx) => {
+                const allImages = p._images;
+                if (allImages.length <= 1) return;
+                const carouselDiv = document.getElementById(`carousel-${idx}`);
+                if (!carouselDiv) return;
+                const imgEl = carouselDiv.querySelector('.carousel-image');
+                const navSpan = carouselDiv.querySelector('.carousel-nav span');
+                const badges = carouselDiv.querySelector('.image-badges');
+                let currentIdx = 0;
+                const update = (newIdx) => {
+                    currentIdx = (newIdx + allImages.length) % allImages.length;
+                    const imgData = allImages[currentIdx];
+                    imgEl.src = imgData.url;
+                    if (navSpan) navSpan.innerText = `${currentIdx+1}/${allImages.length}`;
+                    if (badges) {
+                        badges.innerHTML = `
+                            ${imgData.order !== undefined && imgData.order !== null ? `<span class="badge-order">#${imgData.order}</span>` : ''}
+                            ${imgData.isPrivate ? '<span class="badge-private">🔒 خاص</span>' : ''}
+                        `;
+                    }
+                };
+                const prevBtn = carouselDiv.querySelector('.carousel-btn[data-dir="prev"]');
+                const nextBtn = carouselDiv.querySelector('.carousel-btn[data-dir="next"]');
+                if (prevBtn) prevBtn.onclick = (e) => { e.stopPropagation(); e.preventDefault(); update(currentIdx-1); };
+                if (nextBtn) nextBtn.onclick = (e) => { e.stopPropagation(); e.preventDefault(); update(currentIdx+1); };
+            });
+
+            // تهيئة الخرائط
+            setTimeout(() => {
+                profiles.forEach((p, idx) => {
+                    if (p._lat && p._lng) {
+                        const mapContainer = document.getElementById(`map-${idx}`);
+                        if (mapContainer && !mapContainer._initialized) {
+                            const map = initMap(`map-${idx}`, p._lat, p._lng, p._name);
+                            if (map) {
+                                activeMaps.push(map);
+                                mapContainer._initialized = true;
+                            }
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        window.openGallery = function(profileIdx, startIndex, event) {
+            if (event) event.stopPropagation();
+            const profile = currentFiltered[profileIdx];
+            if (!profile || !profile._images.length) return;
+            activeModalImages = profile._images;
+            activeModalIndex = startIndex % activeModalImages.length;
+            document.getElementById('modalImage').src = activeModalImages[activeModalIndex].url;
+            document.getElementById('imageModal').style.display = 'flex';
+        };
+
+        window.prevModalImage = function(e) {
+            e.stopPropagation();
+            if (!activeModalImages.length) return;
+            activeModalIndex = (activeModalIndex - 1 + activeModalImages.length) % activeModalImages.length;
+            document.getElementById('modalImage').src = activeModalImages[activeModalIndex].url;
+        };
+        window.nextModalImage = function(e) {
+            e.stopPropagation();
+            if (!activeModalImages.length) return;
+            activeModalIndex = (activeModalIndex + 1) % activeModalImages.length;
+            document.getElementById('modalImage').src = activeModalImages[activeModalIndex].url;
+        };
+        window.closeModal = function(e) {
+            if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close'))
+                document.getElementById('imageModal').style.display = 'none';
+        };
+
+        window.copyId = function(id, event) {
+            if (event) event.stopPropagation();
+            navigator.clipboard.writeText(id).then(() => showToast('📋 تم النسخ: ' + id));
+        };
+        window.copyAllImages = function(idx, event) {
+            if (event) event.stopPropagation();
+            const profile = currentFiltered[idx];
+            if (!profile) return;
+            const urls = profile._images.map(i => i.url);
+            navigator.clipboard.writeText(urls.join('\n')).then(() => showToast(`📸 تم نسخ ${urls.length} رابط`));
+        };
+
+        function updateStats(total) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerHTML = `<div class="stat-card"><i class="fas fa-user-friends"></i> عدد الأشخاص: ${total}</div>`;
+        }
+
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            const term = e.target.value.trim().toLowerCase();
+            if (!term) {
+                currentFiltered = [...currentProfiles];
+            } else {
+                currentFiltered = currentProfiles.filter(p =>
+                    (p._name && p._name.toLowerCase().includes(term)) ||
+                    (p.city && p.city.toLowerCase().includes(term)) ||
+                    (p.nationality && p.nationality.toLowerCase().includes(term)) ||
+                    (p.userHandle && p.userHandle.toLowerCase().includes(term)) ||
+                    (p.name && p.name.toLowerCase().includes(term))
+                );
+            }
+            renderProfiles(currentFiltered);
+            updateStats(currentFiltered.length);
+        });
+
+        window.clearAll = function() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('profilesContainer').innerHTML = '';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('searchInput').style.display = 'none';
+            currentProfiles = [];
+            currentFiltered = [];
+            activeMaps.forEach(m => { try { m.remove(); } catch(e) {} });
+            activeMaps = [];
+        };
+
+        window.loadSample = function() {
+            // العينة اللي أنت أرسلتها (result.user مع userImages)
+            const sample = {
+                "result": {
+                    "user": {
+                        "id": "kJxvFCbKPw",
+                        "userImages": [
+                            {
+                                "id": "ONdgh44JKY",
+                                "user": { "id": "kJxvFCbKPw" },
+                                "imageFile": {
+                                    "__type": "File",
+                                    "name": "a02c4e98a453befaa3e97d0f305d1a92_image_9a85954b-bd1c-401b-9930-8f9e0018cb9f.jpg",
+                                    "url": "https://d3haz8kz57vxxi.cloudfront.net/a02c4e98a453befaa3e97d0f305d1a92_image_9a85954b-bd1c-401b-9930-8f9e0018cb9f.jpg"
+                                },
+                                "order": 1,
+                                "isPrivate": true
+                            },
+                            {
+                                "id": "6iIIFHGwaR",
+                                "user": { "id": "kJxvFCbKPw" },
+                                "imageFile": {
+                                    "__type": "File",
+                                    "name": "38dc4fa736bdaff100b318d2cf4f68c7_image_24766dfd-ee47-432c-981b-45c880567451.jpg",
+                                    "url": "https://d3haz8kz57vxxi.cloudfront.net/38dc4fa736bdaff100b318d2cf4f68c7_image_24766dfd-ee47-432c-981b-45c880567451.jpg"
+                                },
+                                "order": 0,
+                                "isPrivate": false
+                            }
+                        ],
+                        "age": 25,
+                        "name": "Ashley Amira💖",
+                        "height": 161,
+                        "weight": 60,
+                        "userSexRole": "Bottom",
+                        "userActivity": "Chat",
+                        "userEthnicity": "Asian",
+                        "userHandle": "ri9rq4",
+                        "appVersion": "2.0.4",
+                        "deviceType": "android",
+                        "profileText": "Hello",
+                        "localeIdentifier": "en-US",
+                        "followedUsersCount": 0,
+                        "followingUsersCount": 145,
+                        "isBlocked": false,
+                        "isFollowing": false
+                    }
+                }
+            };
+            document.getElementById('jsonInput').value = JSON.stringify(sample, null, 2);
+            parseData();
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+            });
+        }
+
+        const dropArea = document.getElementById('jsonInput');
+        dropArea.addEventListener('dragover', e => e.preventDefault());
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && (file.type === 'application/json' || file.name.endsWith('.json'))) {
+                const reader = new FileReader();
+                reader.onload = ev => { dropArea.value = ev.target.result; parseData(); };
+                reader.readAsText(file);
+            } else showToast('يرجى إسقاط ملف JSON صالح');
+        });
+    </script>
+</body>
+</html>
